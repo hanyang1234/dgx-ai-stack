@@ -127,20 +127,22 @@ The OpenAI-compatible endpoint (`/v1/chat/completions`) may not support both at 
 
 | OpenClaw model ID | Name | Size | Role |
 |---|---|---|---|
+| `ollama/qwen3.5:35b` | Qwen3.5 35B | 23 GB | **Primary** — general chat |
 | `ollama/gpt-oss:120b` | GPT-OSS 120B | 65 GB | Large reasoning |
 | `ollama/gpt-oss:20b` | GPT-OSS 20B Fast | 13 GB | Subagents / fast |
 | `ollama/qwen3-coder:latest` | Qwen3-Coder | 18 GB | Coding tasks |
-| `ollama/nemotron-3-nano:latest` | Nemotron-3 Nano — Thinking Mode | 24 GB | **Primary** — reasoning/thinking |
+| `ollama/nemotron-3-nano:latest` | Nemotron-3 Nano | 24 GB | Reasoning (available, not primary) |
 
-Context window: **65,536 tokens** for most local models; **131,072 tokens** for Nemotron-3 (thinking mode).
+Context window: **65,536 tokens** for all local models; **131,072 tokens** for Nemotron-3.
 
 ### Primary model
 
-**Nemotron-3 Nano in thinking mode** (`ollama/nemotron-3-nano:latest`) is the primary model.
+**Qwen3.5 35B** (`ollama/qwen3.5:35b`) is the primary model.
 Fallbacks (in order): `anthropic/claude-opus-4-6` → `anthropic/claude-sonnet-4-6` → `openai/gpt-5.1-codex`.
 
-Nemotron is configured with `reasoning: true` and `params: {thinking: true, streaming: false}`,
-giving it chain-of-thought reasoning before producing its final answer. Context window: 128k tokens.
+> **Note on Nemotron thinking mode:** Nemotron-3 with `thinking: true` leaks chain-of-thought
+> reasoning to Telegram messages. It is available as `ollama/nemotron-3-nano:latest` but should
+> only be used for isolated agent tasks, not as the primary chat model.
 
 ### How to switch the active model
 
@@ -187,13 +189,22 @@ docker compose restart openclaw-gateway
 
 ### Messaging platform pairing
 
-**Telegram** — already configured and running as `@hanopenclaw123bot`:
+**Telegram** — configured and running as `@artoo_dgx_bot`:
 - Bot token is set in `openclaw.json` under `channels.telegram.botToken`
 - Plugin is enabled under `plugins.entries.telegram.enabled: true`
-- DM policy: `pairing` (users must be paired before chatting)
+- DM policy: `open` with `allowFrom: ["*"]` (any user can DM)
 - Group policy: `allowlist` (add group IDs to `channels.telegram.groupAllowFrom` to enable)
 
-To re-pair or add a new device via Telegram: message the bot `/pair` from Telegram.
+> **Why a separate bot from DO:** The original bot token (`@hanopenclaw123bot`) is still used
+> by the DO instance. Using the same token causes a 409 conflict — only one `getUpdates` poller
+> can run per token. DGX uses `@artoo_dgx_bot` with its own token.
+
+To restrict who can DM (lock down from open):
+```bash
+docker compose exec openclaw-gateway openclaw config set channels.telegram.dmPolicy pairing
+docker compose exec openclaw-gateway openclaw config set channels.telegram.allowFrom '[]'
+docker compose restart openclaw-gateway
+```
 
 **Discord / WhatsApp / other:**
 ```bash
@@ -277,7 +288,7 @@ jq . sanitized/openclaw.sanitized.json
 | `openclaw-personality/` | Yes | Agent personality/identity markdown files |
 | `HANDOFF.md` | Yes | Session handoff notes |
 | `.env` | **Never** | Contains live API keys |
-| `openclaw.json` (raw) | **Never** | Contains gateway token |
+| `openclaw.json` (raw) | **Never** | Contains gateway token + bot token |
 | `~/openclaw-config/.env` | **Never** | Contains provider API keys |
 
 ### Running a backup
@@ -362,6 +373,7 @@ docker exec open-webui ollama list        # confirm models still in volume
 | List skills | `docker compose exec openclaw-gateway openclaw skills list` |
 | List paired devices | `openclaw devices list` |
 | View cron schedule | `crontab -l` |
+| View OpenClaw cron jobs | `docker compose exec openclaw-gateway openclaw cron list` |
 
 ---
 

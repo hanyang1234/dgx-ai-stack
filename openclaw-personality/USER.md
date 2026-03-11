@@ -1,17 +1,12 @@
 # USER.md - About Your Human
 
-_Learn about the person you're helping. Update this as you go._
-
-- **Name:**
-- **What to call them:**
-- **Pronouns:** _(optional)_
-- **Timezone:**
-- **Notes:**
+- **Name:** Han
+- **What to call them:** Solo
+- **Pronouns:** _(unknown)_
+- **Timezone:** PST (UTC-8) — always use PST for dates/times, never UTC
+- **Notes:** First contact 2026-03-03. Named me Artoo.
 
 ## Context
 
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
-
----
-
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+- Works on using generative AI to automate AI/ML model governance
+- Wants a **daily AI news briefing** delivered via Telegram each morning

@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.8",
-    "lastTouchedAt": "2026-03-11T00:44:37.230Z"
+    "lastTouchedAt": "2026-03-11T05:09:36.312Z"
   },
   "wizard": {
     "lastRunAt": "2026-02-17T05:39:51.665Z",
@@ -65,6 +65,22 @@
             "maxTokens": 655360
           },
           {
+            "id": "qwen3.5:35b",
+            "name": "Qwen3.5 35B",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 65536,
+            "maxTokens": 655360
+          },
+          {
             "id": "nemotron-3-nano:latest",
             "name": "Nemotron-3 Nano — Thinking Mode",
             "reasoning": true,
@@ -87,7 +103,7 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "ollama/nemotron-3-nano:latest",
+        "primary": "ollama/qwen3.5:35b",
         "fallbacks": [
           "anthropic/claude-opus-4-6",
           "anthropic/claude-sonnet-4-6",
@@ -122,11 +138,16 @@
             "streaming": false
           }
         },
-        "ollama/nemotron-3-nano:latest": {
-          "alias": "Nemotron-Think",
+        "ollama/qwen3.5:35b": {
+          "alias": "Qwen35",
           "params": {
-            "streaming": false,
-            "thinking": true
+            "streaming": false
+          }
+        },
+        "ollama/nemotron-3-nano:latest": {
+          "alias": "Nemotron-Chat",
+          "params": {
+            "streaming": false
           }
         }
       },
@@ -171,8 +192,11 @@
   "channels": {
     "telegram": {
       "enabled": true,
-      "dmPolicy": "pairing",
-      "botToken": "8670587245:AAGg9puYpqWKhJWnsYcGXOHPWZsmrKYoFGs",
+      "dmPolicy": "open",
+      "botToken": "8618248951:AAHS2izojCBMFRkBMuHBu-CEp_yKLBghf5o",
+      "allowFrom": [
+        "*"
+      ],
       "groupPolicy": "allowlist",
       "streaming": "partial"
     },
