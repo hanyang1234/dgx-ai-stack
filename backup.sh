@@ -64,7 +64,7 @@ done
 
 # ── 3. Copy safe files from openclaw-config ──────────────────────────────────
 echo "[backup] Copying personality and memory files …"
-PERSONALITY_DIR="${SCRIPT_DIR}/personality"
+PERSONALITY_DIR="${SCRIPT_DIR}/openclaw-personality"
 mkdir -p "${PERSONALITY_DIR}"
 
 # Workspace personality/identity markdown files (the "soul" of the agent)
@@ -115,7 +115,7 @@ git add .gitignore
 git add backup.sh restore.sh update.sh update-webui.sh migrate-from-do.sh 2>/dev/null || true
 git add DEPLOYMENT.md HANDOFF.md 2>/dev/null || true
 git add sanitized/ 2>/dev/null || true
-git add personality/ 2>/dev/null || true
+git add openclaw-personality/ 2>/dev/null || true
 
 # ── 5. Commit ────────────────────────────────────────────────────────────────
 TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
