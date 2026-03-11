@@ -63,13 +63,46 @@ for secret_field in "auth.token" "apiKey" "ANTHROPIC_API_KEY" "OPENAI_API_KEY"; 
 done
 
 # ── 3. Copy safe files from openclaw-config ──────────────────────────────────
-echo "[backup] Copying skills and memory markdown files …"
-# Skills (shell scripts and md, no json that might contain keys)
+echo "[backup] Copying personality and memory files …"
+PERSONALITY_DIR="${SCRIPT_DIR}/personality"
+mkdir -p "${PERSONALITY_DIR}"
+
+# Workspace personality/identity markdown files (the "soul" of the agent)
+# These are safe – no credentials, just agent behaviour definitions
+for mdfile in SOUL.md IDENTITY.md AGENTS.md BOOTSTRAP.md USER.md TOOLS.md HEARTBEAT.md; do
+  src="${OPENCLAW_CONFIG_DIR}/workspace/${mdfile}"
+  if [ -f "${src}" ]; then
+    cp "${src}" "${PERSONALITY_DIR}/${mdfile}"
+    echo "[backup]   + ${mdfile}"
+  fi
+done
+
+# Any additional markdown files in workspace root (custom memory, etc.)
+find "${OPENCLAW_CONFIG_DIR}/workspace" -maxdepth 1 -name "*.md" \
+  ! -name "SOUL.md" ! -name "IDENTITY.md" ! -name "AGENTS.md" \
+  ! -name "BOOTSTRAP.md" ! -name "USER.md" ! -name "TOOLS.md" \
+  ! -name "HEARTBEAT.md" 2>/dev/null | while read -r f; do
+    cp "${f}" "${PERSONALITY_DIR}/$(basename "${f}")"
+    echo "[backup]   + $(basename "${f}") (extra)"
+done
+
+# Skills and hooks from agents/main (markdown + shell only, no session data)
 if [ -d "${OPENCLAW_CONFIG_DIR}/agents/main" ]; then
-  mkdir -p "${SANITIZED_DIR}/agents-main"
-  find "${OPENCLAW_CONFIG_DIR}/agents/main" -name "*.md" -o -name "*.sh" 2>/dev/null | while read -r f; do
-    cp --parents -r "${f#${OPENCLAW_CONFIG_DIR}/}" "${SANITIZED_DIR}/" 2>/dev/null || true
+  find "${OPENCLAW_CONFIG_DIR}/agents/main" \
+    \( -name "*.md" -o -name "*.sh" \) \
+    ! -path "*/sessions/*" 2>/dev/null | while read -r f; do
+      rel="${f#${OPENCLAW_CONFIG_DIR}/agents/main/}"
+      dest="${PERSONALITY_DIR}/agents-main/${rel}"
+      mkdir -p "$(dirname "${dest}")"
+      cp "${f}" "${dest}"
+      echo "[backup]   + agents/main/${rel}"
   done
+fi
+
+# Cron jobs (schedule definitions, no credentials)
+if [ -f "${OPENCLAW_CONFIG_DIR}/cron/jobs.json" ]; then
+  cp "${OPENCLAW_CONFIG_DIR}/cron/jobs.json" "${PERSONALITY_DIR}/cron-jobs.json"
+  echo "[backup]   + cron-jobs.json"
 fi
 
 # ── 4. Git staging ───────────────────────────────────────────────────────────
@@ -80,8 +113,9 @@ git add docker-compose.yml
 git add .env.example
 git add .gitignore
 git add backup.sh restore.sh update.sh update-webui.sh migrate-from-do.sh 2>/dev/null || true
-git add DEPLOYMENT.md 2>/dev/null || true
+git add DEPLOYMENT.md HANDOFF.md 2>/dev/null || true
 git add sanitized/ 2>/dev/null || true
+git add personality/ 2>/dev/null || true
 
 # ── 5. Commit ────────────────────────────────────────────────────────────────
 TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
