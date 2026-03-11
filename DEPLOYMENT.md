@@ -130,16 +130,17 @@ The OpenAI-compatible endpoint (`/v1/chat/completions`) may not support both at 
 | `ollama/gpt-oss:120b` | GPT-OSS 120B | 65 GB | Large reasoning |
 | `ollama/gpt-oss:20b` | GPT-OSS 20B Fast | 13 GB | Subagents / fast |
 | `ollama/qwen3-coder:latest` | Qwen3-Coder | 18 GB | Coding tasks |
-| `ollama/nemotron-3-nano:latest` | Nemotron-3 Nano | 24 GB | Light/fast |
+| `ollama/nemotron-3-nano:latest` | Nemotron-3 Nano — Thinking Mode | 24 GB | **Primary** — reasoning/thinking |
 
-Context window for all local models: **65,536 tokens** (OpenClaw's recommendation for local models).
+Context window: **65,536 tokens** for most local models; **131,072 tokens** for Nemotron-3 (thinking mode).
 
 ### Primary model
 
-Anthropic Claude Opus 4.6 (`anthropic/claude-opus-4-6`) is set as the primary model,
-with `claude-sonnet-4-6` and `openai/gpt-5.1-codex` as fallbacks.
+**Nemotron-3 Nano in thinking mode** (`ollama/nemotron-3-nano:latest`) is the primary model.
+Fallbacks (in order): `anthropic/claude-opus-4-6` → `anthropic/claude-sonnet-4-6` → `openai/gpt-5.1-codex`.
 
-Ollama models are available but require explicit selection (see below).
+Nemotron is configured with `reasoning: true` and `params: {thinking: true, streaming: false}`,
+giving it chain-of-thought reasoning before producing its final answer. Context window: 128k tokens.
 
 ### How to switch the active model
 
@@ -186,16 +187,37 @@ docker compose restart openclaw-gateway
 
 ### Messaging platform pairing
 
-**Telegram:**
-```bash
-docker compose exec openclaw-gateway openclaw channels add --channel telegram --token "$TELEGRAM_TOKEN"
-docker compose restart openclaw-gateway
-```
+**Telegram** — already configured and running as `@hanopenclaw123bot`:
+- Bot token is set in `openclaw.json` under `channels.telegram.botToken`
+- Plugin is enabled under `plugins.entries.telegram.enabled: true`
+- DM policy: `pairing` (users must be paired before chatting)
+- Group policy: `allowlist` (add group IDs to `channels.telegram.groupAllowFrom` to enable)
+
+To re-pair or add a new device via Telegram: message the bot `/pair` from Telegram.
 
 **Discord / WhatsApp / other:**
 ```bash
 docker compose exec openclaw-gateway openclaw channels --help
 ```
+
+### AgentMail integration
+
+AgentMail gives OpenClaw an email inbox for receiving and sending email as an AI agent.
+
+- Skill status: **✓ ready** (`openclaw skills list | grep agentmail`)
+- Skill location: `/home/node/workspace/skills/agentmail` (inside container)
+- Config: `skills.entries.agentmail` in `openclaw.json`
+- API key stored in: `~/openclaw-config/.env` and `~/Downloads/claude-exp/.env`
+
+To verify the skill is active:
+```bash
+docker compose exec openclaw-gateway openclaw skills list
+```
+
+To update the AgentMail API key:
+1. Update `AGENTMAIL_API_KEY` in `~/openclaw-config/.env` and `~/Downloads/claude-exp/.env`
+2. Update `skills.entries.agentmail.env.AGENTMAIL_API_KEY` in `openclaw.json`
+3. `docker compose restart openclaw-gateway`
 
 ---
 
@@ -205,9 +227,10 @@ docker compose exec openclaw-gateway openclaw channels --help
 
 | Variable | Purpose | Required |
 |----------|---------|---------|
-| `ANTHROPIC_API_KEY` | Claude API access (primary provider) | Yes |
+| `ANTHROPIC_API_KEY` | Claude API access (fallback provider) | Yes |
 | `OPENCLAW_GATEWAY_TOKEN` | Bearer token for gateway authentication | Yes |
-| `TELEGRAM_TOKEN` | Telegram bot integration | No |
+| `TELEGRAM_TOKEN` | Telegram bot token (also set in openclaw.json) | Yes (Telegram active) |
+| `AGENTMAIL_API_KEY` | AgentMail email integration | Yes (AgentMail active) |
 | `WEBUI_SECRET_KEY` | Open WebUI session encryption | No (auto-generated) |
 
 **Why `.env` is never committed:**
@@ -250,6 +273,9 @@ jq . sanitized/openclaw.sanitized.json
 | `backup.sh`, `restore.sh`, etc. | Yes | Automation scripts |
 | `sanitized/openclaw.sanitized.json` | Yes | Config without credentials |
 | `DEPLOYMENT.md` | Yes | This document |
+| `.env` | **Never** | Contains live API keys |
+| `openclaw-personality/` | Yes | Agent personality/identity markdown files |
+| `HANDOFF.md` | Yes | Session handoff notes |
 | `.env` | **Never** | Contains live API keys |
 | `openclaw.json` (raw) | **Never** | Contains gateway token |
 | `~/openclaw-config/.env` | **Never** | Contains provider API keys |
@@ -333,8 +359,9 @@ docker exec open-webui ollama list        # confirm models still in volume
 | List pulled Ollama models | `docker exec open-webui ollama list` |
 | Open OpenClaw dashboard | `openclaw dashboard` |
 | Check gateway health | `docker compose ps` |
-| Add Telegram integration | `docker compose exec openclaw-gateway openclaw channels add --channel telegram --token $TOKEN` |
+| List skills | `docker compose exec openclaw-gateway openclaw skills list` |
 | List paired devices | `openclaw devices list` |
+| View cron schedule | `crontab -l` |
 
 ---
 
