@@ -210,7 +210,7 @@
       "agentmail": {
         "enabled": true,
         "env": {
-          "AGENTMAIL_API_KEY": ""
+          "AGENTMAIL_API_KEY": "am_us_92680e63617997dfdb1106eec07b938e86bf6acdfd9527cb5175f2c59ae5ed7e"
         }
       }
     }
