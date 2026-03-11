@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1773180010795,
+      "updatedAtMs": 1773266442456,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,11 +25,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1773266400000,
-        "lastRunAtMs": 1773180000023,
+        "nextRunAtMs": 1773352800000,
+        "lastRunAtMs": 1773266400017,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 10772,
+        "lastDurationMs": 42439,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0
@@ -42,7 +42,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1773149523160,
+      "updatedAtMs": 1773235927662,
       "schedule": {
         "kind": "cron",
         "expr": "30 6 * * *",
@@ -60,11 +60,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1773235800000,
-        "lastRunAtMs": 1773149400019,
+        "nextRunAtMs": 1773322200000,
+        "lastRunAtMs": 1773235800011,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 123141,
+        "lastDurationMs": 127651,
         "lastDelivered": true,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0
@@ -77,7 +77,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1773147761393,
+      "updatedAtMs": 1773234109467,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -87,7 +87,7 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "Search for EMERGING and NOVEL services, APIs, and infrastructure designed specifically for AI agents. Focus on: 1) Software-for-Agent-as-a-Service (SfAaS) platforms and tools, 2) New or emerging agent-native tooling (not established platforms like LangChain/AutoGen), 3) Agent orchestration systems that solve novel problems, 4) Model-to-model communication APIs, 5) Agent monitoring, observability, and debugging infrastructure, 6) Agent financial/economic systems (e.g., agent-to-agent payments, micropayments for model calls), 7) Emerging agent governance and safety infrastructure, 8) Infrastructure for multi-agent coordination at scale. Also SYNTHESIZE: What infrastructure or services do you think AI agents need that don't exist yet? What gaps are there in the current ecosystem? What would make agents more autonomous and capable?\n\nPrioritize emerging, cutting-edge, or novel approaches. Skip obvious/well-known products (LangChain, AutoGen, etc.). Look for: GitHub trending (novel agent tools), Product Hunt (emerging launches), ArXiv papers on agent infrastructure, X/Twitter discussions from AI researchers about agent infrastructure gaps, newsletters focused on agent development.\n\nThen create a briefing with: 1) Top 5-7 EMERGING or NOVEL agent infrastructure discoveries (including SfAaS platforms), 2) For each: what problem it solves, API/deployment model, direct URL to the product/repo/announcement, and why it matters for future-state agents, 3) A 'SYNTHESIZED NEEDS' section: your analysis of what infrastructure is missing or needed next in the agent ecosystem. What patterns are emerging? What gaps exist? Focus on forward-looking signal—what's genuinely novel or represents a missing piece in agent infrastructure.\n\n**CRITICAL: For EVERY discovery, include the direct URL** (product page, GitHub repo, announcement link, etc.) so Han can explore immediately. Format as: **[Name](URL)** where applicable.\n\nAfter creating the briefing, output it in plain text format. Then:\n1. Send the briefing to Telegram (8128617103) using the message tool with action=send.\n2. Also send the same briefing via email to han.yang123@yahoo.com using exec: node -e \"const{AgentMailClient}=require('/usr/lib/node_modules/agentmail');const c=new AgentMailClient({apiKey:require('/root/.agentmail/config.json').apiKey});c.inboxes.messages.send('artooopenclaw@agentmail.to',{to:['han.yang123@yahoo.com'],subject:'🔮 Agent Needs Briefing - [TODAY_DATE]',text:BRIEFING_TEXT_HERE}).then(r=>console.log('Email sent:',r.messageId)).catch(e=>console.error('Email error:',e.message));\"",
+        "message": "## Step 1 — Read the existing knowledge base\n\nRead the file at /home/node/workspace/AGENT_INFRA.md. Extract all existing entry titles and URLs so you know what has already been documented. If the file does not exist, treat the knowledge base as empty.\n\n## Step 2 — Research\n\nSearch for EMERGING and NOVEL services, APIs, and infrastructure designed specifically for AI agents. Focus on: 1) Software-for-Agent-as-a-Service (SfAaS) platforms and tools, 2) New or emerging agent-native tooling (not established platforms like LangChain/AutoGen), 3) Agent orchestration systems that solve novel problems, 4) Model-to-model communication APIs, 5) Agent monitoring, observability, and debugging infrastructure, 6) Agent financial/economic systems (e.g., agent-to-agent payments, micropayments for model calls), 7) Emerging agent governance and safety infrastructure, 8) Infrastructure for multi-agent coordination at scale. Also SYNTHESIZE gaps: What infrastructure do agents need that doesn't exist yet?\n\nPrioritize emerging, cutting-edge, or novel approaches. Skip obvious/well-known products (LangChain, AutoGen, etc.). Look for: GitHub trending (novel agent tools), Product Hunt (emerging launches), ArXiv papers on agent infrastructure, X/Twitter discussions from AI researchers, newsletters focused on agent development.\n\n**CRITICAL: For EVERY discovery, include the direct URL** (product page, GitHub repo, announcement link). Format as **[Name](URL)**.\n\n## Step 3 — Deduplicate\n\nCompare your findings against the existing entries in AGENT_INFRA.md. A finding is a DUPLICATE if the same product/service/paper is already in the knowledge base (match by URL or title similarity). Skip all duplicates. Only keep findings that are genuinely new.\n\n## Step 4 — Update AGENT_INFRA.md\n\nFor each NEW finding, append an entry to /home/node/workspace/AGENT_INFRA.md between the <!-- ENTRIES_START --> and <!-- ENTRIES_END --> markers, in this exact format:\n\n```\n### [DATE] [CATEGORY] Title\n**URL:** url-here\n**Why it matters:** one or two sentences on what problem it solves and why it is significant for agent infrastructure.\n\n---\n```\n\nWhere DATE is today's date (YYYY-MM-DD), CATEGORY is one of: [PLATFORM] [API] [ORCHESTRATION] [OBSERVABILITY] [PAYMENTS] [GOVERNANCE] [RESEARCH] [GAP].\n\nAlso update the last line \"Total entries: N\" at the bottom of the file with the new total count.\n\nIf there are NO new findings (all duplicates), skip the file update entirely.\n\n## Step 5 — Brief Solo\n\nCreate a briefing containing ONLY the new findings from today (not duplicates). Include:\n1) New discoveries with name, URL, category, and why it matters\n2) A 'SYNTHESIZED NEEDS' section on gaps and patterns\n3) A note on how many items are now in the knowledge base total\n\nIf there are no new findings, send a short message: 'Agent Infra scan complete — no new entries today. Knowledge base holds [N] entries.'\n\nThen:\n1. Send the briefing to Telegram (8128617103) using the message tool with action=send.\n2. Also send the same briefing via email to han.yang123@yahoo.com using exec: node -e \"const{AgentMailClient}=require('/usr/lib/node_modules/agentmail');const c=new AgentMailClient({apiKey:require('/root/.agentmail/config.json').apiKey});c.inboxes.messages.send('artooopenclaw@agentmail.to',{to:['han.yang123@yahoo.com'],subject:'🔮 Agent Needs Briefing - [TODAY_DATE]',text:BRIEFING_TEXT_HERE}).then(r=>console.log('Email sent:',r.messageId)).catch(e=>console.error('Email error:',e.message));\"",
         "thinking": "none",
         "timeoutSeconds": 600,
         "model": "anthropic/claude-haiku-4-5-20251001"
@@ -97,14 +97,52 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1773234000000,
-        "lastRunAtMs": 1773147600011,
+        "nextRunAtMs": 1773320400000,
+        "lastRunAtMs": 1773234000024,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 161382,
+        "lastDurationMs": 109443,
         "lastDelivered": true,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "c2d4e6f8-1a3b-5c7d-9e0f-2a4b6c8d0e1f",
+      "agentId": "main",
+      "sessionKey": "agent:main:telegram:direct:8128617103",
+      "name": "Agent Infra Weekly Review",
+      "enabled": true,
+      "createdAtMs": 1773320400000,
+      "updatedAtMs": 1773320400000,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 10 * * 0",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "## Weekly Agent Infrastructure Knowledge Base Review\n\nRead the file at /home/node/workspace/AGENT_INFRA.md.\n\nPerform the following review tasks:\n\n1) **Consolidate duplicates** — identify any entries covering the same product or service (possibly added on different days). Merge them into a single entry keeping the most recent date and the most complete description.\n\n2) **Flag stale entries** — entries older than 60 days that have been superseded by a newer version of the same product should be marked with a `[STALE]` tag at the start of their title.\n\n3) **Identify themes** — based on all entries, write a short 'Patterns & Trends' section at the top of the knowledge base (below the header, above ENTRIES_START) summarizing: what categories are most represented, what gaps keep appearing, and what direction agent infrastructure seems to be heading. Replace any existing Patterns & Trends section.\n\n4) **Update the metadata** at the bottom: set 'Last reviewed' to today's date and update 'Total entries' count.\n\n5) **Write the updated file** back to /home/node/workspace/AGENT_INFRA.md.\n\n6) **Send a brief summary to Solo** via Telegram (8128617103): how many entries reviewed, how many merged, how many flagged stale, and 2-3 sentences on the key trends you observed.",
+        "thinking": "none",
+        "timeoutSeconds": 300,
+        "model": "anthropic/claude-opus-4-6"
+      },
+      "delivery": {
+        "mode": "announce",
+        "to": "telegram:8128617103"
+      },
+      "state": {
+        "nextRunAtMs": 1773572400000,
+        "lastRunAtMs": 0,
+        "lastRunStatus": "pending",
+        "lastStatus": "pending",
+        "lastDurationMs": 0,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "runningAtMs": 1773272499256
       }
     }
   ]

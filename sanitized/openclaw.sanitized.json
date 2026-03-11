@@ -17,6 +17,22 @@
         "api": "ollama",
         "models": [
           {
+            "id": "nemotron-3-super:120b",
+            "name": "Nemotron-3 Super 120B",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 65536,
+            "maxTokens": 655360
+          },
+          {
             "id": "gpt-oss:120b",
             "name": "GPT-OSS 120B (Local — large reasoning)",
             "reasoning": false,
@@ -103,7 +119,7 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "ollama/qwen3.5:35b",
+        "primary": "ollama/nemotron-3-super:120b",
         "fallbacks": [
           "anthropic/claude-opus-4-6",
           "anthropic/claude-sonnet-4-6",
@@ -134,6 +150,12 @@
         },
         "ollama/qwen3-coder:latest": {
           "alias": "local-coder",
+          "params": {
+            "streaming": false
+          }
+        },
+        "ollama/nemotron-3-super:120b": {
+          "alias": "Nemotron-Super",
           "params": {
             "streaming": false
           }
