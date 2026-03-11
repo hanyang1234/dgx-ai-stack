@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.8",
-    "lastTouchedAt": "2026-03-11T05:09:36.312Z"
+    "lastTouchedAt": "2026-03-11T05:40:09.777Z"
   },
   "wizard": {
     "lastRunAt": "2026-02-17T05:39:51.665Z",
@@ -192,10 +192,10 @@
   "channels": {
     "telegram": {
       "enabled": true,
-      "dmPolicy": "open",
+      "dmPolicy": "allowlist",
       "botToken": "8618248951:AAHS2izojCBMFRkBMuHBu-CEp_yKLBghf5o",
       "allowFrom": [
-        "*"
+        "8128617103"
       ],
       "groupPolicy": "allowlist",
       "streaming": "partial"
