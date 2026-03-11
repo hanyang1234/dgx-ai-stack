@@ -1,0 +1,29 @@
+# Secrets – NEVER commit these
+.env
+*.env.*
+!.env.example
+
+# OpenClaw raw config (contains provider keys and gateway token)
+openclaw.json
+*_token
+*_key
+*secrets*
+
+# Raw (unsanitized) OpenClaw config – only the sanitized/ copy is committed
+# openclaw.json is already blocked above; block any accidental copies too
+openclaw.json.bak
+
+# Common credential files
+credentials.json
+*.pem
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+*.swo

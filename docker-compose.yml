@@ -1,0 +1,125 @@
+---
+# =============================================================================
+# AI Stack – Docker Compose
+# NVIDIA DGX Spark / Ubuntu host
+#
+# Services:
+#   open-webui       – Bundled Open WebUI + Ollama (GPU-accelerated)
+#   openclaw-gateway – OpenClaw agent gateway (non-root, localhost-only)
+#
+# Shared network: ai-stack (bridge)
+# Named volumes:  open-webui, open-webui-ollama
+# Host bind mounts:
+#   ~/openclaw-config  → /home/node/.openclaw  (OpenClaw config + memory)
+#   ~/openclaw/workspace → /home/node/workspace (agent working directory)
+#
+# PORT MAP
+#   0.0.0.0:12000 → open-webui:8080     Open WebUI (public on this host)
+#   127.0.0.1:11435 → open-webui:11434  Container Ollama API (localhost-only)
+#     NOTE: Host port 11434 is occupied by the native Ollama daemon.
+#           Container Ollama is exposed on 11435 for host-side tooling.
+#           Container-to-container traffic uses http://open-webui:11434 directly.
+#   127.0.0.1:18789 → openclaw-gateway:18789  OpenClaw gateway (localhost-only)
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Open WebUI + Ollama (bundled image – NVIDIA DGX Spark playbook)
+  # Source: https://build.nvidia.com/spark/open-webui
+  # ---------------------------------------------------------------------------
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:ollama
+    container_name: open-webui
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    ports:
+      - "12000:8080"
+      # Container Ollama exposed on 11435 because host port 11434 is
+      # occupied by the native Ollama systemd service.
+      - "127.0.0.1:11435:11434"
+    volumes:
+      - open-webui:/app/backend/data
+      - open-webui-ollama:/root/.ollama
+    environment:
+      # Make Ollama listen on all interfaces inside the container so
+      # other containers on ai-stack can reach it at http://open-webui:11434
+      OLLAMA_HOST: "0.0.0.0:11434"
+      SCARF_NO_ANALYTICS: "true"
+      DO_NOT_TRACK: "true"
+      ANONYMIZED_TELEMETRY: "false"
+      # Open WebUI secret key – leave blank to auto-generate, or set in .env
+      WEBUI_SECRET_KEY: "${WEBUI_SECRET_KEY:-}"
+    networks:
+      - ai-stack
+    env_file:
+      - path: .env
+        required: false
+
+  # ---------------------------------------------------------------------------
+  # OpenClaw Gateway
+  # Pinned to 2026.3.8 (>= 2026.1.29 required to avoid CVE-2026-25253)
+  # Runs as user 'node' (non-root, baked into image)
+  # ---------------------------------------------------------------------------
+  openclaw-gateway:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: openclaw-gateway
+    restart: unless-stopped
+    depends_on:
+      - open-webui
+    ports:
+      # Gateway is localhost-only – never expose to 0.0.0.0
+      - "127.0.0.1:18789:18789"
+    volumes:
+      # Config + agent memory: bind-mount for easy host inspection and backup
+      - type: bind
+        source: ${HOME}/openclaw-config
+        target: /home/node/.openclaw
+      # Agent working directory
+      - type: bind
+        source: ${HOME}/openclaw/workspace
+        target: /home/node/workspace
+    environment:
+      # Bind gateway to loopback inside container – host-side port is also
+      # restricted to 127.0.0.1 above for defence in depth
+      OPENCLAW_GATEWAY_BIND: "loopback"
+      # Primary LLM provider
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
+      # Gateway bearer token (required for all API calls)
+      OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}"
+      # Optional messaging integrations
+      TELEGRAM_TOKEN: "${TELEGRAM_TOKEN:-}"
+      # Ollama provider base URL – uses internal Docker hostname, NOT localhost
+      OPENCLAW_OLLAMA_BASE_URL: "http://open-webui:11434/v1"
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    networks:
+      - ai-stack
+    env_file:
+      - .env
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  ai-stack:
+    name: ai-stack
+    external: true   # Created manually: docker network create --driver bridge ai-stack
+
+# =============================================================================
+# Volumes
+# Named volumes preserve Open WebUI database and downloaded Ollama models
+# across container restarts and image updates.
+# =============================================================================
+volumes:
+  open-webui:
+    external: true   # Preserves existing Open WebUI data
+  open-webui-ollama:
+    external: true   # Preserves all downloaded Ollama models

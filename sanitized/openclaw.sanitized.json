@@ -1,0 +1,204 @@
+{
+  "wizard": {
+    "lastRunAt": "2026-02-17T05:39:51.665Z",
+    "lastRunVersion": "2026.2.15",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "anthropic/claude-opus-4-6",
+        "fallbacks": [
+          "anthropic/claude-sonnet-4-6",
+          "openai/gpt-5.1-codex"
+        ]
+      },
+      "models": {
+        "anthropic/claude-opus-4-6": {
+          "alias": "Claude"
+        },
+        "anthropic/claude-sonnet-4-6": {
+          "alias": "Claude-Fast"
+        },
+        "openai/gpt-5.1-codex": {
+          "alias": "GPT"
+        },
+        "ollama/gpt-oss:120b": {
+          "alias": "local-large",
+          "params": {
+            "streaming": false
+          }
+        },
+        "ollama/gpt-oss:20b": {
+          "alias": "local-fast",
+          "params": {
+            "streaming": false
+          }
+        },
+        "ollama/qwen3-coder:latest": {
+          "alias": "local-coder",
+          "params": {
+            "streaming": false
+          }
+        },
+        "ollama/nemotron-3-nano:latest": {
+          "alias": "local-nano",
+          "params": {
+            "streaming": false
+          }
+        }
+      },
+      "workspace": "/home/node/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    }
+  },
+  "models": {
+    "providers": {
+      "ollama": {
+        "baseUrl": "http://open-webui:11434",
+        "apiKey": "ollama-local",
+        "api": "ollama",
+        "models": [
+          {
+            "id": "gpt-oss:120b",
+            "name": "GPT-OSS 120B (Local — large reasoning)",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 65536,
+            "maxTokens": 655360
+          },
+          {
+            "id": "gpt-oss:20b",
+            "name": "GPT-OSS 20B Fast (Local — subagents)",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 65536,
+            "maxTokens": 655360
+          },
+          {
+            "id": "qwen3-coder:latest",
+            "name": "Qwen3-Coder (Local — coding)",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 65536,
+            "maxTokens": 655360
+          },
+          {
+            "id": "nemotron-3-nano:latest",
+            "name": "Nemotron-3 Nano (Local — fast/light)",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 65536,
+            "maxTokens": 655360
+          }
+        ]
+      }
+    }
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto"
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "boot-md": {
+          "enabled": true
+        },
+        "bootstrap-extra-files": {
+          "enabled": true
+        },
+        "command-logger": {
+          "enabled": true
+        },
+        "session-memory": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "channels": {
+    "imessage": {
+      "enabled": false,
+      "cliPath": "imsg",
+      "dmPolicy": "pairing",
+      "groupPolicy": "allowlist"
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "calendar.add",
+        "contacts.add",
+        "reminders.add"
+      ]
+    }
+  },
+  "plugins": {
+    "entries": {
+      "imessage": {
+        "enabled": false
+      }
+    }
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.3.8",
+    "lastTouchedAt": "2026-03-09T00:00:00.000Z"
+  }
+}
