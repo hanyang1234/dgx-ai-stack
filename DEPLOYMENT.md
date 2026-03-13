@@ -352,6 +352,52 @@ docker exec open-webui ollama list        # confirm models still in volume
 
 ---
 
+## OS Upgrade / Reboot Procedure
+
+### Before the upgrade
+
+```bash
+# 1. Backup config and personality files to GitHub
+cd ~/Downloads/claude-exp && ./backup.sh
+
+# 2. Note current stack state
+docker compose ps
+docker exec open-webui ollama list
+
+# 3. Verify Docker volumes exist (hold WebUI data + all Ollama models)
+docker volume ls | grep -E "open-webui|open-webui-ollama"
+
+# 4. Stop the stack cleanly (prevents file corruption during reboot)
+docker compose down
+
+# 5. Confirm ai-stack network (external, manually created — note if it exists)
+docker network ls | grep ai-stack
+```
+
+### After the reboot
+
+```bash
+# 1. Recreate ai-stack network if it was lost
+docker network ls | grep ai-stack || docker network create --driver bridge ai-stack
+
+# 2. Bring the stack back up
+cd ~/Downloads/claude-exp && docker compose up -d
+
+# 3. Verify everything recovered
+docker compose ps                              # both containers Up (healthy)
+docker exec open-webui ollama list            # all models still present
+docker compose logs openclaw-gateway --tail 20 # no errors
+```
+
+> **Why stop before reboot:** Docker volumes and bind mounts are safe across reboots, but
+> an in-progress container write (e.g. Artoo writing to AGENT_INFRA.md or a model being
+> loaded) could corrupt files. A clean `docker compose down` ensures all writes are flushed.
+
+> **Ollama models are safe:** All model weights live in the `open-webui-ollama` named volume
+> which is never touched by `docker compose down`. The 200+ GB of models will still be there.
+
+---
+
 ## Runbook: Common Operations
 
 | Task | Command |
