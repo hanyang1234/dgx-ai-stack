@@ -183,6 +183,11 @@
       }
     }
   },
+  "tools": {
+    "exec": {
+      "host": "gateway"
+    }
+  },
   "messages": {
     "ackReactionScope": "group-mentions"
   },
