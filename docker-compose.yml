@@ -68,7 +68,7 @@ services:
   # Runs as user 'node' (non-root, baked into image)
   # ---------------------------------------------------------------------------
   openclaw-gateway:
-    image: ghcr.io/openclaw/openclaw:latest
+    image: ghcr.io/openclaw/openclaw:2026.3.11
     container_name: openclaw-gateway
     restart: unless-stopped
     depends_on:
@@ -89,6 +89,7 @@ services:
       # Bind gateway to loopback inside container – host-side port is also
       # restricted to 127.0.0.1 above for defence in depth
       OPENCLAW_GATEWAY_BIND: "loopback"
+      OPENCLAW_EXEC_HOST: "gateway"
       # Primary LLM provider
       ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
       # Gateway bearer token (required for all API calls)
