@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1773525641355,
+      "updatedAtMs": 1773612023146,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,11 +25,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1773612000000,
-        "lastRunAtMs": 1773525600027,
+        "nextRunAtMs": 1773698400000,
+        "lastRunAtMs": 1773612000012,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 41328,
+        "lastDurationMs": 23134,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -42,7 +42,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1773529379890,
+      "updatedAtMs": 1773581524996,
       "schedule": {
         "kind": "cron",
         "expr": "30 6 * * *",
@@ -60,11 +60,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1773581400000,
-        "lastRunAtMs": 1773528987335,
+        "nextRunAtMs": 1773667800000,
+        "lastRunAtMs": 1773581400015,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 392555,
+        "lastDurationMs": 124981,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -77,7 +77,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1773510000000,
+      "updatedAtMs": 1773579829451,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -96,14 +96,15 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1773579600000,
-        "lastRunAtMs": 1773493200016,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 289974,
+        "nextRunAtMs": 1773666000000,
+        "lastRunAtMs": 1773579600019,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 229432,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": true
+        "consecutiveErrors": 1,
+        "lastDelivered": true,
+        "lastError": "⚠️ ✉️ Message failed"
       }
     },
     {
@@ -113,7 +114,7 @@
       "name": "Agent Infra Weekly Review",
       "enabled": true,
       "createdAtMs": 1773320400000,
-      "updatedAtMs": 1773272513173,
+      "updatedAtMs": 1773594093663,
       "schedule": {
         "kind": "cron",
         "expr": "0 10 * * 0",
@@ -132,11 +133,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1773594000000,
-        "lastRunAtMs": 1773272499276,
+        "nextRunAtMs": 1774198800000,
+        "lastRunAtMs": 1773594000018,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 13897,
+        "lastDurationMs": 93645,
         "lastDelivered": true,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0
