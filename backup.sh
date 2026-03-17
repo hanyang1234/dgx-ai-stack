@@ -86,13 +86,14 @@ find "${OPENCLAW_CONFIG_DIR}/workspace" -maxdepth 1 -name "*.md" \
     echo "[backup]   + $(basename "${f}") (extra)"
 done
 
-# AGENT_INFRA.md – Artoo's agent infrastructure knowledge base
-# Lives in the Docker workspace bind-mount (~/openclaw/workspace/), not openclaw-config
-AGENT_INFRA_SRC="${HOME}/openclaw/workspace/AGENT_INFRA.md"
-if [ -f "${AGENT_INFRA_SRC}" ]; then
-  cp "${AGENT_INFRA_SRC}" "${PERSONALITY_DIR}/AGENT_INFRA.md"
-  echo "[backup]   + AGENT_INFRA.md (from ~/openclaw/workspace)"
-fi
+# Files from Docker workspace bind-mount (~/openclaw/workspace/)
+for wsfile in AGENT_INFRA.md SKILLS.md; do
+  src="${HOME}/openclaw/workspace/${wsfile}"
+  if [ -f "${src}" ]; then
+    cp "${src}" "${PERSONALITY_DIR}/${wsfile}"
+    echo "[backup]   + ${wsfile} (from ~/openclaw/workspace)"
+  fi
+done
 
 # Skills and hooks from agents/main (markdown + shell only, no session data)
 if [ -d "${OPENCLAW_CONFIG_DIR}/agents/main" ]; then
