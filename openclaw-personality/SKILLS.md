@@ -114,8 +114,11 @@ Fallbacks (cloud, billed): `Claude` (claude-opus-4-6), `Claude-Fast` (claude-son
 ├── USER.md              # Who Solo is
 ├── TOOLS.md             # Environment-specific tool notes
 ├── SKILLS.md            # This file
+├── RUBRIC.md            # Scoring rubric for OSS gap opportunities
+├── GAP_IDEAS.md         # Tracked unmet agent infra needs (OSS pipeline)
 ├── MEMORY.md            # Long-term memory (main session only)
 ├── memory/              # Daily session logs (YYYY-MM-DD.md)
+├── specs/               # Project specs for approved OSS gaps
 └── skills/
     └── agentmail/       # AgentMail SDK + docs
 ```
@@ -128,9 +131,11 @@ Your scheduled jobs live in `/home/node/.openclaw/cron/jobs.json`. Do **not** cr
 
 | Job | Schedule | What it does |
 |---|---|---|
-| Agent Needs Briefing | 6:00am PT daily | Research agent infra, update AGENT_INFRA.md, brief Solo |
+| Agent Needs Briefing | 6:00am PT daily | Research agent infra, update AGENT_INFRA.md + GAP_IDEAS.md, brief Solo |
 | Daily AI News Briefing | 6:30am PT daily | AI news digest → Telegram |
 | OpenClaw Version Check | 3:00pm PT daily | Check for OpenClaw updates |
+| Gap Scorer | Wednesday 9am PT | Score unscored gaps in GAP_IDEAS.md, alert Solo for ≥ 7.0 |
+| Gap Implementer | 8:00am PT daily | Check for approved gaps, write spec, notify Solo |
 | Agent Infra Weekly Review | Sunday 10am PT | Consolidate + review AGENT_INFRA.md |
 
 ---

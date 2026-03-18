@@ -87,13 +87,22 @@ find "${OPENCLAW_CONFIG_DIR}/workspace" -maxdepth 1 -name "*.md" \
 done
 
 # Files from Docker workspace bind-mount (~/openclaw/workspace/)
-for wsfile in AGENT_INFRA.md SKILLS.md; do
+for wsfile in AGENT_INFRA.md SKILLS.md RUBRIC.md GAP_IDEAS.md; do
   src="${HOME}/openclaw/workspace/${wsfile}"
   if [ -f "${src}" ]; then
     cp "${src}" "${PERSONALITY_DIR}/${wsfile}"
     echo "[backup]   + ${wsfile} (from ~/openclaw/workspace)"
   fi
 done
+
+# Specs from Docker workspace bind-mount (~/openclaw/workspace/specs/)
+if [ -d "${HOME}/openclaw/workspace/specs" ]; then
+  mkdir -p "${PERSONALITY_DIR}/specs"
+  find "${HOME}/openclaw/workspace/specs" -maxdepth 1 -name "*.md" 2>/dev/null | while read -r f; do
+    cp "${f}" "${PERSONALITY_DIR}/specs/$(basename "${f}")"
+    echo "[backup]   + specs/$(basename "${f}") (from ~/openclaw/workspace)"
+  done
+fi
 
 # Skills and hooks from agents/main (markdown + shell only, no session data)
 if [ -d "${OPENCLAW_CONFIG_DIR}/agents/main" ]; then
