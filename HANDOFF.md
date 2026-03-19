@@ -1,6 +1,6 @@
 # Handoff — AI Stack on DGX Spark
 
-**Last updated:** 2026-03-11
+**Last updated:** 2026-03-18
 **Status:** Fully deployed and operational — no manual steps remaining
 
 ---
@@ -45,6 +45,32 @@ Both containers have `restart: unless-stopped` — they survive reboots automati
 16. Pulled `qwen3.5:35b` (23 GB) and set as primary model
 17. Disabled Nemotron thinking mode as primary (leaks chain-of-thought to Telegram)
 
+### Session 4 — Hardening, OSS Gap Pipeline, Ollama OOM Fix (2026-03-12 to 2026-03-18)
+18. **Pinned OpenClaw to v2026.3.11** — v2026.3.12/3.13 crash with Ollama plugin bug
+    (`ReferenceError: Cannot access 'ANTHROPIC_MODEL_ALIASES' before initialization`)
+19. **Email delivery abandoned** — AgentMail exec unreliable in isolated cron sessions (GPT-OSS 120B
+    overrides exec host to sandbox; approval prompts time out). All jobs deliver Telegram only.
+20. **Added exec approval allowlist** — `node *` and `node -e *` pre-approved on the main agent
+    to avoid interactive approval prompts during gateway exec calls
+21. **Fixed AGENT_INFRA.md GitHub sync** — `backup.sh` was looking at `~/openclaw-config/workspace/`
+    but the file lives in `~/openclaw/workspace/` (Docker bind-mount). Added explicit copy block.
+22. **Created SKILLS.md** for Artoo's workspace — capability map covering tools, models, cron jobs,
+    and contacts; integrated into session startup reading list in `AGENTS.md`
+23. **OSS Gap Pipeline (Phase 1 & 2):**
+    - Created `RUBRIC.md` — 6-dimension scoring rubric (Pain, Uniqueness, Addressability, Timing,
+      Leverage, Han's Edge); score ≥ 7.0 triggers alert to Han
+    - Created `GAP_IDEAS.md` — gap tracker seeded with 2 entries from AGENT_INFRA.md
+    - Updated Agent Needs Briefing — now extracts [GAP] entries and appends to GAP_IDEAS.md
+    - Added **Gap Scorer** cron job (Wednesday 9am PT) — scores unscored gaps, alerts Han for ≥ 7.0
+    - Added **Gap Implementer** cron job (daily 8am PT) — writes spec for approved gaps, notifies Han
+    - All approval-gated: Han must reply APPROVE → SCAFFOLD before any code ships
+    - Updated `backup.sh` to include RUBRIC.md, GAP_IDEAS.md, and `specs/`
+24. **Ollama OOM fix** — cron jobs failing with "model requires more system memory (63.4 GiB) than
+    available (62.3 GiB)" when a different 120b model was warm from Open WebUI use. Fixed by adding
+    `OLLAMA_MAX_LOADED_MODELS=1` to `docker-compose.yml` and restarting `open-webui`.
+25. **NemoClaw decision: wait** — requires fresh OpenClaw install (can't layer on existing);
+    alpha-stage with active install failures; no DGX Spark-specific guidance. Re-evaluate in 4–6 weeks.
+
 ---
 
 ## Credentials in Use
@@ -76,6 +102,12 @@ Both containers have `restart: unless-stopped` — they survive reboots automati
 | `~/openclaw-config/workspace/` | Agent personality files (SOUL.md, USER.md, etc.) |
 | `~/openclaw-config/cron/jobs.json` | OpenClaw internal cron job definitions |
 | `~/openclaw-config/workspace/skills/agentmail/` | AgentMail skill (installed via clawhub) |
+| `~/openclaw/workspace/` | Artoo's working directory (Docker bind-mount) |
+| `~/openclaw/workspace/AGENT_INFRA.md` | Agent infrastructure knowledge base |
+| `~/openclaw/workspace/SKILLS.md` | Artoo's capability map |
+| `~/openclaw/workspace/RUBRIC.md` | OSS gap scoring rubric |
+| `~/openclaw/workspace/GAP_IDEAS.md` | OSS gap tracker (unscored → shipped) |
+| `~/openclaw/workspace/specs/` | Project specs for approved OSS gaps |
 
 ---
 
@@ -106,11 +138,17 @@ Both containers have `restart: unless-stopped` — they survive reboots automati
 
 ## OpenClaw Cron Jobs (Internal)
 
-| Job | Schedule | Model |
-|---|---|---|
-| Agent Needs Briefing | 6:00am daily (America/Los_Angeles) | anthropic/claude-* |
-| Daily AI News Briefing | 6:30am daily (America/Los_Angeles) | — |
-| OpenClaw Version Check | 3:00pm daily (America/Los_Angeles) | — |
+| Job | Schedule | Model | Delivery |
+|---|---|---|---|
+| Agent Needs Briefing | 6:00am daily (PT) | ollama/gpt-oss:120b | Telegram |
+| Daily AI News Briefing | 6:30am daily (PT) | ollama/gpt-oss:120b | Telegram |
+| Gap Scorer | Wednesday 9:00am (PT) | ollama/gpt-oss:120b | Telegram (alerts only) |
+| Gap Implementer | 8:00am daily (PT) | ollama/gpt-oss:120b | None (silent if no approved gaps) |
+| Agent Infra Weekly Review | Sunday 10:00am (PT) | ollama/gpt-oss:120b | Telegram |
+| OpenClaw Version Check | 3:00pm daily (PT) | default | None (silent if up to date) |
+
+All jobs use `sessionTarget: isolated` and `wakeMode: now`. Email delivery was attempted
+but abandoned — exec in isolated sessions unreliable with GPT-OSS 120B.
 
 View with: `docker compose exec openclaw-gateway openclaw cron list`
 
@@ -139,7 +177,15 @@ View with: `docker compose exec openclaw-gateway openclaw cron list`
 
 - **OLLAMA_HOST env var is required** — without `OLLAMA_HOST=0.0.0.0:11434` in the open-webui container, Ollama binds to loopback only and OpenClaw cannot reach it.
 
+- **OLLAMA_MAX_LOADED_MODELS=1 is required** — the DGX Spark has 128 GiB unified memory. Each 120b model needs ~63 GiB. Without this limit, a warm model from Open WebUI use will cause cron jobs to OOM when trying to load `gpt-oss:120b`. Side effect: model switching in Open WebUI takes 20–30s instead of instant.
+
+- **OpenClaw pinned to v2026.3.11** — do not upgrade to v2026.3.12 or v2026.3.13. Both crash with an Ollama plugin initialization error. Monitor for v2026.3.14+.
+
+- **exec in isolated cron sessions** — GPT-OSS 120B sometimes overrides `tools.exec.host=gateway` with `host=sandbox` in tool calls, which is blocked. Email delivery via AgentMail was abandoned for this reason. All cron jobs deliver via Telegram only.
+
 - **jq edits to openclaw.json** — use `docker compose exec openclaw-gateway openclaw config set` or edit the file directly with the Write tool. Never use shell redirects (`>`) to edit it — a failed `mv` will truncate the file to 0 bytes.
+
+- **Agent workspace vs config** — `~/openclaw/workspace/` (Docker bind-mount) is Artoo's working directory. `~/openclaw-config/workspace/` is personality/identity files. They are different directories. AGENT_INFRA.md, SKILLS.md, RUBRIC.md, GAP_IDEAS.md all live in `~/openclaw/workspace/`.
 
 ---
 

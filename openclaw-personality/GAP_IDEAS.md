@@ -35,7 +35,7 @@ Gaps are discovered by the Agent Needs Briefing cron job and scored weekly again
 ### GAP-001: Scalable Multi-Agent Coordination Layer
 
 **Discovered:** 2026-03-13
-**Status:** unscored
+**Status:** alerted
 **Source:** Agent Needs Briefing daily research
 
 **Description:**
@@ -43,24 +43,28 @@ No vendor-neutral open-source layer exists for dynamic compute allocation, inter
 
 **Evidence to find:** Look for GitHub issues on LangGraph, CrewAI, AutoGen requesting cross-cloud or heterogeneous scheduling. HN threads on "multi-agent orchestration at scale". Papers citing coordination bottlenecks.
 
-**Scores:** (fill in during weekly scoring)
-- Pain Severity: —
-- Gap Uniqueness: —
-- Addressability: —
-- Ecosystem Timing: —
-- Leverage: —
-- Han's Edge: —
-- **Raw total:** —
-- **Final score:** —
+**Scores:** (filled)
+- Pain Severity: 5/5
+- Gap Uniqueness: 4/5
+- Addressability: 4/5
+- Ecosystem Timing: 4/5
+- Leverage: 5/5
+- Han's Edge: 4/5
+- **Raw total:** 26
+- **Final score:** 8.7/10
 
-**Notes:** —
+**Notes:** 
+- https://github.com/anthropics/claude-code/issues/28300
+- https://github.com/ComposioHQ/agent-orchestrator
+- https://www.builder.io/blog/ai-agent-orchestration
+- https://dev.to/ggondim/how-i-built-a-deterministic-multi-agent-dev-pipeline-inside-openclaw-and-contributed-a-missing-4ool
 
 ---
 
 ### GAP-002: Unified Agent-Economic Marketplace
 
 **Discovered:** 2026-03-13
-**Status:** unscored
+**Status:** alerted
 **Source:** Agent Needs Briefing daily research
 
 **Description:**
@@ -68,17 +72,21 @@ No open marketplace exists for agent service publishing, capability discovery, p
 
 **Evidence to find:** Look for work on agent marketplaces in academic papers (2025–2026), proposals in MCP ecosystem for agent discovery, any open protocols for agent capability advertisement. Check if AGNTCY or similar projects have gained traction.
 
-**Scores:** (fill in during weekly scoring)
-- Pain Severity: —
-- Gap Uniqueness: —
-- Addressability: —
-- Ecosystem Timing: —
-- Leverage: —
-- Han's Edge: —
-- **Raw total:** —
-- **Final score:** —
+**Scores:** (filled)
+- Pain Severity: 4/5
+- Gap Uniqueness: 5/5
+- Addressability: 3/5
+- Ecosystem Timing: 3/5
+- Leverage: 5/5
+- Han's Edge: 4/5
+- **Raw total:** 24
+- **Final score:** 8.0/10
 
-**Notes:** —
+**Notes:** 
+- https://github.com/microsoft/multi-agent-marketplace
+- https://www.microsoft.com/en-us/research/blog/magentic-marketplace-an-open-source-simulation-environment-for-studying-agentic-markets/
+- https://arxiv.org/html/2510.25779
+- https://gorilla.cs.berkeley.edu/blogs/11_agent_marketplace.html
 
 ---
 

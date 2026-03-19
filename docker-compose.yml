@@ -51,6 +51,11 @@ services:
       # Make Ollama listen on all interfaces inside the container so
       # other containers on ai-stack can reach it at http://open-webui:11434
       OLLAMA_HOST: "0.0.0.0:11434"
+      # Only keep one model loaded at a time — prevents two 120b models from
+      # competing for memory (each needs ~63 GiB on 128 GiB DGX Spark).
+      # When a cron job requests gpt-oss:120b, any currently-loaded model
+      # is evicted first. Slight model-switch latency in WebUI, but reliable.
+      OLLAMA_MAX_LOADED_MODELS: "1"
       SCARF_NO_ANALYTICS: "true"
       DO_NOT_TRACK: "true"
       ANONYMIZED_TELEMETRY: "false"

@@ -21,7 +21,7 @@ HOST: NVIDIA DGX Spark (Ubuntu)
 │  │   ├── Volume: open-webui            → /app/backend/data
 │  │   └── Volume: open-webui-ollama     → /root/.ollama
 │  │
-│  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:latest, v2026.3.8)
+│  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:2026.3.11)
 │      ├── Gateway            127.0.0.1:18789 → :18789  (localhost-only)
 │      ├── Bind: ~/openclaw-config        → /home/node/.openclaw
 │      └── Bind: ~/openclaw/workspace     → /home/node/workspace
@@ -57,6 +57,11 @@ runs as a subprocess managed by the Open WebUI startup script. This means:
 - Ollama is accessible from other Docker containers at `http://open-webui:11434`.
 - The `OLLAMA_HOST=0.0.0.0:11434` env var is required to make Ollama bind to all interfaces
   inside the container (default is loopback-only), enabling cross-container access.
+- `OLLAMA_MAX_LOADED_MODELS=1` limits Ollama to one model in memory at a time. Each 120b model
+  requires ~63 GiB. Without this limit, a model left warm from Open WebUI use can prevent
+  Artoo's cron jobs from loading `gpt-oss:120b` (OOM error). With this set, Ollama evicts
+  the current model before loading a new one. Tradeoff: model switching in Open WebUI has a
+  20–30s reload delay instead of instant.
 
 ### Named Volumes
 
@@ -90,11 +95,17 @@ The volumes (`open-webui`, `open-webui-ollama`) are never deleted by this script
 ## OpenClaw
 
 ### Image version
-Pinned to `ghcr.io/openclaw/openclaw:latest` which resolves to **v2026.3.8** at time of
-deployment. This is the minimum version required to avoid **CVE-2026-25253** (remote code
-execution via malformed provider response in versions < 2026.1.29).
+Pinned to `ghcr.io/openclaw/openclaw:2026.3.11`. Do **not** upgrade to v2026.3.12 or v2026.3.13
+— both crash on startup with:
+```
+ReferenceError: Cannot access 'ANTHROPIC_MODEL_ALIASES' before initialization
+```
+This is an Ollama provider plugin bug. Monitor for v2026.3.14+.
 
-To update:
+The minimum version to avoid **CVE-2026-25253** (remote code execution via malformed provider
+response) is v2026.1.29.
+
+To update (only when a safe version is confirmed):
 ```bash
 ./update.sh
 ```
@@ -352,6 +363,57 @@ docker exec open-webui ollama list        # confirm models still in volume
 
 ---
 
+## NemoClaw
+
+NVIDIA announced NemoClaw at GTC 2026 (March 16, 2026) — an open-source stack that adds
+OpenShell sandbox isolation and Nemotron model integration to OpenClaw.
+
+**Decision: do not deploy yet.** Reasons:
+- Requires a **fresh OpenClaw installation** — cannot be layered onto an existing setup
+- Alpha-stage with active install failures (GitHub issues #280, #301, #302)
+- GPU detection broken on some NVIDIA hardware (#300)
+- No documented migration path from existing OpenClaw deployments
+
+Re-evaluate when: install failures drop significantly, a migration path is documented, and
+DGX Spark is explicitly listed as a tested platform.
+
+Monitor: [github.com/NVIDIA/NemoClaw/issues](https://github.com/NVIDIA/NemoClaw/issues)
+
+---
+
+## OSS Gap Pipeline
+
+Artoo runs an automated pipeline to identify unmet agent infrastructure needs and surface
+high-potential OSS opportunities for Han to act on.
+
+### Files (in `~/openclaw/workspace/`)
+
+| File | Purpose |
+|------|---------|
+| `RUBRIC.md` | 6-dimension scoring rubric (Pain, Uniqueness, Addressability, Timing, Leverage, Han's Edge) |
+| `GAP_IDEAS.md` | Gap tracker — status: `unscored → scored → alerted → approved → implementing → shipped` |
+| `specs/` | Project specs written for approved gaps |
+
+### Pipeline Cron Jobs
+
+| Job | Schedule | What it does |
+|-----|----------|-------------|
+| Agent Needs Briefing | 6:00am daily | Research + update AGENT_INFRA.md; extract [GAP] entries → GAP_IDEAS.md |
+| Gap Scorer | Wednesday 9am | Score `unscored` gaps against RUBRIC.md; alert Han via Telegram for ≥ 7.0 |
+| Gap Implementer | 8:00am daily | Check for `approved` gaps; write spec; notify Han to confirm SCAFFOLD |
+
+### Approval flow
+
+1. Agent Needs Briefing logs a `[GAP]` → appended to GAP_IDEAS.md as `unscored`
+2. Gap Scorer researches, scores, sends Telegram alert if ≥ 7.0
+3. Han replies **APPROVE GAP-XXX** or **REJECT GAP-XXX**
+4. Gap Implementer writes `specs/GAP-XXX-spec.md`, updates status to `implementing`
+5. Han replies **SCAFFOLD GAP-XXX** to trigger GitHub repo creation
+
+Nothing ships without explicit approval at each stage.
+
+---
+
 ## OS Upgrade / Reboot Procedure
 
 ### Before the upgrade
@@ -438,7 +500,7 @@ docker exec openclaw-gateway curl http://open-webui:11434/api/tags
 
 # Check OLLAMA_HOST is set correctly in open-webui
 docker inspect open-webui | jq '.[0].Config.Env | map(select(startswith("OLLAMA")))'
-# Should show: "OLLAMA_HOST=0.0.0.0:11434"
+# Should show: "OLLAMA_HOST=0.0.0.0:11434" and "OLLAMA_MAX_LOADED_MODELS=1"
 
 # Confirm Ollama is listening on all interfaces inside open-webui
 docker exec open-webui cat /proc/net/tcp | awk 'NR>1{print $2}' | python3 -c "
@@ -498,6 +560,30 @@ To check what a model actually supports:
 ```bash
 docker exec open-webui ollama show gpt-oss:20b --modelfile | grep context
 ```
+
+### Ollama OOM — model requires more memory than available
+
+Symptom: cron jobs fail with `Ollama API error 500: model requires more system memory (63.4 GiB) than is available`.
+
+Cause: a different 120b model is still loaded in memory from Open WebUI use. Each 120b model
+needs ~63 GiB of the DGX Spark's 128 GiB unified memory; two competing 120b models don't fit.
+
+Fix already applied: `OLLAMA_MAX_LOADED_MODELS=1` in `docker-compose.yml` ensures only one
+model is ever resident. If the error recurs after a container restart:
+
+```bash
+# Verify the env var survived the restart
+docker exec open-webui env | grep OLLAMA_MAX
+
+# Force-unload any resident model immediately
+docker exec open-webui ollama stop gpt-oss:120b
+docker exec open-webui ollama stop nemotron-3-super:120b
+
+# Check what's loaded
+curl -s http://127.0.0.1:11435/api/ps | jq '.models[].name'
+```
+
+---
 
 ### GitHub push rejected due to committed credential
 
