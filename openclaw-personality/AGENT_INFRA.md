@@ -1,7 +1,7 @@
 # AGENT_INFRA.md - AI Agent Infrastructure Knowledge Base
 
 **Last Updated:** March 19, 2026  
-**Total Entries:** 35 (was 24)
+**Total Entries:** 40 (was 24)
 
 ---
 
@@ -13,7 +13,11 @@
 [PLATFORM] Haystack – https://haystack.deepset.ai – Industrial-strength RAG and multi-modal agent orchestration from Deepset
 [PLATFORM] Flowise – https://flowiseai.com – Visual drag-and-drop builder for LangChain flows
 [PLATFORM] Vellum – https://vellum.ai – Cloud-agnostic AI workflow platform with observability, governance, model flexibility
-
+[PLATFORM] ServiceNow AI Agents – https://www.servicenow.com – Enterprise AI agent platform introduced in Zurich Release (Q4 2025) enabling autonomous task execution across ITSM, HR, security, and more.
+[PLATFORM] Microsoft 365 Copilot Cowork – https://www.microsoft.com/microsoft-365/copilot – Embedded multi‑model AI agents for enterprise productivity, part of Wave 3 Copilot.
+[PLATFORM] Kore.ai – https://kore.ai – Comprehensive agentic AI platform, recognized as a Gartner leader in 2025.
+[PLATFORM] Nvidia NemoClaw – https://www.nvidia.com – Open‑source AI agent platform allowing enterprises to dispatch agents regardless of hardware.
+[PLATFORM] New Relic Agentic Platform – https://newrelic.com – No‑code observability‑focused AI agents, supports Model Context Protocol (MCP).
 ---
 
 ## ORCHESTRATION
