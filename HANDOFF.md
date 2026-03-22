@@ -1,6 +1,6 @@
 # Handoff — AI Stack on DGX Spark
 
-**Last updated:** 2026-03-18
+**Last updated:** 2026-03-21
 **Status:** Fully deployed and operational — no manual steps remaining
 
 ---
@@ -10,7 +10,7 @@
 ```
 CONTAINER           STATUS          PORTS
 open-webui          Up (healthy)    0.0.0.0:12000→8080, 127.0.0.1:11435→11434
-openclaw-gateway    Up (healthy)    127.0.0.1:18789→18789
+openclaw-gateway    Up (healthy)    0.0.0.0:18789→18789
 ```
 
 Both containers have `restart: unless-stopped` — they survive reboots automatically.
@@ -48,8 +48,9 @@ Both containers have `restart: unless-stopped` — they survive reboots automati
 ### Session 4 — Hardening, OSS Gap Pipeline, Ollama OOM Fix (2026-03-12 to 2026-03-18)
 18. **Pinned OpenClaw to v2026.3.11** — v2026.3.12/3.13 crash with Ollama plugin bug
     (`ReferenceError: Cannot access 'ANTHROPIC_MODEL_ALIASES' before initialization`)
-19. **Email delivery abandoned** — AgentMail exec unreliable in isolated cron sessions (GPT-OSS 120B
-    overrides exec host to sandbox; approval prompts time out). All jobs deliver Telegram only.
+19. **Email delivery restored via AgentMail** — `daily-briefing-email.js` script reads
+    `AGENT_BRIEFING_FILE` env var (path to temp file). Cron jobs write briefing to `/tmp/artoo-*.txt`
+    then exec the script. Both briefing jobs deliver to Telegram + email.
 20. **Added exec approval allowlist** — `node *` and `node -e *` pre-approved on the main agent
     to avoid interactive approval prompts during gateway exec calls
 21. **Fixed AGENT_INFRA.md GitHub sync** — `backup.sh` was looking at `~/openclaw-config/workspace/`
@@ -70,6 +71,23 @@ Both containers have `restart: unless-stopped` — they survive reboots automati
     `OLLAMA_MAX_LOADED_MODELS=1` to `docker-compose.yml` and restarting `open-webui`.
 25. **NemoClaw decision: wait** — requires fresh OpenClaw install (can't layer on existing);
     alpha-stage with active install failures; no DGX Spark-specific guidance. Re-evaluate in 4–6 weeks.
+
+### Session 5 — Model Expansion, Control UI, GPU Fix (2026-03-18 to 2026-03-21)
+26. **Gateway exposed on LAN** — changed `gateway.bind` from `loopback` → `lan` and port binding
+    from `127.0.0.1:18789` → `0.0.0.0:18789`. Control UI now accessible via browser on LAN or SSH tunnel.
+27. **Added 3 new Ollama models** — `qwen3.5:122b-a10b-q4_K_M`, `nemotron-cascade-2:latest`,
+    `nemotron-3-super:120b` registered in openclaw.json.
+28. **Default conversation model changed to `gpt-oss:20b`** — fastest response for interactive chat.
+29. **All cron jobs switched to `ollama/qwen3.5:35b`** — root cause analysis (2026-03-21):
+    - gpt-oss models use MXFP4 format which runs **CPU-only** in Ollama v0.17.7 (no GPU offload)
+    - gpt-oss:120b at 60.9 GiB on CPU → inference too slow to complete within 10-minute timeout
+    - qwen3.5:35b is GGUF, uses GPU (41/41 layers on CUDA0, 21.9 GiB VRAM), loads in ~8s
+30. **CUDA non-deterministic init bug discovered** — after container restart, `ggml_cuda_init`
+    sometimes fails ("no CUDA-capable device"). Fix: restart `open-webui` a **second** time. GGUF
+    models then properly use GPU. Root cause unknown; appears to be a container toolkit race.
+31. **Daily AI News Briefing rescheduled** — from 6:30am → 7:00am PT.
+32. **Anthropic API credits depleted** — fallback chain breaks on Anthropic models. Top up at
+    platform.anthropic.com to restore. OpenAI fallback remains active.
 
 ---
 
@@ -126,13 +144,19 @@ Both containers have `restart: unless-stopped` — they survive reboots automati
 
 ## Configured Ollama Models
 
-| Model ID | Role | Context |
-|---|---|---|
-| `ollama/qwen3.5:35b` | **Primary** — general chat | 65k tokens |
-| `ollama/gpt-oss:120b` | Large reasoning | 65k tokens |
-| `ollama/gpt-oss:20b` | Subagents / fast | 65k tokens |
-| `ollama/qwen3-coder:latest` | Coding | 65k tokens |
-| `ollama/nemotron-3-nano:latest` | Reasoning (not primary — leaks thinking to Telegram) | 128k tokens |
+| Model ID | Role | GPU? | Context |
+|---|---|---|---|
+| `ollama/gpt-oss:20b` | **Primary** — interactive chat (fast) | CPU only (MXFP4) | 65k |
+| `ollama/qwen3.5:35b` | **Cron jobs** — GPU-accelerated quality model | GPU ✓ | 65k |
+| `ollama/gpt-oss:120b` | Large reasoning (CPU-only — too slow for cron) | CPU only (MXFP4) | 65k |
+| `ollama/qwen3.5:122b-a10b-q4_K_M` | Large MoE | GPU ✓ | 262k |
+| `ollama/nemotron-cascade-2:latest` | Fast MoE | GPU ✓ | 262k |
+| `ollama/nemotron-3-super:120b` | Nemotron Super | GPU ✓ | 65k |
+| `ollama/qwen3-coder:latest` | Coding | GPU ✓ | 65k |
+| `ollama/nemotron-3-nano:latest` | Reasoning (not primary — leaks thinking to Telegram) | GPU ✓ | 128k |
+
+> **gpt-oss (MXFP4) models** run CPU-only in Ollama v0.17.7 — they do not offload to GPU.
+> gpt-oss:20b is fast enough for short chat (16 GiB on CPU). gpt-oss:120b is too slow for cron.
 
 ---
 
@@ -140,15 +164,15 @@ Both containers have `restart: unless-stopped` — they survive reboots automati
 
 | Job | Schedule | Model | Delivery |
 |---|---|---|---|
-| Agent Needs Briefing | 6:00am daily (PT) | ollama/gpt-oss:120b | Telegram |
-| Daily AI News Briefing | 6:30am daily (PT) | ollama/gpt-oss:120b | Telegram |
-| Gap Scorer | Wednesday 9:00am (PT) | ollama/gpt-oss:120b | Telegram (alerts only) |
-| Gap Implementer | 8:00am daily (PT) | ollama/gpt-oss:120b | None (silent if no approved gaps) |
-| Agent Infra Weekly Review | Sunday 10:00am (PT) | ollama/gpt-oss:120b | Telegram |
+| Agent Needs Briefing | 6:00am daily (PT) | ollama/qwen3.5:35b | Telegram + email |
+| Daily AI News Briefing | 7:00am daily (PT) | ollama/qwen3.5:35b | Telegram + email |
+| Gap Scorer | Wednesday 9:00am (PT) | ollama/qwen3.5:35b | Telegram (alerts only) |
+| Gap Implementer | 8:00am daily (PT) | ollama/qwen3.5:35b | None (silent if no approved gaps) |
+| Agent Infra Weekly Review | Sunday 10:00am (PT) | ollama/qwen3.5:35b | Telegram |
 | OpenClaw Version Check | 3:00pm daily (PT) | default | None (silent if up to date) |
 
-All jobs use `sessionTarget: isolated` and `wakeMode: now`. Email delivery was attempted
-but abandoned — exec in isolated sessions unreliable with GPT-OSS 120B.
+All jobs use `sessionTarget: isolated` and `wakeMode: now`. Email delivery via AgentMail:
+agent writes briefing to `/tmp/artoo-*.txt`, then execs `daily-briefing-email.js`.
 
 View with: `docker compose exec openclaw-gateway openclaw cron list`
 
@@ -161,7 +185,7 @@ View with: `docker compose exec openclaw-gateway openclaw cron list`
 | `12000` | `0.0.0.0` | Open WebUI (public) |
 | `11434` | `0.0.0.0` | **Native** host Ollama (separate process) |
 | `11435` | `127.0.0.1` | Container Ollama inside open-webui |
-| `18789` | `127.0.0.1` | OpenClaw gateway |
+| `18789` | `0.0.0.0` | OpenClaw gateway (LAN-accessible, token auth required) |
 
 ---
 
@@ -181,7 +205,9 @@ View with: `docker compose exec openclaw-gateway openclaw cron list`
 
 - **OpenClaw pinned to v2026.3.11** — do not upgrade to v2026.3.12 or v2026.3.13. Both crash with an Ollama plugin initialization error. Monitor for v2026.3.14+.
 
-- **exec in isolated cron sessions** — GPT-OSS 120B sometimes overrides `tools.exec.host=gateway` with `host=sandbox` in tool calls, which is blocked. Email delivery via AgentMail was abandoned for this reason. All cron jobs deliver via Telegram only.
+- **gpt-oss (MXFP4) models are CPU-only** — gpt-oss:20b and gpt-oss:120b run entirely on CPU in Ollama v0.17.7. gpt-oss:20b is fast enough for interactive chat; gpt-oss:120b at 60.9 GiB on CPU is too slow for cron jobs (10-minute timeout). All cron jobs use `qwen3.5:35b` (GPU-accelerated).
+
+- **CUDA init non-deterministic after container restart** — after restarting `open-webui`, CUDA sometimes fails to initialize (`ggml_cuda_init: failed to initialize CUDA`). Fix: restart `open-webui` a **second** time. Signs of broken CUDA: all models show `offloaded 0/N layers to GPU` and responses take 1+ minute even for "say hi".
 
 - **jq edits to openclaw.json** — use `docker compose exec openclaw-gateway openclaw config set` or edit the file directly with the Write tool. Never use shell redirects (`>`) to edit it — a failed `mv` will truncate the file to 0 bytes.
 

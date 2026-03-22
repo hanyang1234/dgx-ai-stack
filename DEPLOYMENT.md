@@ -22,7 +22,7 @@ HOST: NVIDIA DGX Spark (Ubuntu)
 │  │   └── Volume: open-webui-ollama     → /root/.ollama
 │  │
 │  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:2026.3.11)
-│      ├── Gateway            127.0.0.1:18789 → :18789  (localhost-only)
+│      ├── Gateway            0.0.0.0:18789 → :18789    (LAN-accessible, token auth)
 │      ├── Bind: ~/openclaw-config        → /home/node/.openclaw
 │      └── Bind: ~/openclaw/workspace     → /home/node/workspace
 │
@@ -37,7 +37,7 @@ HOST: NVIDIA DGX Spark (Ubuntu)
 | `12000` | `0.0.0.0` | Open WebUI | Public on host |
 | `11434` | `0.0.0.0` | **Native** Ollama (host process) | Public on host |
 | `11435` | `127.0.0.1` | Container Ollama (inside open-webui) | Localhost only |
-| `18789` | `127.0.0.1` | OpenClaw gateway | Localhost only |
+| `18789` | `0.0.0.0` | OpenClaw gateway | LAN (token auth required) |
 
 > **Port 11434 note:** The host's native Ollama daemon occupies `0.0.0.0:11434`.
 > The bundled Ollama inside the open-webui container is accessible from other containers via
@@ -136,19 +136,27 @@ The OpenAI-compatible endpoint (`/v1/chat/completions`) may not support both at 
 
 ### Configured Ollama models
 
-| OpenClaw model ID | Name | Size | Role |
-|---|---|---|---|
-| `ollama/qwen3.5:35b` | Qwen3.5 35B | 23 GB | **Primary** — general chat |
-| `ollama/gpt-oss:120b` | GPT-OSS 120B | 65 GB | Large reasoning |
-| `ollama/gpt-oss:20b` | GPT-OSS 20B Fast | 13 GB | Subagents / fast |
-| `ollama/qwen3-coder:latest` | Qwen3-Coder | 18 GB | Coding tasks |
-| `ollama/nemotron-3-nano:latest` | Nemotron-3 Nano | 24 GB | Reasoning (available, not primary) |
+| OpenClaw model ID | Name | GPU? | Size | Role |
+|---|---|---|---|---|
+| `ollama/gpt-oss:20b` | GPT-OSS 20B | CPU only† | 16 GB | **Primary** — interactive chat |
+| `ollama/qwen3.5:35b` | Qwen3.5 35B | GPU ✓ | 22 GB | **Cron jobs** — GPU-accelerated |
+| `ollama/gpt-oss:120b` | GPT-OSS 120B | CPU only† | 61 GB | Large reasoning (too slow for cron) |
+| `ollama/qwen3.5:122b-a10b-q4_K_M` | Qwen3.5 122B MoE | GPU ✓ | 76 GB | Large MoE |
+| `ollama/nemotron-cascade-2:latest` | Nemotron Cascade 2 | GPU ✓ | ~50 GB | Fast MoE |
+| `ollama/nemotron-3-super:120b` | Nemotron-3 Super | GPU ✓ | ~65 GB | Large Nemotron |
+| `ollama/qwen3-coder:latest` | Qwen3-Coder | GPU ✓ | 18 GB | Coding tasks |
+| `ollama/nemotron-3-nano:latest` | Nemotron-3 Nano | GPU ✓ | 24 GB | Reasoning (not primary) |
 
-Context window: **65,536 tokens** for all local models; **131,072 tokens** for Nemotron-3.
+† **gpt-oss (MXFP4) models run CPU-only** in Ollama v0.17.7. They do not offload to GPU regardless
+of available VRAM. gpt-oss:20b is fast enough for short interactive responses (~3s); gpt-oss:120b
+takes 10+ minutes on CPU for long-form tasks and will timeout cron jobs.
+
+Context window: 65,536 tokens for most models; 131,072 for Nemotron-3 Nano; 262,144 for Cascade-2 and Qwen 122B.
 
 ### Primary model
 
-**Qwen3.5 35B** (`ollama/qwen3.5:35b`) is the primary model.
+**GPT-OSS 20B** (`ollama/gpt-oss:20b`) is the primary model for interactive chat.
+**Qwen3.5 35B** (`ollama/qwen3.5:35b`) is the model used by all cron jobs.
 Fallbacks (in order): `anthropic/claude-opus-4-6` → `anthropic/claude-sonnet-4-6` → `openai/gpt-5.1-codex`.
 
 > **Note on Nemotron thinking mode:** Nemotron-3 with `thinking: true` leaks chain-of-thought
@@ -559,6 +567,34 @@ docker compose restart openclaw-gateway
 To check what a model actually supports:
 ```bash
 docker exec open-webui ollama show gpt-oss:20b --modelfile | grep context
+```
+
+### CUDA not initializing after container restart
+
+Symptom: all models show `offloaded 0/N layers to GPU` in `docker logs open-webui`, responses
+take 1+ minute even for a one-word prompt, and you see:
+```
+ggml_cuda_init: failed to initialize CUDA: no CUDA-capable device is detected
+```
+
+Cause: non-deterministic CUDA initialization race in the NVIDIA container toolkit. Happens
+intermittently on first `open-webui` restart; not every time.
+
+Fix: restart `open-webui` a **second** time:
+```bash
+docker restart open-webui
+sleep 20
+# Verify GPU is active — should show CUDA.0.USE_GRAPHS=1 and offloaded N/N layers
+docker logs open-webui 2>&1 | grep -E "USE_GRAPHS|offloading"
+```
+
+Quick check:
+```bash
+curl -s http://127.0.0.1:11435/api/generate \
+  -H "Content-Type: application/json" \
+  -d '{"model":"qwen3.5:35b","prompt":"hi","stream":false}' | python3 -c \
+  "import sys,json; d=json.load(sys.stdin); print('Load:', round(d.get('load_duration',0)/1e9,1),'s')"
+# GPU: ~7s. CPU (broken): 60s+ or timeout
 ```
 
 ### Ollama OOM — model requires more memory than available
