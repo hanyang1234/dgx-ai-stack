@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1774216832323,
+      "updatedAtMs": 1774303236204,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,11 +25,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774303200000,
-        "lastRunAtMs": 1774216800016,
+        "nextRunAtMs": 1774389600000,
+        "lastRunAtMs": 1774303200020,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 32307,
+        "lastDurationMs": 36184,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -42,7 +42,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1774188159003,
+      "updatedAtMs": 1774274448223,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -61,11 +61,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1774274400000,
-        "lastRunAtMs": 1774188000018,
+        "nextRunAtMs": 1774360800000,
+        "lastRunAtMs": 1774274400020,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 158985,
+        "lastDurationMs": 48203,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -78,7 +78,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1774184566798,
+      "updatedAtMs": 1774270904137,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -97,11 +97,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1774270800000,
-        "lastRunAtMs": 1774184400020,
+        "nextRunAtMs": 1774357200000,
+        "lastRunAtMs": 1774270800012,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 166778,
+        "lastDurationMs": 104125,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -187,7 +187,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1774191622254,
+      "updatedAtMs": 1774278022097,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -205,12 +205,12 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774278000000,
-        "lastRunAtMs": 1774191600019,
+        "nextRunAtMs": 1774364400000,
+        "lastRunAtMs": 1774278000016,
         "lastRunStatus": "ok",
         "consecutiveErrors": 0,
         "lastStatus": "ok",
-        "lastDurationMs": 22235,
+        "lastDurationMs": 22081,
         "lastDeliveryStatus": "not-delivered",
         "lastDelivered": false
       }
