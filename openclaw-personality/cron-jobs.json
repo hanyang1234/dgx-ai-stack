@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1774389720025,
+      "updatedAtMs": 1774476120024,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,15 +25,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774476000000,
-        "lastRunAtMs": 1774389600017,
+        "nextRunAtMs": 1774562400000,
+        "lastRunAtMs": 1774476000018,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 120008,
+        "lastDurationMs": 120006,
         "lastDeliveryStatus": "not-requested",
-        "consecutiveErrors": 1,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "consecutiveErrors": 2,
+        "lastErrorReason": "timeout",
+        "lastError": "cron: job execution timed out"
       }
     },
     {
@@ -43,7 +43,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1774360971198,
+      "updatedAtMs": 1774447800025,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -62,14 +62,15 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1774447200000,
-        "lastRunAtMs": 1774360800018,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 171180,
-        "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": true
+        "nextRunAtMs": 1774533600000,
+        "lastRunAtMs": 1774447200017,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 600008,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 1,
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -79,7 +80,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1774357235302,
+      "updatedAtMs": 1774443652318,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -98,11 +99,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1774443600000,
-        "lastRunAtMs": 1774357200021,
+        "nextRunAtMs": 1774530000000,
+        "lastRunAtMs": 1774443600021,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 35281,
+        "lastDurationMs": 52297,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -151,7 +152,7 @@
       "name": "Gap Scorer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1773895368702,
+      "updatedAtMs": 1774454938410,
       "schedule": {
         "kind": "cron",
         "expr": "0 9 * * 3",
@@ -170,13 +171,12 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1774454400000,
-        "lastRunAtMs": 1773895220973,
-        "lastRunStatus": "error",
-        "consecutiveErrors": 1,
-        "lastStatus": "error",
-        "lastDurationMs": 147729,
-        "lastError": "⚠️ 📝 Edit: `in ~/workspace/GAP_IDEAS.md (46 chars)` failed",
+        "nextRunAtMs": 1775059200000,
+        "lastRunAtMs": 1774454400019,
+        "lastRunStatus": "ok",
+        "consecutiveErrors": 0,
+        "lastStatus": "ok",
+        "lastDurationMs": 538391,
         "lastDelivered": true,
         "lastDeliveryStatus": "delivered"
       }
@@ -188,7 +188,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1774364423149,
+      "updatedAtMs": 1774451100025,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -206,14 +206,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774450800000,
-        "lastRunAtMs": 1774364400021,
-        "lastRunStatus": "ok",
-        "consecutiveErrors": 0,
-        "lastStatus": "ok",
-        "lastDurationMs": 23128,
-        "lastDeliveryStatus": "not-delivered",
-        "lastDelivered": false
+        "nextRunAtMs": 1774537200000,
+        "lastRunAtMs": 1774450800016,
+        "lastRunStatus": "error",
+        "consecutiveErrors": 1,
+        "lastStatus": "error",
+        "lastDurationMs": 300009,
+        "lastDeliveryStatus": "not-requested",
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     }
   ]
