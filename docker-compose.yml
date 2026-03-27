@@ -5,7 +5,7 @@
 #
 # Services:
 #   open-webui       – Bundled Open WebUI + Ollama (GPU-accelerated)
-#   openclaw-gateway – OpenClaw agent gateway (non-root, localhost-only)
+#   openclaw-gateway – OpenClaw agent gateway (non-root, LAN-accessible)
 #
 # Shared network: ai-stack (bridge)
 # Named volumes:  open-webui, open-webui-ollama
@@ -29,7 +29,7 @@ services:
   # Source: https://build.nvidia.com/spark/open-webui
   # ---------------------------------------------------------------------------
   open-webui:
-    image: ghcr.io/open-webui/open-webui:ollama
+    image: ghcr.io/open-webui/open-webui:v0.8.11-ollama
     container_name: open-webui
     restart: unless-stopped
     deploy:
@@ -69,11 +69,11 @@ services:
 
   # ---------------------------------------------------------------------------
   # OpenClaw Gateway
-  # Pinned to 2026.3.8 (>= 2026.1.29 required to avoid CVE-2026-25253)
+  # Pinned to 2026.3.24 (>= 2026.1.29 required to avoid CVE-2026-25253)
   # Runs as user 'node' (non-root, baked into image)
   # ---------------------------------------------------------------------------
   openclaw-gateway:
-    image: ghcr.io/openclaw/openclaw:2026.3.11
+    image: ghcr.io/openclaw/openclaw:2026.3.24
     container_name: openclaw-gateway
     restart: unless-stopped
     depends_on:

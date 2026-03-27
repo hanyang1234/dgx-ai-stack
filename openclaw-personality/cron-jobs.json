@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1774476120024,
+      "updatedAtMs": 1774562434602,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,15 +25,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774562400000,
-        "lastRunAtMs": 1774476000018,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 120006,
-        "lastDeliveryStatus": "not-requested",
-        "consecutiveErrors": 2,
-        "lastErrorReason": "timeout",
-        "lastError": "cron: job execution timed out"
+        "nextRunAtMs": 1774648800000,
+        "lastRunAtMs": 1774562400008,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 34594,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     },
     {
@@ -43,7 +42,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1774447800025,
+      "updatedAtMs": 1774533634764,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -62,15 +61,14 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1774533600000,
-        "lastRunAtMs": 1774447200017,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 600008,
-        "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 1,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "nextRunAtMs": 1774620000000,
+        "lastRunAtMs": 1774533600017,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 34747,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": true
       }
     },
     {
@@ -80,7 +78,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1774443652318,
+      "updatedAtMs": 1774530095506,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -99,14 +97,15 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1774530000000,
-        "lastRunAtMs": 1774443600021,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 52297,
+        "nextRunAtMs": 1774616400000,
+        "lastRunAtMs": 1774530000020,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 95486,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": true
+        "consecutiveErrors": 1,
+        "lastDelivered": true,
+        "lastError": "⚠️ 📝 Edit: `in ~/workspace/AGENT_INFRA.md (1961 chars)` failed"
       }
     },
     {
@@ -188,7 +187,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1774451100025,
+      "updatedAtMs": 1774537225201,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -206,15 +205,16 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774537200000,
-        "lastRunAtMs": 1774450800016,
+        "nextRunAtMs": 1774623600000,
+        "lastRunAtMs": 1774537200012,
         "lastRunStatus": "error",
-        "consecutiveErrors": 1,
+        "consecutiveErrors": 2,
         "lastStatus": "error",
-        "lastDurationMs": 300009,
-        "lastDeliveryStatus": "not-requested",
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "lastDurationMs": 25189,
+        "lastDeliveryStatus": "not-delivered",
+        "lastError": "⚠️ ✉️ Message failed",
+        "lastDelivered": false,
+        "lastDeliveryError": "⚠️ ✉️ Message failed"
       }
     }
   ]
