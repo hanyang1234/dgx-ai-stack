@@ -24,7 +24,7 @@
 ---
 
 **Last Updated:** March 22, 2026  
-**Total Entries:** 48 (was 53, merged 5 duplicates, flagged 2 stale)
+**Total Entries:** 53 (updated after adding Q4 2025‑Q1 2026 platforms)
 
 ---
 
@@ -36,6 +36,12 @@
 [PLATFORM] Haystack – https://haystack.deepset.ai – Industrial-strength RAG and multi-modal agent orchestration from Deepset
 [PLATFORM] Flowise – https://flowiseai.com – Visual drag-and-drop builder for LangChain flows
 [PLATFORM] Vellum – https://vellum.ai – Cloud-agnostic AI workflow platform with observability, governance, model flexibility
+[PLATFORM] OpenAI AgentKit – https://openai.com/blog/openai-agent-kit – SDK and tooling for building, training, and deploying agents on OpenAI’s models, released late 2025.
+[PLATFORM] Anthropic Claude Agent SDK – https://www.anthropic.com/sdk – SDK enabling developers to embed Claude agents with safety and policy controls, launched Q4 2025.
+[PLATFORM] Google Agent Development Kit (ADK) – https://developers.google.com/agent-kit – Vertex AI-based kit for constructing agent workflows, announced in December 2025.
+[PLATFORM] Rackspace + Sema4.ai SAFE Platform – https://www.rackspace.com/sem4-ai-partnership – Joint enterprise AI agent solution for secure, scalable deployment, unveiled June 2025.
+[PLATFORM] Fujitsu Kozuchi Physical AI 1.0 – https://global.fujitsu/en-global/pr/news/2025/12/24-02 – Edge‑AI platform enabling physical agents with autonomous decision‑making, announced December 2025.
+[PLATFORM] AccelQ – https://www.accelq.com – Autonomous testing agent platform for enterprise software, launched December 2025.
 [PLATFORM] ServiceNow AI Agents – https://www.servicenow.com – Enterprise AI agent platform introduced in Zurich Release (Q4 2025) enabling autonomous task execution across ITSM, HR, security, and more.
 [PLATFORM] Microsoft 365 Copilot Cowork – https://www.microsoft.com/microsoft-365/copilot – Embedded multi‑model AI agents for enterprise productivity, part of Wave 3 Copilot.
 [PLATFORM] Kore.ai – https://kore.ai – Comprehensive agentic AI platform, recognized as a Gartner leader in 2025.
