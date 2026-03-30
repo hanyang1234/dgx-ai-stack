@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1774735229406,
+      "updatedAtMs": 1774840467076,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -18,18 +18,18 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "Check if a new version of OpenClaw is available. Run `openclaw --version` or equivalent to get the current installed version, then check the OpenClaw GitHub releases page (https://github.com/openclaw/openclaw/releases) or npm registry for the latest version. Compare the two. If a newer version is available, send a Telegram message to Solo (channel: telegram) with: the current version, the new version number, and a brief summary of what changed based on the release notes. If already up to date, do nothing and stay silent (NO_REPLY).",
+        "message": "Check if a new version of OpenClaw is available. Run `openclaw --version` to get the current installed version, then check the OpenClaw GitHub releases page (https://github.com/openclaw/openclaw/releases) or npm registry for the latest version. Compare the two. If a newer version is available, send a Telegram message to Solo with: the current version, the new version number, and a brief summary of what changed based on the release notes. If already up to date, do nothing and stay silent (NO_REPLY).\n\nAlso check if a newer version of Ollama is available by running `ollama version` and comparing to the latest release from the official site or Docker Hub. If a newer Ollama version is available, report it.\n\nFinally, check if a newer version of the webUI Docker image is available by inspecting the latest tag of the `webui` image (e.g., `docker image ls webui:latest`). If an update is available, report it as well.\n\nAdditionally, check if a newer version of Nemoclaw is available by running `nemoclaw --version` and comparing to the latest release on its repository or npm registry. If an update is available, report it.\n\nIf any of these services have updates, notify Solo via Telegram with the details. Otherwise, stay silent.",
         "timeoutSeconds": 120
       },
       "delivery": {
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774821600000,
-        "lastRunAtMs": 1774735200010,
+        "nextRunAtMs": 1774908000000,
+        "lastRunAtMs": 1774821600008,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 29396,
+        "lastDurationMs": 33011,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -42,7 +42,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1774706588604,
+      "updatedAtMs": 1774792993602,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -61,11 +61,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1774792800000,
-        "lastRunAtMs": 1774706400011,
+        "nextRunAtMs": 1774879200000,
+        "lastRunAtMs": 1774792800010,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 188593,
+        "lastDurationMs": 193592,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -78,7 +78,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1774702909401,
+      "updatedAtMs": 1774789235156,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -97,11 +97,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1774789200000,
-        "lastRunAtMs": 1774702800010,
+        "nextRunAtMs": 1774875600000,
+        "lastRunAtMs": 1774789200008,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 109391,
+        "lastDurationMs": 35148,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -114,7 +114,7 @@
       "name": "Agent Infra Weekly Review",
       "enabled": true,
       "createdAtMs": 1773320400000,
-      "updatedAtMs": 1774199081234,
+      "updatedAtMs": 1774803672891,
       "schedule": {
         "kind": "cron",
         "expr": "0 10 * * 0",
@@ -133,11 +133,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1774803600000,
-        "lastRunAtMs": 1774198800023,
+        "nextRunAtMs": 1775408400000,
+        "lastRunAtMs": 1774803600007,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 281211,
+        "lastDurationMs": 72884,
         "lastDelivered": true,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0
@@ -186,7 +186,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1774710021161,
+      "updatedAtMs": 1774796422134,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -204,12 +204,12 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774796400000,
-        "lastRunAtMs": 1774710000009,
+        "nextRunAtMs": 1774882800000,
+        "lastRunAtMs": 1774796400007,
         "lastRunStatus": "ok",
         "consecutiveErrors": 0,
         "lastStatus": "ok",
-        "lastDurationMs": 21152,
+        "lastDurationMs": 22127,
         "lastDeliveryStatus": "not-delivered",
         "lastDelivered": false
       }

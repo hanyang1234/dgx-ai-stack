@@ -4,6 +4,30 @@
 
 ---
 
+## Patterns & Trends
+
+**Q1 2026 State of Agent Infrastructure:**
+
+1. **Standards Solidifying Around AAIF:** The Linux Foundation's Agentic AI Foundation (formed Q4 2025) has established MCP, goose, and AGENTS.md as the core interoperability standards. This represents industry consolidation away from pure proprietary fragmentation toward open protocols.
+
+2. **Enterprise Governance is Table Stakes:** Both OpenAI Frontier (Feb 2026) and Microsoft's Copilot Agent 365 emphasize identity management, access controls, and explicit permissions. Regulated industries (finance, healthcare, legal) are driving adoption with shared context integration from existing enterprise systems.
+
+3. **Platform-Specific Agentic AI:** Major players are embedding agents deeply into their ecosystems—Veeva into Vault for pharma R&D, Fujitsu into SDLC and physical automation, Rakuten for production business workflows. Each is building domain-specialized rather than general-purpose agents.
+
+4. **Hardware-AI Co-Optimization:** NVIDIA's Nemotron 3 specifically optimizing for multi-agent operations signals infrastructure maturation—models being designed for agent workloads, not retrofitted. Physical AI (Fujitsu) is the next frontier, bridging digital agents with autonomous physical action.
+
+5. **Local-First Emerging as Privacy Play:** Goose's local-first approach and tools like Colloqio reflect ongoing tension between capability and privacy/regulation. This decentralized direction remains a niche but persistent counter-trend to cloud-centric platforms.
+
+**Gaps Persisting:**
+- Cross-vendor interoperability beyond protocol-level still limited
+- Long-term agent memory/continuity handling inconsistent
+- Cost transparency for production deployments unclear
+- Human-in-the-loop automation boundaries not standardized
+
+**Direction:** Infrastructure maturing from experimental to production-ready. Focus shifting from "can agents do this?" to "can we safely run this at scale with governance?"
+
+---
+
 ## Discovery Log
 
 [FOUNDATION] Agentic AI Foundation – https://aaif.io – Linux Foundation's new neutral governance body co-founded by Anthropic, Block, and OpenAI. Donated projects: MCP (Model Context Protocol), goose (local-first agent framework), and AGENTS.md (workflow standard). Serves as open standards body for interoperable agents.
@@ -34,37 +58,8 @@
 
 ---
 
-## Patterns Identified
-
-**Standards & Interoperability (Q4 2025 major shift):**
-- AAIF formation represents industry consolidation around open standards
-- Three foundational protocols donated: MCP, goose, AGENTS.md
-- Goal: curb proprietary fragmentation, enable cross-platform agent communication
-
-**Enterprise Governance Focus:**
-- OpenAI Frontier, Microsoft Agent 365 both emphasize identity, permissions, guardrails
-- Regulated environments becoming priority (finance, healthcare, legal)
-- Shared context from existing enterprise systems (CRM, warehouses) crucial
-
-**Local-First & On-Device:**
-- Goose emphasizes local-first approach
-- Colloqio (solo founder) on-device companion, offline-first, private
-- Reflects privacy/regulation concerns driving decentralized approaches
-
-**Agentic AI Infrastructure:**
-- NVIDIA optimizing models specifically for multi-agent systems
-- Physical AI emerging (Fujitsu) - bridging digital and physical automation
-- Long context handling critical for complex agent workflows
-
-**Platform Fragmentation:**
-- Major vendors each launching proprietary agent platforms
-- AAIF attempts to create neutral interoperability layer
-- Enterprises facing multi-vendor strategy decisions
+**Total Platforms/Tools Documented: 13**
 
 ---
 
-**Total Platforms/Tools Documented: 16**
-
----
-
-*Last updated: 2026-03-28*
+*Last reviewed: 2026-03-29*
