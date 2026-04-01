@@ -201,7 +201,10 @@
         "ollama/qwen3.5:9b": {
           "alias": "Qwen9B",
           "params": {
-            "streaming": true
+            "streaming": true,
+            "options": {
+              "think": false
+            }
           }
         },
         "ollama/gpt-oss:20b": {
