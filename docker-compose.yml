@@ -43,7 +43,8 @@ services:
       - "12000:8080"
       # Container Ollama exposed on 11435 because host port 11434 is
       # occupied by the native Ollama systemd service.
-      - "127.0.0.1:11435:11434"
+      # Bound to 0.0.0.0 so Mac can reach it via Tailscale (100.x.x.x) directly.
+      - "0.0.0.0:11435:11434"
     volumes:
       - open-webui:/app/backend/data
       - open-webui-ollama:/root/.ollama
@@ -56,6 +57,9 @@ services:
       # When a cron job requests gpt-oss:120b, any currently-loaded model
       # is evicted first. Slight model-switch latency in WebUI, but reliable.
       OLLAMA_MAX_LOADED_MODELS: "1"
+      # Force CUDA v13 library selection for DGX Spark GB10 — prevents silent
+      # CPU fallback on container restart (known Ollama issue on GB10 hardware).
+      OLLAMA_LLM_LIBRARY: "cuda_v13"
       SCARF_NO_ANALYTICS: "true"
       DO_NOT_TRACK: "true"
       ANONYMIZED_TELEMETRY: "false"
