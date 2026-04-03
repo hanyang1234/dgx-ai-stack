@@ -56,10 +56,44 @@
 
 [TOOL] Anthropic Cowork Plugins – https://www.anthropic.com/news/adding-plug-ins-to-cowork – Customizable agentic plug-ins for specialized workflows (marketing, legal, customer support). Teams define preferred tools, data sources, workflow commands. No heavy technical overhead required.
 
+[FRAMEWORK] Pydantic AI – https://ai.pydantic.dev – Python agent framework for type-safe production applications. Focuses on clear workflows with modular tools, allowing normal Python functions to be called within Pydantic agent classes.
+
+[FRAMEWORK] Agno – https://github.com/marcus0505/agno – Developer-first, modular agent SDK. Fast, lightweight framework targeting production performance with optional managed platform. Ideal for fast iteration and control.
+
+[FRAMEWORK] Mastra – https://mastra.ai – TypeScript-first AI app framework with built-in workflows and human-in-the-loop patterns. Targets JS/TS developers finding Python frameworks foreign.
+
+[FRAMEWORK] Microsoft Agent Framework – https://github.com/microsoft/agent-framework – Unified runtime complementing AutoGen and Semantic Kernel. Merged from SK + AutoGen to provide flexible general-purpose runtime for enterprise.
+
+[FRAMEWORK] LangGraph – https://langchain.com/langgraph – Built for complex stateful workflows with branching control and explicit state management. Part of LangChain ecosystem.
+
+[FRAMEWORK] CrewAI – https://docs.crewai.com – Enables collaborative, role-based multi-agent systems. Raised $18M, powers agents for 60% of Fortune 500 companies.
+
+[FRAMEWORK] AutoGen – https://microsoft.github.io/autogen/ – Microsoft's multi-agent conversation framework. Evolved into full ecosystem with tool calling, retrieval, browser agents, and community support.
+
+[FRAMEWORK] OpenAI Swarm – https://github.com/openai/swarm – Lightweight option for rapid prototyping and simple agent hand-offs. Minimal overhead for OpenAI stack users.
+
+[FRAMEWORK] AgentGPT – https://agentgpt.dev – Accessible entry-point to agentic AI for quick prototyping. Focuses on accessible AI agent development.
+
+[PLATFORM] IBM watsonx Orchestrate – https://ibm.com/watsonx/orchestrate – No-code hybrid-cloud automation platform with focus on responsible AI and industry-specific models. Part of IBM watsonx governance suite.
+
+[PLATFORM] Siemens Edge AI – https://siemens.com/industrial-ai – Edge-native AI agent platform for manufacturing and industrial IoT.
+
+[PLATFORM] Amelia AI – https://ameliabot.com – Customer service and enterprise automation agent platform.
+
+[PLATFORM] AWS Industrial AI – https://aws.amazon.com/industrial-ai/ – Industrial-grade AI agents for AWS customers.
+
+[PLATFORM] Google Gemini Agents – https://developers.google.com/gemini-agents – Google's agent framework and ecosystem.
+
+[FRAMEWORK] Atomic Agents – https://github.com/dair-ai/atomic-agents – Control-focused, modular-first framework for developers familiar with design patterns.
+
+[PLATFORM] Sana Agents – https://sana.ai – Knowledge-grounded enterprise agent platform. One platform for creating expert AI agents grounded in company knowledge, no coding required.
+
+[PLATFORM] Slack as Agentic OS – https://slack.com – Agentic operating system integrating agent capabilities into workflow.
+
 ---
 
-**Total Platforms/Tools Documented: 13**
+**Total Platforms/Tools Documented: 30**
 
 ---
 
-*Last reviewed: 2026-03-29*
+*Last reviewed: 2026-04-02*

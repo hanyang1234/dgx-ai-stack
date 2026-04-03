@@ -12,7 +12,7 @@
   "models": {
     "providers": {
       "ollama": {
-        "baseUrl": "http://open-webui:11434",
+        "baseUrl": "http://ollama:11434",
         "apiKey": "ollama-local",
         "api": "ollama",
         "models": [
@@ -161,6 +161,23 @@
             },
             "contextWindow": 262144,
             "maxTokens": 2621440
+          },
+          {
+            "id": "gemma4:26b",
+            "name": "Gemma 4 26B (Local — multimodal)",
+            "reasoning": false,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 131072,
+            "maxTokens": 1310720
           }
         ]
       }
@@ -248,6 +265,12 @@
           "params": {
             "streaming": false
           }
+        },
+        "ollama/gemma4:26b": {
+          "alias": "Gemma4",
+          "params": {
+            "streaming": false
+          }
         }
       },
       "workspace": "/home/node/workspace",
@@ -264,6 +287,13 @@
       "maxConcurrent": 4,
       "subagents": {
         "maxConcurrent": 8
+      },
+      "sandbox": {
+        "ssh": {
+          "target": "hanyang@172.18.0.1",
+          "workspaceRoot": "/home/hanyang/openclaw/workspace",
+          "strictHostKeyChecking": false
+        }
       }
     }
   },
@@ -306,6 +336,9 @@
         "enabled": true,
         "approvers": [
           8128617103
+        ],
+        "sessionFilter": [
+          "agent:main:telegram:direct:8128617103"
         ]
       },
       "enabled": true,

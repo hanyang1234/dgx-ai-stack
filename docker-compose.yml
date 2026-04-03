@@ -4,7 +4,8 @@
 # NVIDIA DGX Spark / Ubuntu host
 #
 # Services:
-#   open-webui       – Bundled Open WebUI + Ollama (GPU-accelerated)
+#   ollama           – Standalone Ollama (GPU-accelerated, updatable independently)
+#   open-webui       – Open WebUI (points to ollama service)
 #   openclaw-gateway – OpenClaw agent gateway (non-root, LAN-accessible)
 #
 # Shared network: ai-stack (bridge)
@@ -15,22 +16,19 @@
 #
 # PORT MAP
 #   0.0.0.0:12000 → open-webui:8080     Open WebUI (public on this host)
-#   127.0.0.1:11435 → open-webui:11434  Container Ollama API (localhost-only)
-#     NOTE: Host port 11434 is occupied by the native Ollama daemon.
-#           Container Ollama is exposed on 11435 for host-side tooling.
-#           Container-to-container traffic uses http://open-webui:11434 directly.
-#   127.0.0.1:18789 → openclaw-gateway:18789  OpenClaw gateway (localhost-only)
+#   0.0.0.0:11435 → ollama:11434        Ollama API (Tailscale + LAN accessible)
+#   0.0.0.0:18789 → openclaw-gateway:18789  OpenClaw gateway (token auth required)
 # =============================================================================
 
 services:
 
   # ---------------------------------------------------------------------------
-  # Open WebUI + Ollama (bundled image – NVIDIA DGX Spark playbook)
-  # Source: https://build.nvidia.com/spark/open-webui
+  # Ollama – standalone, GPU-accelerated, updatable independently of Open WebUI
+  # Models stored in named volume open-webui-ollama (preserved across updates)
   # ---------------------------------------------------------------------------
-  open-webui:
-    image: ghcr.io/open-webui/open-webui:v0.8.11-ollama
-    container_name: open-webui
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
     restart: unless-stopped
     deploy:
       resources:
@@ -40,26 +38,36 @@ services:
               count: all
               capabilities: [gpu]
     ports:
-      - "12000:8080"
-      # Container Ollama exposed on 11435 because host port 11434 is
-      # occupied by the native Ollama systemd service.
-      # Bound to 0.0.0.0 so Mac can reach it via Tailscale (100.x.x.x) directly.
+      # Exposed on all interfaces so Mac can reach it via Tailscale (100.x.x.x)
       - "0.0.0.0:11435:11434"
     volumes:
-      - open-webui:/app/backend/data
       - open-webui-ollama:/root/.ollama
     environment:
-      # Make Ollama listen on all interfaces inside the container so
-      # other containers on ai-stack can reach it at http://open-webui:11434
-      OLLAMA_HOST: "0.0.0.0:11434"
       # Only keep one model loaded at a time — prevents two 120b models from
       # competing for memory (each needs ~63 GiB on 128 GiB DGX Spark).
-      # When a cron job requests gpt-oss:120b, any currently-loaded model
-      # is evicted first. Slight model-switch latency in WebUI, but reliable.
       OLLAMA_MAX_LOADED_MODELS: "1"
       # Force CUDA v13 library selection for DGX Spark GB10 — prevents silent
       # CPU fallback on container restart (known Ollama issue on GB10 hardware).
       OLLAMA_LLM_LIBRARY: "cuda_v13"
+    networks:
+      - ai-stack
+
+  # ---------------------------------------------------------------------------
+  # Open WebUI – connects to standalone Ollama service
+  # ---------------------------------------------------------------------------
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: open-webui
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    ports:
+      - "12000:8080"
+    volumes:
+      - open-webui:/app/backend/data
+    environment:
+      # Point to standalone Ollama container
+      OLLAMA_BASE_URL: "http://ollama:11434"
       SCARF_NO_ANALYTICS: "true"
       DO_NOT_TRACK: "true"
       ANONYMIZED_TELEMETRY: "false"
@@ -73,15 +81,14 @@ services:
 
   # ---------------------------------------------------------------------------
   # OpenClaw Gateway
-  # Pinned to 2026.3.28 (>= 2026.1.29 required to avoid CVE-2026-25253)
   # Runs as user 'node' (non-root, baked into image)
   # ---------------------------------------------------------------------------
   openclaw-gateway:
-    image: ghcr.io/openclaw/openclaw:2026.3.28
+    image: ghcr.io/openclaw/openclaw:2026.4.1
     container_name: openclaw-gateway
     restart: unless-stopped
     depends_on:
-      - open-webui
+      - ollama
     ports:
       # Exposed on LAN for web UI access (token auth required)
       - "0.0.0.0:18789:18789"
@@ -104,8 +111,8 @@ services:
       OPENCLAW_GATEWAY_TOKEN: "${OPENCLAW_GATEWAY_TOKEN}"
       # Optional messaging integrations
       TELEGRAM_TOKEN: "${TELEGRAM_TOKEN:-}"
-      # Ollama provider base URL – uses internal Docker hostname, NOT localhost
-      OPENCLAW_OLLAMA_BASE_URL: "http://open-webui:11434/v1"
+      # Ollama provider base URL – uses standalone ollama container
+      OPENCLAW_OLLAMA_BASE_URL: "http://ollama:11434/v1"
     cap_drop:
       - NET_RAW
       - NET_ADMIN
