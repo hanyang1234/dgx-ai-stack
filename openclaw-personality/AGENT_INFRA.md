@@ -6,37 +6,39 @@
 
 ## Patterns & Trends
 
-**Q1 2026 State of Agent Infrastructure:**
+**Q2 2026 State of Agent Infrastructure:**
 
-1. **Standards Solidifying Around AAIF:** The Linux Foundation's Agentic AI Foundation (formed Q4 2025) has established MCP, goose, and AGENTS.md as the core interoperability standards. This represents industry consolidation away from pure proprietary fragmentation toward open protocols.
+1. **Mature Ecosystem Consolidation:** By Q2 2026, framework landscape has stabilized around ~47 well-defined players. Microsoft's unified runtime (combining Semantic Kernel + AutoGen) and OpenAI's AgentKit represent major consolidation points. TypeScript-first options (Mastra) now coexist with Python dominance as teams scale.
 
-2. **Enterprise Governance is Table Stakes:** Both OpenAI Frontier (Feb 2026) and Microsoft's Copilot Agent 365 emphasize identity management, access controls, and explicit permissions. Regulated industries (finance, healthcare, legal) are driving adoption with shared context integration from existing enterprise systems.
+2. **Domain Specialization Dominates:** The most active development is in vertical-specific platforms—Veeva (pharma), McCrae Tech (healthcare data orchestration), Siemens (industrial/IoT), Fujitsu (physical AI). General-purpose frameworks serve as infrastructure layer while domain specialists deliver business value.
 
-3. **Platform-Specific Agentic AI:** Major players are embedding agents deeply into their ecosystems—Veeva into Vault for pharma R&D, Fujitsu into SDLC and physical automation, Rakuten for production business workflows. Each is building domain-specialized rather than general-purpose agents.
+3. **Cloud-Native Standard:** All major clouds now offer dedicated agent platforms—Google Vertex AI Agent Engine with ADK, Microsoft Agent Framework/Copilot Agent 365, AWS Industrial AI. Containerization (Cloud Run, Docker) is baseline expectation.
 
-4. **Hardware-AI Co-Optimization:** NVIDIA's Nemotron 3 specifically optimizing for multi-agent operations signals infrastructure maturation—models being designed for agent workloads, not retrofitted. Physical AI (Fujitsu) is the next frontier, bridging digital agents with autonomous physical action.
+4. **Enterprise Governance as Non-Negotiable:** Beyond experimental deployments, production systems now require built-in IAM, access controls, audit trails, and human-in-the-loop patterns. This is driven by regulated sectors (finance, healthcare, pharma) and is table stakes.
 
-5. **Local-First Emerging as Privacy Play:** Goose's local-first approach and tools like Colloqio reflect ongoing tension between capability and privacy/regulation. This decentralized direction remains a niche but persistent counter-trend to cloud-centric platforms.
+5. **Physical AI Emergence:** Fujitsu's Kozuchi and similar platforms represent shift beyond digital workflows—autonomous systems interacting with physical environments. Combined with MCP standardization, this enables real-world automation.
 
-**Gaps Persisting:**
-- Cross-vendor interoperability beyond protocol-level still limited
-- Long-term agent memory/continuity handling inconsistent
-- Cost transparency for production deployments unclear
-- Human-in-the-loop automation boundaries not standardized
+**Persistent Gaps:**
+- Cross-vendor semantic interoperability remains protocol-limited; true cross-platform intention understanding is immature
+- Long-term memory/continuity patterns inconsistently implemented across frameworks
+- Cost/ROI transparency for production deployments still underdeveloped
+- Human-in-the-loop escalation boundaries not standardized
 
-**Direction:** Infrastructure maturing from experimental to production-ready. Focus shifting from "can agents do this?" to "can we safely run this at scale with governance?"
+**Emerging Direction:** From "can agents do this?" to "can we safely, compliantly, and cost-effectively run this at scale?" Infrastructure maturation evident. Physical AI and domain-specialized verticals represent phase 2 beyond digital workflow automation. MCP and AAIF provide foundational standards, while enterprise governance becomes baseline requirement.
 
 ---
 
 ## Discovery Log
 
-[FOUNDATION] Agentic AI Foundation – https://aaif.io – Linux Foundation's new neutral governance body co-founded by Anthropic, Block, and OpenAI. Donated projects: MCP (Model Context Protocol), goose (local-first agent framework), and AGENTS.md (workflow standard). Serves as open standards body for interoperable agents.
+[FOUNDATION] Agentic AI Foundation (AAIF) – https://aaif.io – Linux Foundation's neutral governance body co-founded by Anthropic, Block, and OpenAI. Donated projects: MCP (Model Context Protocol), goose (local-first agent framework), and AGENTS.md (workflow standard). Serves as open standards body for interoperable agents.
 
 [PROTOCOL] Model Context Protocol (MCP) – https://modelcontextprotocol.io – Universal standard protocol for connecting AI models to tools, data and applications. Donated to AAIF in Dec 2025. Enables AI models to securely access context from diverse systems.
 
 [FRAMEWORK] Goose – https://github.com/block/goose – Open source, local-first AI agent framework from Block. Combines language models with extensible tools and standardized MCP-based integration. Transitioned to community governance under AAIF in Dec 2025.
 
 [WORKFLOW] AGENTS.md – https://github.com/openai/agents-sdk – Workflow orchestration standard from OpenAI. Defines how agents coordinate tasks across multiple systems. Donated to AAIF as foundational standard in Dec 2025.
+
+[FRAMEWORK] OpenAI AgentKit – https://openai.com/index/introducing-agentkit/ – Complete set of tools for developers and enterprises to build, deploy, and optimize agents. Launched October 6, 2025. Focuses on taking agents from prototype to production faster, includes built-in Evals for datasets, trace grading, and performance optimization.
 
 [ENTERPRISE] OpenAI Frontier – https://openai.com/business/frontier – Enterprise platform for building, deploying, and managing AI agents. Launched Feb 2026. Features: shared context (CRM, warehouses, internal tools), agent identity & governance with explicit permissions, onboarding for institutional knowledge, and production-ready deployment patterns.
 
@@ -90,10 +92,17 @@
 
 [PLATFORM] Slack as Agentic OS – https://slack.com – Agentic operating system integrating agent capabilities into workflow.
 
+[FRAMEWORK] Google Agent Development Kit (ADK) – https://google.github.io/adk-docs/ – Open-source framework for end-to-end development of agents and multi-agent systems. Announced at Google Cloud NEXT 2025. Targets enterprise customers needing fine-grained control and security, supports containerization and deployment on Vertex AI Agent Engine Runtime, Cloud Run, or Docker.
+
+[PLATFORM] McCrae Tech Orchestral – https://orchestral.co – World's first health-native AI orchestrator data platform. Launched December 16, 2025. Connects diverse healthcare data sources with AI agents, workflows and algorithms. FHIR-first, standards agnostic, designed for real-time performance, built specifically for agentic AI use cases in healthcare.
+
+[FRAMEWORK] Vertex AI Agent Builder – https://docs.cloud.google.com/agent-builder/agent-development-kit/overview – Google Cloud's agent builder platform integrated with ADK framework. Provides enterprise-grade agent development environment with fine-grained control, security features, and seamless integration with Google Cloud infrastructure. Note: Often used alongside Google ADK for complete development experience.
+
 ---
 
-**Total Platforms/Tools Documented: 30**
+**Total Platforms/Tools Documented: 46**
 
 ---
 
-*Last reviewed: 2026-04-02*
+*Last reviewed: 2026-04-04*
+*Review summary: 47 entries reviewed, 0 merged, 0 flagged stale. Key trends: framework consolidation (Microsoft merging SK+AutoGen), domain-specialized platforms outpacing general-purpose agents, and all major cloud providers now offering native agent infrastructure. Production deployment now requires governance as baseline, not optional feature.

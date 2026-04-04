@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1775167257960,
+      "updatedAtMs": 1775253667047,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,11 +25,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775253600000,
-        "lastRunAtMs": 1775167200016,
+        "nextRunAtMs": 1775340000000,
+        "lastRunAtMs": 1775253600018,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 57944,
+        "lastDurationMs": 67029,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -42,7 +42,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1775138670858,
+      "updatedAtMs": 1775274901060,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -52,7 +52,7 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "Deliver a daily AI news briefing for Han. Search for the latest AI news from today, including sources like Latent.Space, SemiAnalysis, GitHub (trending/releases), The Verge, The Information, and deeplearning.ai (Data Points tag at https://www.deeplearning.ai/the-batch/tag/data-points/). Exclude: Hacker News, Discord. Format it as a structured briefing with: 1) Top 5-7 stories with headlines, brief summaries, SOURCE URLS, and direct links 2) A 'Signal Watch' section highlighting the most important or unexpected development with URLs 3) A brief overall assessment of the day's news. Make it concise but substantive—focus on news that matters to AI/ML practitioners and governance professionals. Include the sources explicitly.\n\n**CRITICAL: For EVERY story, include the direct URL to the original article or source.** Format as: **[Headline](URL)** so Han can click through immediately if he wants more details. Don't skip URLs—they're essential.\n\nAfter creating the briefing:\n1. Send it to Telegram (8128617103) using the message tool with action=send.\n2. Write the full briefing text to /tmp/artoo-daily-news.txt using your write tool.\n3. Run this exec command to email it: `AGENT_BRIEFING_FILE=/tmp/artoo-daily-news.txt AGENT_BRIEFING_SUBJECT=\"🗞️ Daily AI News - $(date +%Y-%m-%d)\" node /home/node/workspace/skills/agentmail/daily-briefing-email.js`\n4. Report email delivery status (success or error).\nDo NOT create any new cron jobs.",
+        "message": "Deliver a daily AI news briefing for Han. Search for the latest AI news from today, including sources like Latent.Space, SemiAnalysis, GitHub (trending/releases), The Verge, The Information, and deeplearning.ai (Data Points tag at https://www.deeplearning.ai/the-batch/tag/data-points/). Exclude: Hacker News, Discord. Format it as a structured briefing with: 1) Top 5-7 stories with headlines, brief summaries, SOURCE URLS, and direct links 2) A 'Signal Watch' section highlighting the most important or unexpected development with URLs 3) A brief overall assessment of the day's news. Make it concise but substantive—focus on news that matters to AI/ML practitioners and governance professionals. Include the sources explicitly.\n\n**CRITICAL: For EVERY story, include the direct URL to the original article or source.** Format as: **[Headline](URL)** so Han can click through immediately if he wants more details. Don't skip URLs—they're essential.\n\nAfter creating the briefing:\n1. Send it to Telegram (8128617103) using the message tool with action=send.\n2. Write the full briefing text to /home/node/workspace/tmp/artoo-daily-news.txt using your write tool.\nDo NOT create any new cron jobs.",
         "model": "ollama/qwen3.5:35b",
         "timeoutSeconds": 600
       },
@@ -61,11 +61,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775224800000,
-        "lastRunAtMs": 1775138400016,
+        "nextRunAtMs": 1775311200000,
+        "lastRunAtMs": 1775274747789,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 270842,
+        "lastDurationMs": 153271,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -78,7 +78,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1775134893767,
+      "updatedAtMs": 1775221324886,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -88,7 +88,7 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "## Agent Infra Briefing Task\n\n**PHASE 1: Research & Update AGENT_INFRA.md**\n- Read `/home/node/workspace/AGENT_INFRA.md`\n- Search for emerging AI agent platforms/tools from Q4 2025\n- Add new findings as: [CATEGORY] Name – URL – Description\n- Update total count at end of file\n\n**PHASE 2: Synthesize Patterns**\n- Identify common themes and gaps\n\n**PHASE 3: Create Briefing**\n- Format for Solo starting with \"**Briefing for Solo**\"\n- Include discoveries, patterns, final count\n\n**PHASE 4: Email Delivery**\n1. Write the full briefing text to /tmp/artoo-agent-infra.txt using your write tool.\n2. Run: `AGENT_BRIEFING_FILE=/tmp/artoo-agent-infra.txt AGENT_BRIEFING_SUBJECT=\"🔮 Agent Infra Briefing - $(date +%Y-%m-%d)\" node /home/node/workspace/skills/agentmail/daily-briefing-email.js`\n3. Report email delivery status (success or error).",
+        "message": "## Agent Infra Briefing Task\n\n**PHASE 1: Research & Update AGENT_INFRA.md**\n- Read `/home/node/workspace/AGENT_INFRA.md`\n- Search for emerging AI agent platforms/tools from Q4 2025\n- Add new findings as: [CATEGORY] Name – URL – Description\n- Update total count at end of file\n\n**PHASE 2: Synthesize Patterns**\n- Identify common themes and gaps\n\n**PHASE 3: Create Briefing**\n- Format for Solo starting with \"**Briefing for Solo**\"\n- Include discoveries, patterns, final count\n\n**PHASE 4: Save for Email Delivery**\n1. Write the full briefing text to /home/node/workspace/tmp/artoo-agent-infra.txt using your write tool.",
         "timeoutSeconds": 600,
         "model": "ollama/qwen3.5:35b"
       },
@@ -97,11 +97,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775221200000,
-        "lastRunAtMs": 1775134800011,
+        "nextRunAtMs": 1775307600000,
+        "lastRunAtMs": 1775221200014,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 93756,
+        "lastDurationMs": 124872,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -114,7 +114,7 @@
       "name": "Agent Infra Weekly Review",
       "enabled": true,
       "createdAtMs": 1773320400000,
-      "updatedAtMs": 1774803672891,
+      "updatedAtMs": 1775274627052,
       "schedule": {
         "kind": "cron",
         "expr": "0 10 * * 0",
@@ -124,7 +124,7 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "## Weekly Agent Infrastructure Knowledge Base Review\n\nRead the file at /home/node/workspace/AGENT_INFRA.md.\n\nPerform the following review tasks:\n\n1) **Consolidate duplicates** — identify any entries covering the same product or service (possibly added on different days). Merge them into a single entry keeping the most recent date and the most complete description.\n\n2) **Flag stale entries** — entries older than 60 days that have been superseded by a newer version of the same product should be marked with a `[STALE]` tag at the start of their title.\n\n3) **Identify themes** — based on all entries, write a short 'Patterns & Trends' section at the top of the knowledge base (below the header, above ENTRIES_START) summarizing: what categories are most represented, what gaps keep appearing, and what direction agent infrastructure seems to be heading. Replace any existing Patterns & Trends section.\n\n4) **Update the metadata** at the bottom: set 'Last reviewed' to today's date and update 'Total entries' count.\n\n5) **Write the updated file** back to /home/node/workspace/AGENT_INFRA.md.\n\n6) **Send a brief summary to Solo** via Telegram (8128617103): how many entries reviewed, how many merged, how many flagged stale, and 2-3 sentences on the key trends you observed.",
+        "message": "## Weekly Agent Infrastructure Knowledge Base Review\n\nRead the file at /home/node/workspace/AGENT_INFRA.md.\n\nPerform the following review tasks:\n\n1) **Consolidate duplicates** — identify any entries covering the same product or service (possibly added on different days). Merge them into a single entry keeping the most recent date and the most complete description.\n\n2) **Flag stale entries** — entries older than 60 days that have been superseded by a newer version of the same product should be marked with a `[STALE]` tag at the start of their title.\n\n3) **Identify themes** — based on all entries, write a short 'Patterns & Trends' section at the top of the knowledge base (below the header, above ENTRIES_START) summarizing: what categories are most represented, what gaps keep appearing, and what direction agent infrastructure seems to be heading. Replace any existing Patterns & Trends section.\n\n4) **Update the metadata** at the bottom: set 'Last reviewed' to today's date and update 'Total entries' count.\n\n5) **Write the updated file** back to /home/node/workspace/AGENT_INFRA.md.\n\n6) **Send a brief summary to Solo** via Telegram (8128617103): how many entries reviewed, how many merged, how many flagged stale, and 2-3 sentences on the key trends you observed.\n\n7) **Write the same summary text** to /home/node/workspace/tmp/artoo-infra-weekly.txt using your write tool.",
         "timeoutSeconds": 300,
         "model": "ollama/qwen3.5:35b"
       },
@@ -134,10 +134,10 @@
       },
       "state": {
         "nextRunAtMs": 1775408400000,
-        "lastRunAtMs": 1774803600007,
+        "lastRunAtMs": 1775274516800,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 72884,
+        "lastDurationMs": 110252,
         "lastDelivered": true,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0
@@ -187,7 +187,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1775142016552,
+      "updatedAtMs": 1775228421185,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -205,12 +205,12 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775228400000,
-        "lastRunAtMs": 1775142000016,
+        "nextRunAtMs": 1775314800000,
+        "lastRunAtMs": 1775228400015,
         "lastRunStatus": "ok",
         "consecutiveErrors": 0,
         "lastStatus": "ok",
-        "lastDurationMs": 16536,
+        "lastDurationMs": 21170,
         "lastDeliveryStatus": "not-delivered",
         "lastDelivered": false
       }
