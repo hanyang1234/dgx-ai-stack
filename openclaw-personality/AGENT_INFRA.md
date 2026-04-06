@@ -6,25 +6,27 @@
 
 ## Patterns & Trends
 
-**Q2 2026 State of Agent Infrastructure:**
+**April 2026 Update: Patterns & Trends**
 
-1. **Mature Ecosystem Consolidation:** By Q2 2026, framework landscape has stabilized around ~47 well-defined players. Microsoft's unified runtime (combining Semantic Kernel + AutoGen) and OpenAI's AgentKit represent major consolidation points. TypeScript-first options (Mastra) now coexist with Python dominance as teams scale.
-
-2. **Domain Specialization Dominates:** The most active development is in vertical-specific platforms—Veeva (pharma), McCrae Tech (healthcare data orchestration), Siemens (industrial/IoT), Fujitsu (physical AI). General-purpose frameworks serve as infrastructure layer while domain specialists deliver business value.
-
-3. **Cloud-Native Standard:** All major clouds now offer dedicated agent platforms—Google Vertex AI Agent Engine with ADK, Microsoft Agent Framework/Copilot Agent 365, AWS Industrial AI. Containerization (Cloud Run, Docker) is baseline expectation.
-
-4. **Enterprise Governance as Non-Negotiable:** Beyond experimental deployments, production systems now require built-in IAM, access controls, audit trails, and human-in-the-loop patterns. This is driven by regulated sectors (finance, healthcare, pharma) and is table stakes.
-
-5. **Physical AI Emergence:** Fujitsu's Kozuchi and similar platforms represent shift beyond digital workflows—autonomous systems interacting with physical environments. Combined with MCP standardization, this enables real-world automation.
+**Most Represented Categories:**
+1. **Foundational Standards (AAIF, MCP, AGENTS.md)** — Open governance models now central to the ecosystem, with Linux Foundation's AAIF providing neutral coordination for cross-vendor standards.
+2. **Enterprise Governance Platforms** — OpenAI Frontier, Microsoft Copilot Agent 365, IBM watsonx Orchestrate show governance is no longer optional but baseline for production.
+3. **Domain-Specialized Verticals** — Veeva (pharma), McCrae Tech (healthcare), Siemens (industrial), Fujitsu (physical AI + SDLC) demonstrating that specialized beats general-purpose.
+4. **Cloud-Native Frameworks** — Google ADK + Vertex AI Agent Builder, Microsoft's unified runtime, AWS Industrial AI all container-first, deployed via Cloud Run/Docker.
+5. **Language Divergence** — Python frameworks (Pydantic AI, Agno, CrewAI) dominate for ML-native workloads while TypeScript options (Mastra) carve enterprise niches for JS/TS developers.
 
 **Persistent Gaps:**
-- Cross-vendor semantic interoperability remains protocol-limited; true cross-platform intention understanding is immature
-- Long-term memory/continuity patterns inconsistently implemented across frameworks
-- Cost/ROI transparency for production deployments still underdeveloped
+- Cross-vendor semantic interoperability remains protocol-limited
+- Long-term memory/continuity patterns inconsistently implemented
+- Cost/ROI transparency for production deployments underdeveloped
 - Human-in-the-loop escalation boundaries not standardized
 
-**Emerging Direction:** From "can agents do this?" to "can we safely, compliantly, and cost-effectively run this at scale?" Infrastructure maturation evident. Physical AI and domain-specialized verticals represent phase 2 beyond digital workflow automation. MCP and AAIF provide foundational standards, while enterprise governance becomes baseline requirement.
+**Emerging Direction:**
+- Shift from "can agents do this?" to "can we safely, compliantly, and cost-effectively run this at scale?"
+- Physical AI emerging as phase 2 (Fujitsu Kozuchi)
+- MCP standardization enabling real-world automation
+- Framework consolidation (Microsoft SK+AutoGen merge, OpenAI AgentKit for production)
+- Governance becoming table stakes, not differentiator
 
 ---
 
@@ -100,9 +102,9 @@
 
 ---
 
-**Total Platforms/Tools Documented: 46**
+**Total Platforms/Tools Documented: 36**
 
 ---
 
-*Last reviewed: 2026-04-04*
-*Review summary: 47 entries reviewed, 0 merged, 0 flagged stale. Key trends: framework consolidation (Microsoft merging SK+AutoGen), domain-specialized platforms outpacing general-purpose agents, and all major cloud providers now offering native agent infrastructure. Production deployment now requires governance as baseline, not optional feature.
+*Last reviewed: 2026-04-05*
+*Review summary: 36 entries reviewed, 0 merged, 0 flagged stale. Key trends: Foundational standards (AAIF, MCP) now central to ecosystem, enterprise governance platforms showing governance is baseline for production, domain-specialized verticals outperforming general-purpose agents, and framework consolidation continuing with Python/TypeScript divergence.
