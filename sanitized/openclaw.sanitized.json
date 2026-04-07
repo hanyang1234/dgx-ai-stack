@@ -1,7 +1,7 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.3.11",
-    "lastTouchedAt": "2026-03-21T00:52:34.359Z"
+    "lastTouchedVersion": "2026.4.5",
+    "lastTouchedAt": "2026-04-07T22:14:52.901Z"
   },
   "wizard": {
     "lastRunAt": "2026-02-17T05:39:51.665Z",
@@ -404,6 +404,15 @@
         "enabled": false
       },
       "telegram": {
+        "enabled": true
+      },
+      "ollama": {
+        "enabled": true
+      },
+      "anthropic": {
+        "enabled": true
+      },
+      "openai": {
         "enabled": true
       }
     }

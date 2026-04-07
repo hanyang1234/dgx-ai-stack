@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1775512826705,
+      "updatedAtMs": 1775599292281,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,11 +25,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775599200000,
-        "lastRunAtMs": 1775512800008,
+        "nextRunAtMs": 1775685600000,
+        "lastRunAtMs": 1775599200006,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 26697,
+        "lastDurationMs": 92275,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -42,7 +42,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1775535292974,
+      "updatedAtMs": 1775571000047,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -61,15 +61,15 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775570400000,
-        "lastRunAtMs": 1775535022626,
+        "nextRunAtMs": 1775656800000,
+        "lastRunAtMs": 1775570400006,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 270348,
-        "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 1,
-        "lastDelivered": true,
-        "lastError": "⚠️ ✉️ Message failed"
+        "lastDurationMs": 600041,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 2,
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -79,7 +79,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1775535022593,
+      "updatedAtMs": 1775567179404,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -98,13 +98,13 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775566800000,
-        "lastRunAtMs": 1775534775723,
+        "nextRunAtMs": 1775653200000,
+        "lastRunAtMs": 1775566800010,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 246870,
+        "lastDurationMs": 379394,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 1,
+        "consecutiveErrors": 2,
         "lastDelivered": true,
         "lastError": "⚠️ 📝 Edit: `in ~/workspace/AGENT_INFRA.md` failed"
       }
@@ -190,7 +190,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1775487620961,
+      "updatedAtMs": 1775574023051,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -208,12 +208,12 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775574000000,
-        "lastRunAtMs": 1775487600012,
+        "nextRunAtMs": 1775660400000,
+        "lastRunAtMs": 1775574000009,
         "lastRunStatus": "ok",
         "consecutiveErrors": 0,
         "lastStatus": "ok",
-        "lastDurationMs": 20949,
+        "lastDurationMs": 23042,
         "lastDeliveryStatus": "not-delivered",
         "lastDelivered": false
       }

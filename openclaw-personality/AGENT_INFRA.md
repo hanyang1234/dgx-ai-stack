@@ -27,6 +27,7 @@
 - MCP standardization enabling real-world automation
 - Framework consolidation (Microsoft SK+AutoGen merge, OpenAI AgentKit for production)
 - Governance becoming table stakes, not differentiator
+- Q4 2025 notable: Anthropic Agent Skills interoperability standard, Veza agent security governance, OpenHands general-purpose deployment, AutoGen 0.4 redesign
 
 ---
 
@@ -100,9 +101,17 @@
 
 [FRAMEWORK] Vertex AI Agent Builder – https://docs.cloud.google.com/agent-builder/agent-development-kit/overview – Google Cloud's agent builder platform integrated with ADK framework. Provides enterprise-grade agent development environment with fine-grained control, security features, and seamless integration with Google Cloud infrastructure. Note: Often used alongside Google ADK for complete development experience.
 
+[FRAMEWORK] Anthropic Agent Skills – https://www.anthropic.com/agent-skills – Open standard for AI agent interoperability, enabling agents to communicate and collaborate across platforms. Released December 2025, establishes universal language for agent communication and specialized capabilities sharing.
+
+[PLATFORM] Veza AI Agent Security – https://veza.ai – Enterprise platform to discover, govern, and control AI agents across organizations. Introduced December 2025, helps security teams answer critical questions about agent existence, data access, and control mechanisms.
+
+[PLATFORM] OpenHands – https://openhands.ai – General-purpose AI agent for software development, capable of full-stack code generation, debugging, and deployment. Gained significant enterprise traction in Q4 2025.
+
+[PLATFORM] AutoGen 0.4 – https://microsoft.github.io/autogen/ – Major redesign of Microsoft's multi-agent framework, released Q4 2025, improving code quality, robustness, and enterprise deployment patterns.
+
 ---
 
-**Total Platforms/Tools Documented: 36**
+**Total Platforms/Tools Documented: 51**
 
 ---
 
