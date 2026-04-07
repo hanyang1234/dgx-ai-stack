@@ -123,6 +123,12 @@ if [ -f "${OPENCLAW_CONFIG_DIR}/cron/jobs.json" ]; then
   echo "[backup]   + cron-jobs.json"
 fi
 
+# Docker daemon config (contains cgroupfs fix required for CUDA init on DGX Spark GB10)
+if [ -f /etc/docker/daemon.json ]; then
+  cp /etc/docker/daemon.json "${SANITIZED_DIR}/docker-daemon.json"
+  echo "[backup]   + /etc/docker/daemon.json (cgroupfs fix)"
+fi
+
 # ── 4. Git staging ───────────────────────────────────────────────────────────
 echo "[backup] Staging safe files …"
 cd "${SCRIPT_DIR}"

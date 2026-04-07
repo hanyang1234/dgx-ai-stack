@@ -7,112 +7,110 @@
 ## Stack Overview
 
 ```
-HOST: NVIDIA DGX Spark (Ubuntu)
-│
-│  Native processes (host, NOT Docker):
-│  ├── ollama serve          :11434  (native Ollama – has 2 of 4 models)
-│  └── (openclaw-gateway disabled – Docker manages it now)
+HOST: NVIDIA DGX Spark GB10 (Ubuntu)
+│  NVIDIA driver: 580.142 | nvidia-container-toolkit: v1.19.0
+│  Docker cgroup driver: cgroupfs (required for CUDA init — see Troubleshooting)
+│  Tailscale IP: 100.105.68.67
 │
 │  Docker network: ai-stack (bridge)
 │  │
-│  ├── open-webui  (ghcr.io/open-webui/open-webui:ollama)
-│  │   ├── Open WebUI         0.0.0.0:12000 → :8080     (public on this host)
-│  │   ├── Ollama API         127.0.0.1:11435 → :11434  (localhost-only)
-│  │   ├── Volume: open-webui            → /app/backend/data
-│  │   └── Volume: open-webui-ollama     → /root/.ollama
+│  ├── ollama  (ollama/ollama:latest, v0.20.0+)
+│  │   ├── Ollama API         0.0.0.0:11435 → :11434   (LAN + Tailscale accessible)
+│  │   ├── Volume: open-webui-ollama        → /root/.ollama  (all model weights)
+│  │   └── Env: OLLAMA_LLM_LIBRARY=cuda_v13 (required for GB10 CUDA init)
 │  │
-│  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:2026.3.11)
-│      ├── Gateway            0.0.0.0:18789 → :18789    (LAN-accessible, token auth)
-│      ├── Bind: ~/openclaw-config        → /home/node/.openclaw
-│      └── Bind: ~/openclaw/workspace     → /home/node/workspace
+│  ├── open-webui  (ghcr.io/open-webui/open-webui:latest)
+│  │   ├── Open WebUI         0.0.0.0:12000 → :8080
+│  │   ├── Volume: open-webui              → /app/backend/data
+│  │   └── Env: OLLAMA_BASE_URL=http://ollama:11434
+│  │
+│  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:2026.4.1)
+│      ├── Gateway            0.0.0.0:18789 → :18789   (LAN, token auth)
+│      ├── Bind: ~/openclaw-config          → /home/node/.openclaw
+│      └── Bind: ~/openclaw/workspace       → /home/node/workspace
 │
 │  Internal traffic (ai-stack, never leaves Docker):
-│      openclaw-gateway → open-webui:11434  (Ollama API, native format)
+│      openclaw-gateway → ollama:11434      (Ollama API)
+│      open-webui       → ollama:11434      (Ollama API)
 ```
 
 ### Port Map
 
 | Port | Bind | Service | Visible to |
 |------|------|---------|------------|
-| `12000` | `0.0.0.0` | Open WebUI | Public on host |
-| `11434` | `0.0.0.0` | **Native** Ollama (host process) | Public on host |
-| `11435` | `127.0.0.1` | Container Ollama (inside open-webui) | Localhost only |
+| `12000` | `0.0.0.0` | Open WebUI | LAN / Tailscale |
+| `11435` | `0.0.0.0` | Ollama API | LAN / Tailscale (`100.105.68.67:11435`) |
 | `18789` | `0.0.0.0` | OpenClaw gateway | LAN (token auth required) |
 
-> **Port 11434 note:** The host's native Ollama daemon occupies `0.0.0.0:11434`.
-> The bundled Ollama inside the open-webui container is accessible from other containers via
-> `http://open-webui:11434` (internal Docker network), and from the host at `127.0.0.1:11435`.
+> **Why separate Ollama container:** The bundled `open-webui:ollama` image caps Ollama at
+> v0.18.2, which predates Gemma 4 support. Splitting into `ollama/ollama:latest` allows
+> independent Ollama updates. The `open-webui-ollama` named volume is shared between both
+> containers so all downloaded models are preserved.
 
 ---
 
-## Ollama / Open WebUI
+## Ollama
 
-**Based on:** [NVIDIA DGX Spark playbook](https://build.nvidia.com/spark/open-webui)
+**Container:** `ollama/ollama:latest` (standalone, v0.20.0+)
 
-**Why the bundled image:** The `ghcr.io/open-webui/open-webui:ollama` image bundles Ollama and
-Open WebUI in a single container, which is the recommended approach for the DGX Spark. Ollama
-runs as a subprocess managed by the Open WebUI startup script. This means:
-- Ollama does not have a separate container or image to manage.
-- Models downloaded via the WebUI are stored in the `open-webui-ollama` volume.
-- Ollama is accessible from other Docker containers at `http://open-webui:11434`.
-- The `OLLAMA_HOST=0.0.0.0:11434` env var is required to make Ollama bind to all interfaces
-  inside the container (default is loopback-only), enabling cross-container access.
-- `OLLAMA_MAX_LOADED_MODELS=1` limits Ollama to one model in memory at a time. Each 120b model
-  requires ~63 GiB. Without this limit, a model left warm from Open WebUI use can prevent
-  Artoo's cron jobs from loading `gpt-oss:120b` (OOM error). With this set, Ollama evicts
-  the current model before loading a new one. Tradeoff: model switching in Open WebUI has a
-  20–30s reload delay instead of instant.
+**Critical env vars:**
+- `OLLAMA_LLM_LIBRARY=cuda_v13` — forces the correct CUDA library for GB10. Without this, CUDA init is non-deterministic and models may silently fall back to CPU.
+- `OLLAMA_MAX_LOADED_MODELS=1` — limits to one model in memory at a time. Each 120b model needs ~63 GiB of the 128 GiB unified memory. Without this, a warm model from Open WebUI blocks Artoo's cron jobs from loading a different large model.
+
+**Host-level requirement:** Docker must use `cgroupfs` cgroup driver (not `systemd`). Set in `/etc/docker/daemon.json`:
+```json
+{"userland-proxy": false, "exec-opts": ["native.cgroupdriver=cgroupfs"]}
+```
+This is the decisive fix for non-deterministic CUDA device detection on GB10. A copy is committed to `sanitized/docker-daemon.json`. After any OS reinstall, restore this before starting the stack.
 
 ### Named Volumes
 
-| Volume | Container Path | Contents |
-|--------|---------------|---------|
-| `open-webui` | `/app/backend/data` | WebUI SQLite database, user settings, uploaded files |
-| `open-webui-ollama` | `/root/.ollama` | All downloaded Ollama model weights |
+| Volume | Container | Path | Contents |
+|--------|-----------|------|---------|
+| `open-webui` | open-webui | `/app/backend/data` | WebUI database, user settings |
+| `open-webui-ollama` | ollama + open-webui | `/root/.ollama` | All model weights (~200 GB+) |
 
 ### Pulling new Ollama models
 
-**Via Open WebUI (recommended):**
-1. Open `http://localhost:12000`
-2. Admin → Models → Pull from Ollama.com
-
-**Via CLI:**
 ```bash
-docker exec open-webui ollama pull llama3.3
-docker exec open-webui ollama list
+docker exec ollama ollama pull gemma4:26b
+docker exec ollama ollama list
 ```
 
-### Updating Open WebUI without losing models
+### Updating Ollama
+
+```bash
+docker compose pull ollama
+docker compose up -d --no-deps ollama
+docker exec ollama ollama list   # verify models still present
+```
+
+### Updating Open WebUI
 
 ```bash
 ./update-webui.sh
 ```
-This pulls the latest image, recreates the container, and verifies all models are intact.
-The volumes (`open-webui`, `open-webui-ollama`) are never deleted by this script.
+
+## Open WebUI
+
+Points to the standalone Ollama container via `OLLAMA_BASE_URL=http://ollama:11434`.
+Accessible at `http://192.168.4.45:12000` on LAN.
 
 ---
 
 ## OpenClaw
 
 ### Image version
-Pinned to `ghcr.io/openclaw/openclaw:2026.3.11`. Do **not** upgrade to v2026.3.12 or v2026.3.13
-— both crash on startup with:
-```
-ReferenceError: Cannot access 'ANTHROPIC_MODEL_ALIASES' before initialization
-```
-This is an Ollama provider plugin bug. Monitor for v2026.3.14+.
+Pinned to `ghcr.io/openclaw/openclaw:2026.4.1` (current latest as of 2026-04-04).
 
-The minimum version to avoid **CVE-2026-25253** (remote code execution via malformed provider
-response) is v2026.1.29.
-
-To update (only when a safe version is confirmed):
+To update:
 ```bash
 ./update.sh
 ```
 
 ### How Ollama models are wired in
 
-OpenClaw connects to the Ollama inside `open-webui` via the internal `ai-stack` Docker network.
+OpenClaw connects to the standalone `ollama` container via the internal `ai-stack` Docker network.
 The provider block in `~/openclaw-config/openclaw.json`:
 
 ```json5
@@ -120,9 +118,9 @@ The provider block in `~/openclaw-config/openclaw.json`:
   models: {
     providers: {
       ollama: {
-        baseUrl: "http://open-webui:11434",   // internal Docker hostname
-        apiKey: "ollama-local",               // any value – Ollama ignores it
-        api: "ollama",                        // uses native /api/chat (full tool support)
+        baseUrl: "http://ollama:11434",   // standalone ollama container
+        apiKey: "ollama-local",
+        api: "ollama",                    // native /api/chat (full tool support)
         models: [...]
       }
     }
@@ -130,38 +128,33 @@ The provider block in `~/openclaw-config/openclaw.json`:
 }
 ```
 
-**Why native API (`api: "ollama"`) instead of OpenAI-compat?**
-The native Ollama API (`/api/chat`) fully supports streaming + tool calling simultaneously.
-The OpenAI-compatible endpoint (`/v1/chat/completions`) may not support both at once.
-
 ### Configured Ollama models
 
-| OpenClaw model ID | Name | GPU? | Size | Role |
+| OpenClaw model ID | Alias | GPU? | Size | Role |
 |---|---|---|---|---|
-| `ollama/gpt-oss:20b` | GPT-OSS 20B | CPU only† | 16 GB | **Primary** — interactive chat |
-| `ollama/qwen3.5:35b` | Qwen3.5 35B | GPU ✓ | 22 GB | **Cron jobs** — GPU-accelerated |
-| `ollama/gpt-oss:120b` | GPT-OSS 120B | CPU only† | 61 GB | Large reasoning (too slow for cron) |
-| `ollama/qwen3.5:122b-a10b-q4_K_M` | Qwen3.5 122B MoE | GPU ✓ | 76 GB | Large MoE |
-| `ollama/nemotron-cascade-2:latest` | Nemotron Cascade 2 | GPU ✓ | ~50 GB | Fast MoE |
-| `ollama/nemotron-3-super:120b` | Nemotron-3 Super | GPU ✓ | ~65 GB | Large Nemotron |
-| `ollama/qwen3-coder:latest` | Qwen3-Coder | GPU ✓ | 18 GB | Coding tasks |
-| `ollama/nemotron-3-nano:latest` | Nemotron-3 Nano | GPU ✓ | 24 GB | Reasoning (not primary) |
+| `ollama/qwen3.5:9b` | Qwen9B | GPU ✓ | 6.6 GB | **Default** — interactive chat |
+| `ollama/qwen3.5:35b` | Qwen35 | GPU ✓ | 23 GB | Cron jobs (Gap Scorer, Implementer, Weekly Review) |
+| `ollama/nemotron-3-super:120b` | Nemotron-Super | GPU ✓ | 86 GB | Daily AI briefings |
+| `ollama/qwen3.5:122b-a10b-q4_K_M` | Qwen122B | GPU ✓ | 81 GB | Large MoE |
+| `ollama/nemotron-cascade-2:latest` | Cascade2 | GPU ✓ | 24 GB | Fast MoE, reasoning |
+| `ollama/gemma4:26b` | Gemma4 | GPU ✓ | 17 GB | Multimodal |
+| `ollama/qwen3-coder:latest` | local-coder | GPU ✓ | 18 GB | Coding tasks |
+| `ollama/nemotron-3-nano:latest` | Nemotron-Chat | GPU ✓ | 24 GB | Thinking mode |
+| `ollama/gpt-oss:20b` | local-fast | CPU only† | 13 GB | Subagents |
+| `ollama/gpt-oss:120b` | local-large | CPU only† | 65 GB | Too slow for cron |
 
-† **gpt-oss (MXFP4) models run CPU-only** in Ollama v0.17.7. They do not offload to GPU regardless
-of available VRAM. gpt-oss:20b is fast enough for short interactive responses (~3s); gpt-oss:120b
-takes 10+ minutes on CPU for long-form tasks and will timeout cron jobs.
+† **gpt-oss (MXFP4) models run CPU-only** — do not offload to GPU regardless of VRAM.
 
 Context window: 65,536 tokens for most models; 131,072 for Nemotron-3 Nano; 262,144 for Cascade-2 and Qwen 122B.
 
 ### Primary model
 
-**GPT-OSS 20B** (`ollama/gpt-oss:20b`) is the primary model for interactive chat.
-**Qwen3.5 35B** (`ollama/qwen3.5:35b`) is the model used by all cron jobs.
-Fallbacks (in order): `anthropic/claude-opus-4-6` → `anthropic/claude-sonnet-4-6` → `openai/gpt-5.1-codex`.
+**Qwen3.5 9B** (`ollama/qwen3.5:9b`) — default interactive chat (fast, 6.6 GB).
+**Nemotron-3 Super 120B** — Daily AI News and Agent Infra briefing cron jobs.
+**Qwen3.5 35B** — all other cron jobs.
+Fallbacks: `anthropic/claude-opus-4-6` → `anthropic/claude-sonnet-4-6` → `openai/gpt-5.1-codex`.
 
-> **Note on Nemotron thinking mode:** Nemotron-3 with `thinking: true` leaks chain-of-thought
-> reasoning to Telegram messages. It is available as `ollama/nemotron-3-nano:latest` but should
-> only be used for isolated agent tasks, not as the primary chat model.
+**Switch model in chat:** say "use Gemma4" or type `/model ollama/gemma4:26b`.
 
 ### How to switch the active model
 
@@ -482,8 +475,8 @@ docker compose logs openclaw-gateway --tail 20 # no errors
 | Switch OpenClaw model | `openclaw models set ollama/gpt-oss:120b` |
 | View OpenClaw logs | `docker compose logs -f openclaw-gateway` |
 | View Open WebUI logs | `docker compose logs -f open-webui` |
-| Pull new Ollama model | `docker exec open-webui ollama pull <model>` |
-| List pulled Ollama models | `docker exec open-webui ollama list` |
+| Pull new Ollama model | `docker exec ollama ollama pull <model>` |
+| List pulled Ollama models | `docker exec ollama ollama list` |
 | Open OpenClaw dashboard | `openclaw dashboard` |
 | Check gateway health | `docker compose ps` |
 | List skills | `docker compose exec openclaw-gateway openclaw skills list` |
@@ -571,30 +564,42 @@ docker exec open-webui ollama show gpt-oss:20b --modelfile | grep context
 
 ### CUDA not initializing after container restart
 
-Symptom: all models show `offloaded 0/N layers to GPU` in `docker logs open-webui`, responses
-take 1+ minute even for a one-word prompt, and you see:
-```
-ggml_cuda_init: failed to initialize CUDA: no CUDA-capable device is detected
-```
+**Status: RESOLVED (2026-04-01).** Two permanent fixes are in place. This section documents
+the root cause, the fixes, and what to do if symptoms ever recur.
 
-Cause: non-deterministic CUDA initialization race in the NVIDIA container toolkit. Happens
-intermittently on first `open-webui` restart; not every time.
+**Symptoms:**
+- `ollama ps` shows `100% CPU` instead of `100% GPU`
+- `docker logs ollama` shows `offloaded 0/N layers to GPU`
+- Responses take 60+ seconds for a one-word prompt
+- Log line: `ggml_cuda_init: failed to initialize CUDA: no CUDA-capable device is detected`
 
-Fix: restart `open-webui` a **second** time:
+**Root cause:** Non-deterministic CUDA device detection in Ollama's runner process inside Docker
+on the NVIDIA GB10 SoC. Known platform issue (NVIDIA forums #353683, #355624, #359196, #352743).
+No official NVIDIA incident ID.
+
+**Applied fixes (both must be in place):**
+
+1. **`OLLAMA_LLM_LIBRARY=cuda_v13`** in `docker-compose.yml` — forces the correct CUDA library
+   for GB10. Without this, Ollama may select the wrong library on startup.
+
+2. **Docker cgroup driver = `cgroupfs`** in `/etc/docker/daemon.json`:
+   ```json
+   {"userland-proxy": false, "exec-opts": ["native.cgroupdriver=cgroupfs"]}
+   ```
+   This is the decisive fix. Switching from `systemd` to `cgroupfs` resolved the non-deterministic
+   init. After this change, 100% GPU on every cold start. A copy is committed to
+   `sanitized/docker-daemon.json` — restore it after any OS reinstall.
+
+**To verify GPU is active:**
 ```bash
-docker restart open-webui
-sleep 20
-# Verify GPU is active — should show CUDA.0.USE_GRAPHS=1 and offloaded N/N layers
-docker logs open-webui 2>&1 | grep -E "USE_GRAPHS|offloading"
+docker exec ollama ollama ps
+# Should show: 100% GPU
 ```
 
-Quick check:
+**If symptoms recur (fallback fix):**
 ```bash
-curl -s http://127.0.0.1:11435/api/generate \
-  -H "Content-Type: application/json" \
-  -d '{"model":"qwen3.5:35b","prompt":"hi","stream":false}' | python3 -c \
-  "import sys,json; d=json.load(sys.stdin); print('Load:', round(d.get('load_duration',0)/1e9,1),'s')"
-# GPU: ~7s. CPU (broken): 60s+ or timeout
+docker restart ollama && docker restart ollama
+# Double restart sometimes recovers GPU init
 ```
 
 ### Ollama OOM — model requires more memory than available

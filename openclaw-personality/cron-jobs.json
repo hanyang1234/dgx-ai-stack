@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1775426520069,
+      "updatedAtMs": 1775512826705,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,15 +25,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775512800000,
-        "lastRunAtMs": 1775426400015,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 120054,
-        "lastDeliveryStatus": "not-requested",
-        "consecutiveErrors": 2,
-        "lastErrorReason": "timeout",
-        "lastError": "cron: job execution timed out"
+        "nextRunAtMs": 1775599200000,
+        "lastRunAtMs": 1775512800008,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 26697,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     },
     {
@@ -43,7 +42,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1775410380399,
+      "updatedAtMs": 1775535292974,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -54,7 +53,7 @@
       "payload": {
         "kind": "agentTurn",
         "message": "Deliver a daily AI news briefing for Han. Search for the latest AI news from today, including sources like Latent.Space, SemiAnalysis, GitHub (trending/releases), The Verge, The Information, and deeplearning.ai (Data Points tag at https://www.deeplearning.ai/the-batch/tag/data-points/). Exclude: Hacker News, Discord. Format it as a structured briefing with: 1) Top 5-7 stories with headlines, brief summaries, SOURCE URLS, and direct links 2) A 'Signal Watch' section highlighting the most important or unexpected development with URLs 3) A brief overall assessment of the day's news. Make it concise but substantive—focus on news that matters to AI/ML practitioners and governance professionals. Include the sources explicitly.\n\n**CRITICAL: For EVERY story, include the direct URL to the original article or source.** Format as: **[Headline](URL)** so Han can click through immediately if he wants more details. Don't skip URLs—they're essential.\n\n**Research rigor (researching-with-confidence skill)**: For each story, score its confidence — HIGH (3+ independent sources corroborate), MEDIUM (2 sources or 1 strong source), LOW (single source or contradicted). Flag any story where all sources trace to a single original (echo chamber risk). Do not include LOW confidence stories unless flagged with ⚠️.\n\n**Fact check**: Flag any story that appears fabricated, suspiciously vague, or lacks a verifiable primary source with ⚠️ UNVERIFIED.\n\n**Devil's Advocate — AI Agent Infrastructure framing**: For any story about AI agent infrastructure (frameworks, platforms, orchestration tools, MCP, multi-agent systems, enterprise agent deployments), apply the full devils-advocate skill:\n- Identify 2-3 hidden assumptions in how the story frames the need for agent infrastructure\n- Steelman the counter-argument: who benefits from this framing? Is the problem real or vendor-manufactured?\n- Find the biggest blind spot: what costs, risks, or alternatives is the coverage not mentioning?\n- Check for model bias: am I defaulting to accepting agent infrastructure as inherently valuable?\n- Deliver a verdict: SIGNAL (genuine development) / HYPE (vendor-driven narrative) / MIXED\n- Add one sentence of constructive context Han should keep in mind\nPresent this as a '🔍 Infrastructure Framing Check' section after the main stories.\n\nAfter creating the briefing:\n1. Send it to Telegram (8128617103) using the message tool with action=send.\n2. Write the full briefing text to /home/node/workspace/tmp/artoo-daily-news.txt using your write tool.\nDo NOT create any new cron jobs.",
-        "model": "ollama/qwen3.5:35b",
+        "model": "ollama/nemotron-3-super:120b",
         "timeoutSeconds": 600
       },
       "delivery": {
@@ -62,14 +61,15 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775484000000,
-        "lastRunAtMs": 1775410033092,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 347307,
+        "nextRunAtMs": 1775570400000,
+        "lastRunAtMs": 1775535022626,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 270348,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": true
+        "consecutiveErrors": 1,
+        "lastDelivered": true,
+        "lastError": "⚠️ ✉️ Message failed"
       }
     },
     {
@@ -79,7 +79,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1775410033084,
+      "updatedAtMs": 1775535022593,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -91,21 +91,22 @@
         "kind": "agentTurn",
         "message": "## Agent Infra Briefing Task\n\n**PHASE 1: Research & Update AGENT_INFRA.md**\n- Read `/home/node/workspace/AGENT_INFRA.md`\n- Search for emerging AI agent platforms/tools from Q4 2025\n- Add new findings as: [CATEGORY] Name – URL – Description\n- Update total count at end of file\n\n**PHASE 2: Synthesize Patterns**\n- Identify common themes and gaps\n\n**PHASE 3: Create Briefing**\n- Format for Solo starting with \"**Briefing for Solo**\"\n- Include discoveries, patterns, final count\n\n**PHASE 4: Save for Email Delivery**\n1. Write the full briefing text to /home/node/workspace/tmp/artoo-agent-infra.txt using your write tool.",
         "timeoutSeconds": 600,
-        "model": "ollama/qwen3.5:35b"
+        "model": "ollama/nemotron-3-super:120b"
       },
       "delivery": {
         "mode": "announce",
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775480400000,
-        "lastRunAtMs": 1775409967246,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 65838,
+        "nextRunAtMs": 1775566800000,
+        "lastRunAtMs": 1775534775723,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 246870,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": true
+        "consecutiveErrors": 1,
+        "lastDelivered": true,
+        "lastError": "⚠️ 📝 Edit: `in ~/workspace/AGENT_INFRA.md` failed"
       }
     },
     {
@@ -189,7 +190,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1775401222019,
+      "updatedAtMs": 1775487620961,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -207,12 +208,12 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775487600000,
-        "lastRunAtMs": 1775401200013,
+        "nextRunAtMs": 1775574000000,
+        "lastRunAtMs": 1775487600012,
         "lastRunStatus": "ok",
         "consecutiveErrors": 0,
         "lastStatus": "ok",
-        "lastDurationMs": 22006,
+        "lastDurationMs": 20949,
         "lastDeliveryStatus": "not-delivered",
         "lastDelivered": false
       }
