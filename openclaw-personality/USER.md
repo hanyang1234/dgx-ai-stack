@@ -4,6 +4,8 @@
 - **What to call them:** Solo
 - **Pronouns:** _(unknown)_
 - **Timezone:** PST (UTC-8) — always use PST for dates/times, never UTC
+- **Email:** han.yang123@yahoo.com
+- **Telegram chat ID:** 8128617103
 - **Notes:** First contact 2026-03-03. Named me Artoo.
 
 ## Context

@@ -217,6 +217,90 @@
         "lastDeliveryStatus": "not-delivered",
         "lastDelivered": false
       }
+    },
+    {
+      "id": "a3f11d19-fbbf-4adc-9974-dfec69c8c3f0",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "Stock Recommendation Daily",
+      "description": "Daily stock recommendation report via email and Telegram",
+      "enabled": true,
+      "createdAtMs": 1775630212711,
+      "updatedAtMs": 1775630212711,
+      "schedule": {
+        "expr": "0 5 * * *",
+        "kind": "cron",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "## Stock Recommendation — Daily Report\n\n**Task**: Generate and send the daily stock recommendation report.\n\n## Step 1 — Generate the Report\n1. Read `/home/node/workspace/skills/recommend-stocks/report/daily_<TODAY>.json` (use today's date)\n2. Format the report with:\n   - Date and time\n   - Market regime (BULL/BEAR/SIDeways)\n   - Quality gates status\n   - Top BUY picks with ticker, price, composite score, 1-day return, RSI, trend score\n   - Brief summary of all stocks\n\n## Step 2 — Send via Email\nRun:\n```bash\nnode -e 'const {AgentMailClient}=require(\"/home/node/workspace/skills/agentmail/node_modules/agentmail\");const c=new AgentMailClient({apiKey:process.env.AGENTMAIL_API_KEY});c.inboxes.messages.send(\"artooopenclaw@agentmail.to\",{to:[\"han.yang123@yahoo.com\"],subject:\"Daily Stock Recommendation Report - <DATE>\",text:<REPORT TEXT>}).then(r=>console.log(\"sent\",r.messageId)).catch(e=>console.error(e.message));'\n```\n\n## Step 3 — Send via Telegram\nUsing the message tool, send the same report to Telegram (8128617103).\n\n## Output\n1. Save the report text to `/home/node/workspace/tmp/artoo-stock-report.txt`\n2. Notify Solo via Telegram that the email and Telegram message have been sent.\n\nDo NOT create any new cron jobs."
+      },
+      "delivery": {
+        "mode": "announce",
+        "to": "telegram:8128617103"
+      },
+      "state": {
+        "nextRunAtMs": 1775649600000
+      }
+    },
+    {
+      "id": "63919b6a-1a06-4065-934b-11e65ae3f684",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "Agent Infra Briefing + Email",
+      "description": "Agent Infra briefing with email delivery",
+      "enabled": true,
+      "createdAtMs": 1775630271258,
+      "updatedAtMs": 1775630271258,
+      "schedule": {
+        "expr": "0 6 * * *",
+        "kind": "cron",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "## Agent Infra Briefing — Complete Report\n\n**Task**: Generate the Agent Infra briefing and send via email and Telegram.\n\n## Step 1 — Generate Report\n1. Read `/home/node/workspace/tmp/artoo-agent-infra.txt`\n2. If missing, run the existing Agent Infra briefing task (cron job \"Agent Needs Briefing\")\n3. Read the briefing content from `/home/node/workspace/AGENT_INFRA.md`\n4. Format with header: \"**Agent Infrastructure Briefing**\" + full content\n\n## Step 2 — Send via Email\nRun:\n```bash\nnode -e 'const {AgentMailClient}=require(\"/home/node/workspace/skills/agentmail/node_modules/agentmail\");const c=new AgentMailClient({apiKey:process.env.AGENTMAIL_API_KEY});const subject=\"Agent Infrastructure Briefing - \" + new Date().toISOString().split(\"T\")[0];const body=require(\"fs\").readFileSync(\"/home/node/workspace/tmp/artoo-agent-infra.txt\",\"utf8\");c.inboxes.messages.send(\"artooopenclaw@agentmail.to\",{to:[\"han.yang123@yahoo.com\"],subject,text:body}).then(r=>console.log(\"sent\",r.messageId)).catch(e=>console.error(e.message));'\n```\n\n## Step 3 — Send via Telegram\nUsing message tool with action=send, send the briefing to Telegram (8128617103).\n\n## Step 4 — Save\nWrite the briefing text to `/home/node/workspace/tmp/artoo-agent-infra.txt`.\n\nDo NOT create any new cron jobs."
+      },
+      "delivery": {
+        "mode": "announce",
+        "to": "telegram:8128617103"
+      },
+      "state": {
+        "nextRunAtMs": 1775653200000
+      }
+    },
+    {
+      "id": "15762f78-ceba-4e06-ac32-c27e40d8cacf",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "Daily AI News Briefing + Email",
+      "description": "Daily AI News briefing with email delivery",
+      "enabled": true,
+      "createdAtMs": 1775630271269,
+      "updatedAtMs": 1775630271269,
+      "schedule": {
+        "expr": "0 7 * * *",
+        "kind": "cron",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "## Daily AI News Briefing — Complete Report\n\n**Task**: Generate the daily AI news briefing and send via email and Telegram.\n\n## Step 1 — Generate Report\n1. Run the existing AI news briefing task (payload from cron job \"Daily AI News Briefing\")\n2. Read the generated briefing from `/home/node/workspace/tmp/artoo-daily-news.txt`\n3. Format with header: \"**Daily AI News Briefing**\" + full content\n\n## Step 2 — Send via Email\nRun:\n```bash\nnode -e 'const {AgentMailClient}=require(\"/home/node/workspace/skills/agentmail/node_modules/agentmail\");const c=new AgentMailClient({apiKey:process.env.AGENTMAIL_API_KEY});const subject=\"Daily AI News Briefing - \" + new Date().toISOString().split(\"T\")[0];const body=require(\"fs\").readFileSync(\"/home/node/workspace/tmp/artoo-daily-news.txt\",\"utf8\");c.inboxes.messages.send(\"artooopenclaw@agentmail.to\",{to:[\"han.yang123@yahoo.com\"],subject,text:body}).then(r=>console.log(\"sent\",r.messageId)).catch(e=>console.error(e.message));'\n```\n\n## Step 3 — Send via Telegram\nUsing message tool with action=send, send the briefing to Telegram (8128617103).\n\n## Step 4 — Save\nWrite the briefing text to `/home/node/workspace/tmp/artoo-daily-news.txt`.\n\nDo NOT create any new cron jobs."
+      },
+      "delivery": {
+        "mode": "announce",
+        "to": "telegram:8128617103"
+      },
+      "state": {
+        "nextRunAtMs": 1775656800000
+      }
     }
   ]
 }
