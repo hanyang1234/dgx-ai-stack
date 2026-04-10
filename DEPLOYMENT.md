@@ -60,6 +60,7 @@ HOST: NVIDIA DGX Spark GB10 (Ubuntu)
 - `OLLAMA_LLM_LIBRARY=cuda_v13` — forces the correct CUDA library for GB10. Without this, CUDA init is non-deterministic and models may silently fall back to CPU.
 - `OLLAMA_MAX_LOADED_MODELS=2` — allows two models resident in VRAM simultaneously. With 128 GiB unified memory, this fits e.g. gemma4:26b (16 GB) + gemma4:31b (20 GB) at the same time, reducing cold-load latency for cron jobs. Keep at 2 rather than higher to avoid OOM with large models.
 - `OLLAMA_FLASH_ATTENTION=1` — enables flash attention for all models that support it (gemma4, qwen3.5, nemotron). Reduces time-to-first-token and increases tokens/sec, especially for long context. No quality impact.
+- `OLLAMA_KEEP_ALIVE=10m` — evicts models 10 minutes after the last request. Default is 5 minutes. Set to 10m so that large models loaded in Web UI (e.g. nemotron 86 GB) are guaranteed to be gone well before the 6am cron jobs run, eliminating the cold-load + eviction latency that was causing briefing timeouts.
 
 **Host-level requirement:** Docker must use `cgroupfs` cgroup driver (not `systemd`). Set in `/etc/docker/daemon.json`:
 ```json

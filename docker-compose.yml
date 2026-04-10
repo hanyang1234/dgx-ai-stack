@@ -50,6 +50,11 @@ services:
       # CPU fallback on container restart (known Ollama issue on GB10 hardware).
       OLLAMA_LLM_LIBRARY: "cuda_v13"
       OLLAMA_FLASH_ATTENTION: "1"
+      # Evict models 10 minutes after last use. Prevents large models loaded in
+      # Open WebUI (e.g. nemotron 86 GB) from blocking cron jobs at 6am.
+      # Default is 5m; 10m gives a comfortable buffer for long Web UI responses
+      # without leaving models warm all night.
+      OLLAMA_KEEP_ALIVE: "10m"
     networks:
       - ai-stack
 
