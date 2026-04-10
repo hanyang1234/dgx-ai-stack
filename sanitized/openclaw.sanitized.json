@@ -1,6 +1,6 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.4.5",
+    "lastTouchedVersion": "2026.4.9",
     "lastTouchedAt": "2026-04-07T22:14:52.901Z"
   },
   "wizard": {
@@ -186,7 +186,7 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "ollama/qwen3.5:9b",
+        "primary": "ollama/gemma4:26b",
         "fallbacks": [
           "anthropic/claude-opus-4-6",
           "anthropic/claude-sonnet-4-6",

@@ -14,20 +14,23 @@ HOST: NVIDIA DGX Spark GB10 (Ubuntu)
 │
 │  Docker network: ai-stack (bridge)
 │  │
-│  ├── ollama  (ollama/ollama:latest, v0.20.0+)
+│  ├── ollama  (ollama/ollama:latest, v0.20.4+)
 │  │   ├── Ollama API         0.0.0.0:11435 → :11434   (LAN + Tailscale accessible)
 │  │   ├── Volume: open-webui-ollama        → /root/.ollama  (all model weights)
-│  │   └── Env: OLLAMA_LLM_LIBRARY=cuda_v13 (required for GB10 CUDA init)
+│  │   ├── Env: OLLAMA_LLM_LIBRARY=cuda_v13     (required for GB10 CUDA init)
+│  │   ├── Env: OLLAMA_MAX_LOADED_MODELS=2      (two models in VRAM simultaneously)
+│  │   └── Env: OLLAMA_FLASH_ATTENTION=1        (faster prefill/TTFT)
 │  │
 │  ├── open-webui  (ghcr.io/open-webui/open-webui:latest)
 │  │   ├── Open WebUI         0.0.0.0:12000 → :8080
 │  │   ├── Volume: open-webui              → /app/backend/data
 │  │   └── Env: OLLAMA_BASE_URL=http://ollama:11434
 │  │
-│  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:2026.4.1)
+│  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:2026.4.9)
 │      ├── Gateway            0.0.0.0:18789 → :18789   (LAN, token auth)
 │      ├── Bind: ~/openclaw-config          → /home/node/.openclaw
-│      └── Bind: ~/openclaw/workspace       → /home/node/workspace
+│      ├── Bind: ~/openclaw/workspace       → /home/node/workspace
+│      └── Startup: runs as root, creates /media→/tmp/openclaw symlink, then drops to node user
 │
 │  Internal traffic (ai-stack, never leaves Docker):
 │      openclaw-gateway → ollama:11434      (Ollama API)
@@ -51,11 +54,12 @@ HOST: NVIDIA DGX Spark GB10 (Ubuntu)
 
 ## Ollama
 
-**Container:** `ollama/ollama:latest` (standalone, v0.20.0+)
+**Container:** `ollama/ollama:latest` (standalone, v0.20.4+)
 
 **Critical env vars:**
 - `OLLAMA_LLM_LIBRARY=cuda_v13` — forces the correct CUDA library for GB10. Without this, CUDA init is non-deterministic and models may silently fall back to CPU.
-- `OLLAMA_MAX_LOADED_MODELS=1` — limits to one model in memory at a time. Each 120b model needs ~63 GiB of the 128 GiB unified memory. Without this, a warm model from Open WebUI blocks Artoo's cron jobs from loading a different large model.
+- `OLLAMA_MAX_LOADED_MODELS=2` — allows two models resident in VRAM simultaneously. With 128 GiB unified memory, this fits e.g. gemma4:26b (16 GB) + gemma4:31b (20 GB) at the same time, reducing cold-load latency for cron jobs. Keep at 2 rather than higher to avoid OOM with large models.
+- `OLLAMA_FLASH_ATTENTION=1` — enables flash attention for all models that support it (gemma4, qwen3.5, nemotron). Reduces time-to-first-token and increases tokens/sec, especially for long context. No quality impact.
 
 **Host-level requirement:** Docker must use `cgroupfs` cgroup driver (not `systemd`). Set in `/etc/docker/daemon.json`:
 ```json
@@ -101,7 +105,7 @@ Accessible at `http://192.168.4.45:12000` on LAN.
 ## OpenClaw
 
 ### Image version
-Pinned to `ghcr.io/openclaw/openclaw:2026.4.1` (current latest as of 2026-04-04).
+Pinned to `ghcr.io/openclaw/openclaw:2026.4.9` (updated 2026-04-08).
 
 To update:
 ```bash
@@ -132,12 +136,13 @@ The provider block in `~/openclaw-config/openclaw.json`:
 
 | OpenClaw model ID | Alias | GPU? | Size | Role |
 |---|---|---|---|---|
-| `ollama/qwen3.5:9b` | Qwen9B | GPU ✓ | 6.6 GB | **Default** — interactive chat |
-| `ollama/qwen3.5:35b` | Qwen35 | GPU ✓ | 23 GB | Cron jobs (Gap Scorer, Implementer, Weekly Review) |
-| `ollama/nemotron-3-super:120b` | Nemotron-Super | GPU ✓ | 86 GB | Daily AI briefings |
+| `ollama/gemma4:26b` | Gemma4-26B | GPU ✓ | 16 GB | **Default** — interactive chat + all cron jobs |
+| `ollama/gemma4:31b` | Gemma4-31B | GPU ✓ | 20 GB | Quality eval / heavy reasoning |
+| `ollama/qwen3.5:35b` | Qwen35 | GPU ✓ | 23 GB | Fallback for cron jobs |
+| `ollama/qwen3.5:9b` | Qwen9B | GPU ✓ | 6.6 GB | Fast/simple cron subtasks |
+| `ollama/nemotron-3-super:120b` | Nemotron-Super | GPU ✓ | 86 GB | Deep reasoning (Web UI only) |
 | `ollama/qwen3.5:122b-a10b-q4_K_M` | Qwen122B | GPU ✓ | 81 GB | Large MoE |
 | `ollama/nemotron-cascade-2:latest` | Cascade2 | GPU ✓ | 24 GB | Fast MoE, reasoning |
-| `ollama/gemma4:26b` | Gemma4 | GPU ✓ | 17 GB | Multimodal |
 | `ollama/qwen3-coder:latest` | local-coder | GPU ✓ | 18 GB | Coding tasks |
 | `ollama/nemotron-3-nano:latest` | Nemotron-Chat | GPU ✓ | 24 GB | Thinking mode |
 | `ollama/gpt-oss:20b` | local-fast | CPU only† | 13 GB | Subagents |
@@ -145,14 +150,18 @@ The provider block in `~/openclaw-config/openclaw.json`:
 
 † **gpt-oss (MXFP4) models run CPU-only** — do not offload to GPU regardless of VRAM.
 
-Context window: 65,536 tokens for most models; 131,072 for Nemotron-3 Nano; 262,144 for Cascade-2 and Qwen 122B.
+Context window: 65,536 tokens for most models; 262,144 for gemma4 (26b and 31b), Cascade-2, and Qwen 122B.
 
 ### Primary model
 
-**Qwen3.5 9B** (`ollama/qwen3.5:9b`) — default interactive chat (fast, 6.6 GB).
-**Nemotron-3 Super 120B** — Daily AI News and Agent Infra briefing cron jobs.
-**Qwen3.5 35B** — all other cron jobs.
+**Gemma4 26B** (`ollama/gemma4:26b`) — default for both interactive chat and all cron jobs (2026-04-08).
+Supports vision (image inputs via Telegram), tool use, and thinking mode. Q4_K_M, 16 GB VRAM.
 Fallbacks: `anthropic/claude-opus-4-6` → `anthropic/claude-sonnet-4-6` → `openai/gpt-5.1-codex`.
+
+**Model selection for cron jobs:** When creating a new cron job, always confirm which model to use.
+- Fast/simple tasks: `ollama/qwen3.5:9b`
+- Research/briefing tasks: `ollama/gemma4:26b` (default)
+- Deep reasoning: `ollama/qwen3.5:122b-a10b-q4_K_M` or `ollama/nemotron-cascade-2:latest`
 
 **Switch model in chat:** say "use Gemma4" or type `/model ollama/gemma4:26b`.
 
@@ -397,11 +406,16 @@ high-potential OSS opportunities for Han to act on.
 
 ### Pipeline Cron Jobs
 
-| Job | Schedule | What it does |
-|-----|----------|-------------|
-| Agent Needs Briefing | 6:00am daily | Research + update AGENT_INFRA.md; extract [GAP] entries → GAP_IDEAS.md |
-| Gap Scorer | Wednesday 9am | Score `unscored` gaps against RUBRIC.md; alert Han via Telegram for ≥ 7.0 |
-| Gap Implementer | 8:00am daily | Check for `approved` gaps; write spec; notify Han to confirm SCAFFOLD |
+| Job | Schedule | Model | Timeout | What it does |
+|-----|----------|-------|---------|-------------|
+| Agent Needs Briefing | 6:00am daily | gemma4:26b | 1200s | Research + update AGENT_INFRA.md; extract [GAP] entries → GAP_IDEAS.md |
+| Daily AI News Briefing | 7:00am daily | gemma4:26b | 1800s | Multi-source AI news briefing → Telegram + artoo-daily-news.txt |
+| Gap Implementer | 8:00am daily | gemma4:26b | 600s | Check for `approved` gaps; write spec; notify Han to confirm SCAFFOLD |
+| Gap Scorer | Wednesday 9am | gemma4:26b | 600s | Score `unscored` gaps against RUBRIC.md; alert Han via Telegram for ≥ 7.0 |
+| Agent Infra Weekly Review | Sunday 10am | gemma4:26b | 300s | Consolidate/deduplicate AGENT_INFRA.md; send trends summary |
+| OpenClaw Version Check | 3:00pm daily | - | 120s | Check for OpenClaw/Ollama/WebUI updates; notify if newer version available |
+
+**Timeout sizing rationale:** gemma4:26b is a 16 GB model. If a large model (nemotron, gemma4:31b) is warm in VRAM from overnight Web UI use, gemma4:26b must evict it before loading — this can take 3-5 minutes. Timeouts are set to accommodate cold-load + full research task.
 
 ### Approval flow
 
@@ -483,10 +497,35 @@ docker compose logs openclaw-gateway --tail 20 # no errors
 | List paired devices | `openclaw devices list` |
 | View cron schedule | `crontab -l` |
 | View OpenClaw cron jobs | `docker compose exec openclaw-gateway openclaw cron list` |
+| Run a cron job immediately | `docker compose exec openclaw-gateway openclaw cron run <job-id> --token $OPENCLAW_GATEWAY_TOKEN --url ws://127.0.0.1:18789` |
 
 ---
 
 ## Troubleshooting
+
+### Telegram image upload fails with path restriction error
+
+**Status: RESOLVED (2026-04-08).** OpenClaw v2026.4.9 introduced a security check that uses
+`fs.realpath()` to verify media paths against an allowed roots list. `/media/images/` (where
+Telegram saves image uploads) resolves outside the allowed roots, causing the read to fail.
+
+**Fix:** At container startup, create a symlink `/media` → `/tmp/openclaw` as root, then drop
+to the `node` user. This is already baked into `docker-compose.yml`:
+
+```yaml
+user: root
+command: >
+  sh -c "rm -rf /media && ln -sf /tmp/openclaw /media
+  && exec runuser -u node -- node openclaw.mjs gateway --allow-unconfigured"
+```
+
+If image access breaks after a container update, verify the symlink survived:
+```bash
+docker exec openclaw-gateway ls -la /media
+# Should show: /media -> /tmp/openclaw
+```
+
+---
 
 ### OpenClaw can't reach Ollama
 
@@ -609,16 +648,19 @@ Symptom: cron jobs fail with `Ollama API error 500: model requires more system m
 Cause: a different 120b model is still loaded in memory from Open WebUI use. Each 120b model
 needs ~63 GiB of the DGX Spark's 128 GiB unified memory; two competing 120b models don't fit.
 
-Fix already applied: `OLLAMA_MAX_LOADED_MODELS=1` in `docker-compose.yml` ensures only one
-model is ever resident. If the error recurs after a container restart:
+Fix already applied: `OLLAMA_MAX_LOADED_MODELS=2` in `docker-compose.yml`. With 128 GiB unified
+memory, two mid-size models (e.g. gemma4:26b + gemma4:31b = ~36 GB) coexist fine. The OOM
+only occurs when loading nemotron (86 GB) alongside another large model.
+
+If the error recurs after a container restart:
 
 ```bash
 # Verify the env var survived the restart
-docker exec open-webui env | grep OLLAMA_MAX
+docker exec ollama env | grep OLLAMA_MAX
 
 # Force-unload any resident model immediately
-docker exec open-webui ollama stop gpt-oss:120b
-docker exec open-webui ollama stop nemotron-3-super:120b
+docker exec ollama ollama stop nemotron-3-super:120b
+docker exec ollama ollama stop gpt-oss:120b
 
 # Check what's loaded
 curl -s http://127.0.0.1:11435/api/ps | jq '.models[].name'

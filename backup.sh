@@ -86,6 +86,19 @@ find "${OPENCLAW_CONFIG_DIR}/workspace" -maxdepth 1 -name "*.md" \
     echo "[backup]   + $(basename "${f}") (extra)"
 done
 
+# Sync personality files from config workspace → agent workspace
+# Config workspace (~/openclaw-config/workspace/) is the source of truth.
+# Agent workspace (~/openclaw/workspace/) is what Artoo reads with its file tool.
+echo "[backup] Syncing personality files to agent workspace …"
+for mdfile in SOUL.md IDENTITY.md AGENTS.md BOOTSTRAP.md USER.md TOOLS.md HEARTBEAT.md; do
+  src="${OPENCLAW_CONFIG_DIR}/workspace/${mdfile}"
+  dst="${HOME}/openclaw/workspace/${mdfile}"
+  if [ -f "${src}" ]; then
+    cp "${src}" "${dst}"
+    echo "[backup]   synced ${mdfile} → ~/openclaw/workspace/"
+  fi
+done
+
 # Files from Docker workspace bind-mount (~/openclaw/workspace/)
 for wsfile in AGENT_INFRA.md SKILLS.md RUBRIC.md GAP_IDEAS.md; do
   src="${HOME}/openclaw/workspace/${wsfile}"

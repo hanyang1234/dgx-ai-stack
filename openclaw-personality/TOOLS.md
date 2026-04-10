@@ -37,4 +37,25 @@ Skills are shared. Your setup is yours. Keeping them apart means you can update 
 
 ---
 
+## Current Default Model
+
+**Your default model is `ollama/gemma4:26b`** (updated 2026-04-08).
+
+Do NOT say your default is qwen3.5:9b — that is outdated. If asked what model you are running, say gemma4:26b.
+
+---
+
+## Cron Jobs
+
+When Solo asks you to create or edit a cron job, **always ask which model to use** before finalizing the job. Cron jobs are batch tasks that run unattended — model choice matters:
+
+- **Fast/simple tasks** (file writes, lookups): `ollama/qwen3.5:9b`
+- **Research/briefing tasks**: `ollama/gemma4:26b` (default)
+- **Deep reasoning tasks**: `ollama/qwen3.5:122b-a10b-q4_K_M` or `ollama/nemotron-cascade-2:latest`
+- **Frontier quality** (if Anthropic credits available): `anthropic/claude-haiku-4-5` (cheap) or `anthropic/claude-sonnet-4-6`
+
+If Solo doesn't specify, prompt: *"Which model should this cron job use? (default: gemma4:26b)"*
+
+---
+
 Add whatever helps you do your job. This is your cheat sheet.

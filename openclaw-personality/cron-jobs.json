@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1775599292281,
+      "updatedAtMs": 1775772063846,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,14 +25,16 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775685600000,
-        "lastRunAtMs": 1775599200006,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 92275,
+        "nextRunAtMs": 1775858400000,
+        "lastRunAtMs": 1775772000017,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 63829,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
+        "consecutiveErrors": 1,
+        "lastDelivered": false,
+        "lastError": "⚠️ ✉️ Message failed",
+        "lastDeliveryError": "⚠️ ✉️ Message failed"
       }
     },
     {
@@ -42,7 +44,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1775571000047,
+      "updatedAtMs": 1775838904504,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -52,24 +54,23 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "Deliver a daily AI news briefing for Han. Search for the latest AI news from today, including sources like Latent.Space, SemiAnalysis, GitHub (trending/releases), The Verge, The Information, and deeplearning.ai (Data Points tag at https://www.deeplearning.ai/the-batch/tag/data-points/). Exclude: Hacker News, Discord. Format it as a structured briefing with: 1) Top 5-7 stories with headlines, brief summaries, SOURCE URLS, and direct links 2) A 'Signal Watch' section highlighting the most important or unexpected development with URLs 3) A brief overall assessment of the day's news. Make it concise but substantive—focus on news that matters to AI/ML practitioners and governance professionals. Include the sources explicitly.\n\n**CRITICAL: For EVERY story, include the direct URL to the original article or source.** Format as: **[Headline](URL)** so Han can click through immediately if he wants more details. Don't skip URLs—they're essential.\n\n**Research rigor (researching-with-confidence skill)**: For each story, score its confidence — HIGH (3+ independent sources corroborate), MEDIUM (2 sources or 1 strong source), LOW (single source or contradicted). Flag any story where all sources trace to a single original (echo chamber risk). Do not include LOW confidence stories unless flagged with ⚠️.\n\n**Fact check**: Flag any story that appears fabricated, suspiciously vague, or lacks a verifiable primary source with ⚠️ UNVERIFIED.\n\n**Devil's Advocate — AI Agent Infrastructure framing**: For any story about AI agent infrastructure (frameworks, platforms, orchestration tools, MCP, multi-agent systems, enterprise agent deployments), apply the full devils-advocate skill:\n- Identify 2-3 hidden assumptions in how the story frames the need for agent infrastructure\n- Steelman the counter-argument: who benefits from this framing? Is the problem real or vendor-manufactured?\n- Find the biggest blind spot: what costs, risks, or alternatives is the coverage not mentioning?\n- Check for model bias: am I defaulting to accepting agent infrastructure as inherently valuable?\n- Deliver a verdict: SIGNAL (genuine development) / HYPE (vendor-driven narrative) / MIXED\n- Add one sentence of constructive context Han should keep in mind\nPresent this as a '🔍 Infrastructure Framing Check' section after the main stories.\n\nAfter creating the briefing:\n1. Send it to Telegram (8128617103) using the message tool with action=send.\n2. Write the full briefing text to /home/node/workspace/tmp/artoo-daily-news.txt using your write tool.\nDo NOT create any new cron jobs.",
-        "model": "ollama/nemotron-3-super:120b",
-        "timeoutSeconds": 600
+        "message": "Deliver a daily AI news briefing for Han. Search for the latest AI news from today, including sources like Latent.Space, SemiAnalysis, GitHub (trending/releases), The Verge, The Information, and deeplearning.ai (Data Points tag at https://www.deeplearning.ai/the-batch/tag/data-points/). Exclude: Hacker News, Discord. Format it as a structured briefing with: 1) Top 5-7 stories with headlines, brief summaries, SOURCE URLS, and direct links 2) A 'Signal Watch' section highlighting the most important or unexpected development with URLs 3) A brief overall assessment of the day's news. Make it concise but substantive—focus on news that matters to AI/ML practitioners and governance professionals. Include the sources explicitly.\n\n**CRITICAL: For EVERY story, the headline MUST be a clickable hyperlink to the primary source article.** Format each story as:\n\n### [Story Headline](PRIMARY_SOURCE_URL)\n**Summary:** ...\n**Sources:** [Publisher 1](url1) | [Publisher 2](url2) | [Publisher 3](url3)\n**Confidence:** HIGH/MEDIUM/LOW\n\nThe headline link goes directly to the most authoritative original article. The Sources line lists 2-4 additional links for deeper reading. Never write a headline without a URL. Never use placeholder or homepage URLs — each link must go to the specific article.\n\n**Research rigor (researching-with-confidence skill)**: For each story, score its confidence — HIGH (3+ independent sources corroborate), MEDIUM (2 sources or 1 strong source), LOW (single source or contradicted). Flag any story where all sources trace to a single original (echo chamber risk). Do not include LOW confidence stories unless flagged with ⚠️.\n\n**Fact check**: Flag any story that appears fabricated, suspiciously vague, or lacks a verifiable primary source with ⚠️ UNVERIFIED.\n\n**Devil's Advocate — AI Agent Infrastructure framing**: For any story about AI agent infrastructure (frameworks, platforms, orchestration tools, MCP, multi-agent systems, enterprise agent deployments), apply the full devils-advocate skill:\n- Identify 2-3 hidden assumptions in how the story frames the need for agent infrastructure\n- Steelman the counter-argument: who benefits from this framing? Is the problem real or vendor-manufactured?\n- Find the biggest blind spot: what costs, risks, or alternatives is the coverage not mentioning?\n- Check for model bias: am I defaulting to accepting agent infrastructure as inherently valuable?\n- Deliver a verdict: SIGNAL (genuine development) / HYPE (vendor-driven narrative) / MIXED\n- Add one sentence of constructive context Han should keep in mind\nPresent this as a '🔍 Infrastructure Framing Check' section after the main stories.\n\nAfter creating the briefing:\n1. Send it to Telegram (8128617103) using the message tool with action=send.\n2. Write the full briefing text to /home/node/workspace/tmp/artoo-daily-news.txt using your write tool.\nDo NOT create any new cron jobs.",
+        "model": "ollama/gemma4:26b",
+        "timeoutSeconds": 1800
       },
       "delivery": {
         "mode": "announce",
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775656800000,
-        "lastRunAtMs": 1775570400006,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 600041,
-        "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 2,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "nextRunAtMs": 1775916000000,
+        "lastRunAtMs": 1775838847923,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 56581,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": true
       }
     },
     {
@@ -79,7 +80,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1775567179404,
+      "updatedAtMs": 1775838847916,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -90,23 +91,22 @@
       "payload": {
         "kind": "agentTurn",
         "message": "## Agent Infra Briefing Task\n\n**PHASE 1: Research & Update AGENT_INFRA.md**\n- Read `/home/node/workspace/AGENT_INFRA.md`\n- Search for emerging AI agent platforms/tools from Q4 2025\n- Add new findings as: [CATEGORY] Name – URL – Description\n- Update total count at end of file\n\n**PHASE 2: Synthesize Patterns**\n- Identify common themes and gaps\n\n**PHASE 3: Create Briefing**\n- Format for Solo starting with \"**Briefing for Solo**\"\n- Include discoveries, patterns, final count\n\n**PHASE 4: Save for Email Delivery**\n1. Write the full briefing text to /home/node/workspace/tmp/artoo-agent-infra.txt using your write tool.",
-        "timeoutSeconds": 600,
-        "model": "ollama/nemotron-3-super:120b"
+        "timeoutSeconds": 1200,
+        "model": "ollama/gemma4:26b"
       },
       "delivery": {
         "mode": "announce",
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775653200000,
-        "lastRunAtMs": 1775566800010,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 379394,
-        "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 2,
-        "lastDelivered": true,
-        "lastError": "⚠️ 📝 Edit: `in ~/workspace/AGENT_INFRA.md` failed"
+        "nextRunAtMs": 1775912400000,
+        "lastRunAtMs": 1775838791946,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 55970,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     },
     {
@@ -128,7 +128,7 @@
         "kind": "agentTurn",
         "message": "## Weekly Agent Infrastructure Knowledge Base Review\n\nRead the file at /home/node/workspace/AGENT_INFRA.md.\n\nPerform the following review tasks:\n\n1) **Consolidate duplicates** — identify any entries covering the same product or service (possibly added on different days). Merge them into a single entry keeping the most recent date and the most complete description.\n\n2) **Flag stale entries** — entries older than 60 days that have been superseded by a newer version of the same product should be marked with a `[STALE]` tag at the start of their title.\n\n3) **Identify themes** — based on all entries, write a short 'Patterns & Trends' section at the top of the knowledge base (below the header, above ENTRIES_START) summarizing: what categories are most represented, what gaps keep appearing, and what direction agent infrastructure seems to be heading. Replace any existing Patterns & Trends section.\n\n4) **Update the metadata** at the bottom: set 'Last reviewed' to today's date and update 'Total entries' count.\n\n5) **Write the updated file** back to /home/node/workspace/AGENT_INFRA.md.\n\n6) **Send a brief summary to Solo** via Telegram (8128617103): how many entries reviewed, how many merged, how many flagged stale, and 2-3 sentences on the key trends you observed.\n\n7) **Write the same summary text** to /home/node/workspace/tmp/artoo-infra-weekly.txt using your write tool.",
         "timeoutSeconds": 300,
-        "model": "ollama/qwen3.5:35b"
+        "model": "ollama/gemma4:26b"
       },
       "delivery": {
         "mode": "announce",
@@ -153,7 +153,7 @@
       "name": "Gap Scorer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1775059800037,
+      "updatedAtMs": 1775664078390,
       "schedule": {
         "kind": "cron",
         "expr": "0 9 * * 3",
@@ -165,22 +165,21 @@
         "kind": "agentTurn",
         "message": "## Gap Scorer — Weekly OSS Opportunity Scoring\n\nYou are scoring unmet agent infrastructure gaps against a rubric to identify high-priority OSS opportunities.\n\n## Step 1 — Read inputs\n\nRead both files:\n- /home/node/workspace/GAP_IDEAS.md — the gap tracker\n- /home/node/workspace/RUBRIC.md — the scoring rubric\n\nIdentify all entries in GAP_IDEAS.md with status `unscored`.\n\nIf there are no `unscored` entries, send a brief Telegram message to Solo (8128617103): 'Gap Scorer ran — no unscored gaps to score. All gaps have been evaluated.' Then stop.\n\n## Step 2 — Research and score each unscored gap\n\nFor each `unscored` gap entry, do the following:\n\n**Research:** Use web_search to find evidence for scoring. Look for:\n- GitHub issues requesting the capability (pain severity)\n- Existing tools/libraries that partially address it (gap uniqueness)\n- Academic papers or blog posts describing the problem (pain + timing)\n- Recent launches or announcements that might be filling the gap (uniqueness)\n- Adoption signals — are developers actually building this already? (timing)\n\nCite 2-4 specific sources (URLs) in your notes for each gap.\n\n**Score** each of the 6 dimensions (1-5 each) using the RUBRIC.md scale:\n1. Pain Severity\n2. Gap Uniqueness\n3. Addressability\n4. Ecosystem Timing\n5. Leverage\n6. Han's Edge\n\nCalculate: Raw total = sum of 6 scores. Final score = (raw total / 30) × 10.\n\n## Step 3 — Update GAP_IDEAS.md\n\nFor each scored gap, update its entry in /home/node/workspace/GAP_IDEAS.md:\n- Fill in all 6 dimension scores\n- Fill in Raw total and Final score\n- Add evidence URLs to Notes\n- Change status from `unscored` to:\n  - `alerted` if final score ≥ 7.0\n  - `scored` if final score < 7.0\n\n## Step 4 — Alert Solo for high-scoring gaps\n\nFor any gap that scored ≥ 7.0, send a Telegram message to Solo (8128617103) using the message tool:\n\n```\n🔍 OSS Gap Alert — Approval Needed\n\n[GAP-XXX]: [Title]\nScore: [X.X] / 10\n\nSummary: [2-3 sentence description of the gap and why it scored high]\n\nScores:\n• Pain Severity: X/5\n• Gap Uniqueness: X/5\n• Addressability: X/5\n• Ecosystem Timing: X/5\n• Leverage: X/5\n• Han's Edge: X/5\n\nEvidence: [2-3 key URLs]\n\nReply with APPROVE [GAP-XXX] to proceed with implementation, or REJECT [GAP-XXX] to pass.\n```\n\nSend one message per high-scoring gap.\n\nIf no gaps scored ≥ 7.0, send: 'Gap Scorer complete. Scored [N] gaps — none reached alert threshold (7.0). Highest score: [X.X] ([title]).'\n\nDo NOT create any new cron jobs.",
         "timeoutSeconds": 600,
-        "model": "ollama/qwen3.5:35b"
+        "model": "ollama/gemma4:26b"
       },
       "delivery": {
         "mode": "announce",
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775664000000,
-        "lastRunAtMs": 1775059200017,
-        "lastRunStatus": "error",
-        "consecutiveErrors": 1,
-        "lastStatus": "error",
-        "lastDurationMs": 600020,
-        "lastDeliveryStatus": "unknown",
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "nextRunAtMs": 1776268800000,
+        "lastRunAtMs": 1775664000009,
+        "lastRunStatus": "ok",
+        "consecutiveErrors": 0,
+        "lastStatus": "ok",
+        "lastDurationMs": 78381,
+        "lastDeliveryStatus": "delivered",
+        "lastDelivered": true
       }
     },
     {
@@ -190,7 +189,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1775574023051,
+      "updatedAtMs": 1775833500034,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -201,21 +200,22 @@
       "payload": {
         "kind": "agentTurn",
         "message": "## Gap Implementer — OSS Opportunity Execution Check\n\nCheck if any approved OSS gap opportunities are ready for implementation.\n\n## Step 1 — Check for approved gaps\n\nRead /home/node/workspace/GAP_IDEAS.md.\n\nLook for entries with status `approved`.\n\nIf there are NO `approved` entries, silently stop — do nothing, send nothing. (NO_REPLY)\n\n## Step 2 — For each approved gap, write a spec\n\nFor each `approved` gap entry:\n\n1. **Write a project spec** to /home/node/workspace/specs/GAP-XXX-spec.md (create the specs/ directory if needed) with this structure:\n\n```markdown\n# GAP-XXX: [Title] — Project Spec\n\n## Problem Statement\n[2-3 paragraphs on the gap, who is affected, what they do today, why it falls short]\n\n## Proposed Solution\n[What we will build. Be concrete: what APIs, what protocols, what integrations]\n\n## Target Users\n[Who this is for: solo devs, enterprise teams, framework authors, etc.]\n\n## v1 Scope (MVP)\n[Bulleted list of what v1 ships — no more than can be built by 1-3 people in 3 months]\n\n## Out of Scope (v1)\n[What we explicitly defer]\n\n## Technical Architecture\n[High-level architecture: main components, data flows, key design decisions]\n\n## Competitive Landscape\n[What else exists, why it falls short, how we differentiate]\n\n## Success Metrics\n[How we know v1 is working: adoption signals, GitHub stars, user feedback]\n\n## Han's Edge\n[Why Han is well-positioned to lead or contribute to this project]\n\n## Open Questions\n[2-4 key unknowns that need resolution before or during v1 build]\n\n## Estimated Effort\n[Rough estimate: weeks of focused engineering for a 1-3 person team]\n```\n\n2. **Update GAP_IDEAS.md** — change the entry's status from `approved` to `implementing` and add a Notes line: `Spec written: specs/GAP-XXX-spec.md`\n\n3. **Notify Solo** via Telegram (8128617103):\n\n```\n🚀 Gap Implementation Started\n\n[GAP-XXX]: [Title]\n\nSpec written at: /home/node/workspace/specs/GAP-XXX-spec.md\n\nNext step: Review the spec and let me know if you want to scaffold a GitHub repo, or if you'd like to refine the scope first.\n\nReply SCAFFOLD [GAP-XXX] to have me create the GitHub repo structure and initial README.\n```\n\nDo NOT create any new cron jobs.\nDo NOT scaffold GitHub repos unless Solo explicitly says SCAFFOLD.",
-        "timeoutSeconds": 300,
-        "model": "ollama/qwen3.5:35b"
+        "timeoutSeconds": 600,
+        "model": "ollama/gemma4:26b"
       },
       "delivery": {
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775660400000,
-        "lastRunAtMs": 1775574000009,
-        "lastRunStatus": "ok",
-        "consecutiveErrors": 0,
-        "lastStatus": "ok",
-        "lastDurationMs": 23042,
-        "lastDeliveryStatus": "not-delivered",
-        "lastDelivered": false
+        "nextRunAtMs": 1775919600000,
+        "lastRunAtMs": 1775833200012,
+        "lastRunStatus": "error",
+        "consecutiveErrors": 1,
+        "lastStatus": "error",
+        "lastDurationMs": 300022,
+        "lastDeliveryStatus": "not-requested",
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -224,9 +224,9 @@
       "sessionKey": "agent:main:main",
       "name": "Stock Recommendation Daily",
       "description": "Daily stock recommendation report via email and Telegram",
-      "enabled": true,
+      "enabled": false,
       "createdAtMs": 1775630212711,
-      "updatedAtMs": 1775630212711,
+      "updatedAtMs": 1775649693016,
       "schedule": {
         "expr": "0 5 * * *",
         "kind": "cron",
@@ -243,7 +243,14 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775649600000
+        "lastRunAtMs": 1775649600014,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 93002,
+        "lastError": "FallbackSummaryError: All models failed (4): ollama/qwen3.5:9b: LLM request timed out. (timeout) | anthropic/claude-opus-4-6: LLM request rejected: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits. (billing) | anthropic/claude-sonnet-4-6: No available auth profile for anthropic (all in cooldown or unavailable). (billing) | openai/gpt-5.1-codex: 400 Unsupported value: 'none' is not supported with the 'gpt-5.1-codex' model. Supported values are: 'low', 'medium', and 'high'. (format)",
+        "lastErrorReason": "timeout",
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 1
       }
     },
     {
@@ -252,9 +259,9 @@
       "sessionKey": "agent:main:main",
       "name": "Agent Infra Briefing + Email",
       "description": "Agent Infra briefing with email delivery",
-      "enabled": true,
+      "enabled": false,
       "createdAtMs": 1775630271258,
-      "updatedAtMs": 1775630271258,
+      "updatedAtMs": 1775653381947,
       "schedule": {
         "expr": "0 6 * * *",
         "kind": "cron",
@@ -271,7 +278,13 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775653200000
+        "lastRunAtMs": 1775653262821,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 119126,
+        "lastDelivered": true,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0
       }
     },
     {
@@ -280,9 +293,9 @@
       "sessionKey": "agent:main:main",
       "name": "Daily AI News Briefing + Email",
       "description": "Daily AI News briefing with email delivery",
-      "enabled": true,
+      "enabled": false,
       "createdAtMs": 1775630271269,
-      "updatedAtMs": 1775630271269,
+      "updatedAtMs": 1775656973723,
       "schedule": {
         "expr": "0 7 * * *",
         "kind": "cron",
@@ -299,7 +312,13 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775656800000
+        "lastRunAtMs": 1775656862910,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 110813,
+        "lastDelivered": true,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0
       }
     }
   ]

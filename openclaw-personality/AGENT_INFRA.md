@@ -77,7 +77,9 @@
 
 [FRAMEWORK] OpenAI Swarm – https://github.com/openai/swarm – Lightweight option for rapid prototyping and simple agent hand-offs. Minimal overhead for OpenAI stack users.
 
-[FRAMEWORK] AgentGPT – https://agentgpt.dev – Accessible entry-point to agentic AI for quick prototyping. Focuses on accessible AI agent development.
+[INTEGRATION] Pipedream – https://pipedream.com – Low-code workflow automation connecting 2,700+ APIs; acquired by Workday in November 2025, signaling a major enterprise shift toward agentic integration infrastructure.
+
+[AUTOMATION] n8n – https://n8n.io – The de facto "action layer" for AI agents, featuring visual workflow automation with native AI nodes and self-hostable capabilities.
 
 [PLATFORM] IBM watsonx Orchestrate – https://ibm.com/watsonx/orchestrate – No-code hybrid-cloud automation platform with focus on responsible AI and industry-specific models. Part of IBM watsonx governance suite.
 
