@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1775772063846,
+      "updatedAtMs": 1775858486368,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,16 +25,16 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775858400000,
-        "lastRunAtMs": 1775772000017,
+        "nextRunAtMs": 1775944800000,
+        "lastRunAtMs": 1775858400010,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 63829,
+        "lastDurationMs": 86358,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 1,
+        "consecutiveErrors": 2,
         "lastDelivered": false,
-        "lastError": "⚠️ ✉️ Message failed",
-        "lastDeliveryError": "⚠️ ✉️ Message failed"
+        "lastDeliveryError": "⚠️ ✉️ Message failed",
+        "lastError": "⚠️ ✉️ Message failed"
       }
     },
     {
