@@ -80,6 +80,23 @@ await c.inboxes.messages.send("artooopenclaw@agentmail.to", {
 
 ---
 
+### Wiki Query (`skills/wiki-query`)
+Answer questions from the locally maintained wiki — no web search.
+
+- **Trigger:** Start your message with `wiki:` or say "from your wiki", "check your wiki", "what do you know about"
+- **Wiki location:** `/home/node/workspace/wiki/`
+- **How it works:** Reads `index.md` to find relevant pages, reads them, synthesizes an answer with citations
+- **If no wiki content:** Artoo will say so and offer to research + add it
+
+**Examples:**
+```
+wiki: vllm
+wiki: what do you know about NemoClaw?
+from your wiki, summarize agent infrastructure
+```
+
+---
+
 ## Future Skills
 
 Skills will be added here as Solo installs them. When a new skill is installed, update this section with:

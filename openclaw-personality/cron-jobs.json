@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1775944881851,
+      "updatedAtMs": 1776031236178,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,11 +25,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776031200000,
-        "lastRunAtMs": 1775944800010,
+        "nextRunAtMs": 1776117600000,
+        "lastRunAtMs": 1776031200006,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 81841,
+        "lastDurationMs": 36172,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -42,7 +42,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1775916053108,
+      "updatedAtMs": 1776002457032,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -52,7 +52,7 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "Deliver a daily AI news briefing for Han. Search for the latest AI news from today, including sources like Latent.Space, SemiAnalysis, GitHub (trending/releases), The Verge, The Information, and deeplearning.ai (Data Points tag at https://www.deeplearning.ai/the-batch/tag/data-points/). Exclude: Hacker News, Discord. Format it as a structured briefing with: 1) Top 5-7 stories with headlines, brief summaries, SOURCE URLS, and direct links 2) A 'Signal Watch' section highlighting the most important or unexpected development with URLs 3) A brief overall assessment of the day's news. Make it concise but substantive—focus on news that matters to AI/ML practitioners and governance professionals. Include the sources explicitly.\n\n**CRITICAL: For EVERY story, the headline MUST be a clickable hyperlink to the primary source article.** Format each story as:\n\n### [Story Headline](PRIMARY_SOURCE_URL)\n**Summary:** ...\n**Sources:** [Publisher 1](url1) | [Publisher 2](url2) | [Publisher 3](url3)\n**Confidence:** HIGH/MEDIUM/LOW\n\nThe headline link goes directly to the most authoritative original article. The Sources line lists 2-4 additional links for deeper reading. Never write a headline without a URL. Never use placeholder or homepage URLs — each link must go to the specific article.\n\n**Research rigor (researching-with-confidence skill)**: For each story, score its confidence — HIGH (3+ independent sources corroborate), MEDIUM (2 sources or 1 strong source), LOW (single source or contradicted). Flag any story where all sources trace to a single original (echo chamber risk). Do not include LOW confidence stories unless flagged with ⚠️.\n\n**Fact check**: Flag any story that appears fabricated, suspiciously vague, or lacks a verifiable primary source with ⚠️ UNVERIFIED.\n\n**Devil's Advocate — AI Agent Infrastructure framing**: For any story about AI agent infrastructure (frameworks, platforms, orchestration tools, MCP, multi-agent systems, enterprise agent deployments), apply the full devils-advocate skill:\n- Identify 2-3 hidden assumptions in how the story frames the need for agent infrastructure\n- Steelman the counter-argument: who benefits from this framing? Is the problem real or vendor-manufactured?\n- Find the biggest blind spot: what costs, risks, or alternatives is the coverage not mentioning?\n- Check for model bias: am I defaulting to accepting agent infrastructure as inherently valuable?\n- Deliver a verdict: SIGNAL (genuine development) / HYPE (vendor-driven narrative) / MIXED\n- Add one sentence of constructive context Han should keep in mind\nPresent this as a '🔍 Infrastructure Framing Check' section after the main stories.\n\nAfter creating the briefing:\n1. Send it to Telegram (8128617103) using the message tool with action=send.\n2. Write the full briefing text to /home/node/workspace/tmp/artoo-daily-news.txt using your write tool.\nDo NOT create any new cron jobs.",
+        "message": "## PHASE 0 — Load Wiki Context\nBefore researching today's news:\n1. Read /home/node/workspace/wiki/index.md to see existing topic pages\n2. Read the 3-5 most relevant topic pages (based on the index) to prime yourself with historical context on ongoing storylines\n3. Keep this context in mind while writing the briefing — where relevant, add a brief '📚 Prior context:' note to a story (1 sentence max) referencing what you already know\n\n---\n\nDeliver a daily AI news briefing for Han. Search for the latest AI news from today, including sources like Latent.Space, SemiAnalysis, GitHub (trending/releases), The Verge, The Information, and deeplearning.ai (Data Points tag at https://www.deeplearning.ai/the-batch/tag/data-points/). Exclude: Hacker News, Discord. Format it as a structured briefing with: 1) Top 5-7 stories with headlines, brief summaries, SOURCE URLS, and direct links 2) A 'Signal Watch' section highlighting the most important or unexpected development with URLs 3) A brief overall assessment of the day's news. Make it concise but substantive—focus on news that matters to AI/ML practitioners and governance professionals. Include the sources explicitly.\n\n**CRITICAL: For EVERY story, the headline MUST be a clickable hyperlink to the primary source article.** Format each story as:\n\n### [Story Headline](PRIMARY_SOURCE_URL)\n**Summary:** ...\n**Sources:** [Publisher 1](url1) | [Publisher 2](url2) | [Publisher 3](url3)\n**Confidence:** HIGH/MEDIUM/LOW\n\nThe headline link goes directly to the most authoritative original article. The Sources line lists 2-4 additional links for deeper reading. Never write a headline without a URL. Never use placeholder or homepage URLs — each link must go to the specific article.\n\n**Research rigor (researching-with-confidence skill)**: For each story, score its confidence — HIGH (3+ independent sources corroborate), MEDIUM (2 sources or 1 strong source), LOW (single source or contradicted). Flag any story where all sources trace to a single original (echo chamber risk). Do not include LOW confidence stories unless flagged with ⚠️.\n\n**Fact check**: Flag any story that appears fabricated, suspiciously vague, or lacks a verifiable primary source with ⚠️ UNVERIFIED.\n\n**Devil's Advocate — AI Agent Infrastructure framing**: For any story about AI agent infrastructure (frameworks, platforms, orchestration tools, MCP, multi-agent systems, enterprise agent deployments), apply the full devils-advocate skill:\n- Identify 2-3 hidden assumptions in how the story frames the need for agent infrastructure\n- Steelman the counter-argument: who benefits from this framing? Is the problem real or vendor-manufactured?\n- Find the biggest blind spot: what costs, risks, or alternatives is the coverage not mentioning?\n- Check for model bias: am I defaulting to accepting agent infrastructure as inherently valuable?\n- Deliver a verdict: SIGNAL (genuine development) / HYPE (vendor-driven narrative) / MIXED\n- Add one sentence of constructive context Han should keep in mind\nPresent this as a '🔍 Infrastructure Framing Check' section after the main stories.\n\n**New Agent Skills Radar**: Search GitHub Trending, GitHub Gists (search for 'agent skill' or 'claude skill' or 'llm skill'), r/LocalLLaMA, and Simon Willison's blog (simonwillison.net) for any newly shared agent skills, prompts, or techniques that have surfaced in the last 24-48 hours. Include up to 3 findings — only if genuinely novel (not repackaged existing ideas). Format as a '🛠 Skills Radar' section:\n\n**[Skill Name]** — [one sentence on what it does and why it's interesting] — [URL]\n\nSkip this section entirely if nothing notable was found.\n\nAfter creating the briefing:\n1. Send it to Telegram (8128617103) using the message tool with action=send.\n2. Write the full briefing text to /home/node/workspace/tmp/artoo-daily-news.txt using your write tool.\n\n## PHASE FINAL — Wiki Ingest\nFor each significant story from today's briefing:\n1. Identify the relevant topic page in /home/node/workspace/wiki/ (check index.md — use existing pages where they fit, e.g. openai.md, reasoning-models.md, hardware.md, governance.md, agent-infrastructure.md)\n2. If the page exists: append a datestamped entry — `### [YYYY-MM-DD] [Headline]` followed by a 2-3 sentence summary and the primary source URL\n3. If no suitable page exists: create /home/node/workspace/wiki/<topic>.md with a short intro paragraph and the first entry\n4. Update /home/node/workspace/wiki/index.md: add any new pages to the Topic Pages list with a one-line description; update 'Last updated' and 'Total pages'\n5. Append one line to /home/node/workspace/wiki/log.md: `[YYYY-MM-DD] Ingested N stories from daily briefing: [comma-separated topic page names updated]`\n\nDo NOT create any new cron jobs.",
         "model": "ollama/gemma4:26b",
         "timeoutSeconds": 1800
       },
@@ -61,11 +61,11 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1776002400000,
-        "lastRunAtMs": 1775916000014,
+        "nextRunAtMs": 1776088800000,
+        "lastRunAtMs": 1776002400009,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 53094,
+        "lastDurationMs": 57023,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -78,7 +78,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1775912611125,
+      "updatedAtMs": 1775998850722,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -97,15 +97,14 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1775998800000,
-        "lastRunAtMs": 1775912400012,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 211113,
+        "nextRunAtMs": 1776085200000,
+        "lastRunAtMs": 1775998800014,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 50708,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 1,
-        "lastDelivered": true,
-        "lastError": "⚠️ 📝 Edit: `in ~/workspace/AGENT_INFRA.md` failed"
+        "consecutiveErrors": 0,
+        "lastDelivered": true
       }
     },
     {
@@ -115,7 +114,7 @@
       "name": "Agent Infra Weekly Review",
       "enabled": true,
       "createdAtMs": 1773320400000,
-      "updatedAtMs": 1775408511162,
+      "updatedAtMs": 1776013500029,
       "schedule": {
         "kind": "cron",
         "expr": "0 10 * * 0",
@@ -134,15 +133,15 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1776013200000,
-        "lastRunAtMs": 1775408400013,
+        "nextRunAtMs": 1776618000000,
+        "lastRunAtMs": 1776013200016,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 111149,
-        "lastDelivered": true,
-        "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 1,
-        "lastError": "⚠️ ✉️ Message failed"
+        "lastDurationMs": 300013,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 2,
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -188,7 +187,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1775919616012,
+      "updatedAtMs": 1776006021234,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -206,14 +205,79 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776006000000,
-        "lastRunAtMs": 1775919600012,
+        "nextRunAtMs": 1776092400000,
+        "lastRunAtMs": 1776006000014,
         "lastRunStatus": "ok",
         "consecutiveErrors": 0,
         "lastStatus": "ok",
-        "lastDurationMs": 16000,
+        "lastDurationMs": 21220,
         "lastDeliveryStatus": "not-delivered",
         "lastDelivered": false
+      }
+    },
+    {
+      "id": "c0ffee01-w1k1-enr1ch-th1n-pages000001",
+      "agentId": "main",
+      "sessionKey": "agent:main:telegram:direct:8128617103",
+      "name": "Wiki Enrich Thin Pages (one-shot)",
+      "enabled": true,
+      "createdAtMs": 1776175200000,
+      "updatedAtMs": 1776063568298,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 12 * * 0",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "## Wiki Enrichment — Thin Pages\n\nFour wiki pages are currently too sparse to be useful: anthropic.md, openai.md, hardware.md, governance.md. Each has fewer than 200 words and only 1-4 stub entries. Your job is to research and rewrite each one as a rich, substantive reference page.\n\nFor EACH of the four pages below, do the following:\n1. Read the current page at /home/node/workspace/wiki/<page>.md to see what's already there\n2. Search the web for recent (2025-2026) developments on that topic — aim for 5-8 distinct findings\n3. Rewrite the page with full depth: include dates, specific claims, numbers, trade-offs, named people/products, source URLs. Each entry should be a meaty paragraph, not a one-liner.\n4. Write the enriched page back to /home/node/workspace/wiki/<page>.md\n\n---\n\n### Page 1: anthropic.md\nTopic: Anthropic — model releases, safety research, Claude updates, business moves, governance positions\nSearch for: Claude model releases (Claude 3.x, Claude 4.x timeline), Anthropic safety papers, Anthropic funding rounds, Constitutional AI updates, Conway agent platform, Anthropic policy positions\n\n### Page 2: openai.md\nTopic: OpenAI — GPT releases, product launches, business news, org changes, governance\nSearch for: GPT-4o, GPT-5, o1/o3 reasoning models, OpenAI Frontier platform, Sora video, Sam Altman news, OpenAI governance/board events 2025-2026\n\n### Page 3: hardware.md\nTopic: AI hardware — GPUs, chips, compute trends, new silicon\nSearch for: NVIDIA Blackwell GB10/GB200, AMD MI300X/MI400, Apple Silicon M4/M5 for AI, compute scaling trends 2026, H100 vs H200 pricing, inference chips (Groq, Cerebras, Tenstorrent)\n\n### Page 4: governance.md\nTopic: AI governance, policy, regulation, safety, ethics, privacy\nSearch for: EU AI Act implementation 2025-2026, US AI policy executive orders, AI safety summits, model transparency requirements, AI liability frameworks, notable AI privacy cases\n\n---\n\n## After enriching all four pages:\n1. Update /home/node/workspace/wiki/index.md — update 'Last updated' to today's date\n2. Append to /home/node/workspace/wiki/log.md: `[DATE] Enrichment: rewrote anthropic.md, openai.md, hardware.md, governance.md with full research`\n3. Send Telegram to 8128617103 with a brief summary: pages enriched, approximate word count per page, done.\n\nDo NOT create any new cron jobs.",
+        "model": "ollama/gemma4:26b",
+        "timeoutSeconds": 1800
+      },
+      "delivery": {
+        "mode": "announce",
+        "to": "telegram:8128617103"
+      },
+      "state": {
+        "nextRunAtMs": 1776627000000,
+        "lastRunAtMs": 1776063459338,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 108960,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": true
+      }
+    },
+    {
+      "id": "b1c2d3e4-f5a6-7b8c-9d0e-f1a2b3c4d5e6",
+      "agentId": "main",
+      "sessionKey": "agent:main:telegram:direct:8128617103",
+      "name": "Weekly Wiki Lint",
+      "enabled": true,
+      "createdAtMs": 1776175200000,
+      "updatedAtMs": 1776175200000,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 11 * * 0",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "## Weekly Wiki Lint\n\nPerform a health check and cleanup of the LLM wiki at /home/node/workspace/wiki/.\n\n## Step 1 — Inventory\nRead /home/node/workspace/wiki/index.md to get the list of all topic pages. Read each topic page.\n\n## Step 2 — Find issues\nFor each page, check for:\n- **Contradictions**: two entries on the same page that make conflicting claims about the same entity (e.g., a company's status, a model's capabilities)\n- **Stale claims**: entries older than 60 days that reference something as 'upcoming', 'expected', or 'announced' — these should be verified or marked `[STALE]`\n- **Orphans**: pages listed in index.md but with no entries, or pages with entries that are never referenced by any other page\n- **Gaps**: obvious topics that appear frequently across pages but have no dedicated page yet\n- **Duplicates**: two pages covering the same topic (e.g., `openai.md` and `open-ai.md`)\n\n## Step 3 — Fix what you can\n- Merge duplicate pages (keep the more complete one, delete the other)\n- Mark stale claims with `[STALE as of YYYY-MM-DD]`\n- Create stub pages for high-frequency gap topics (title + 1-sentence description, no entries yet)\n- Update index.md to reflect any merges, additions, or removals\n\n## Step 4 — Update metadata\nIn index.md, update 'Last updated' to today and 'Total pages' count.\n\n## Step 5 — Append to log\nAppend to /home/node/workspace/wiki/log.md: `[YYYY-MM-DD] Wiki Lint: N pages reviewed, N merged, N stale marked, N stubs created`\n\n## Step 6 — Report to Solo\nSend a brief Telegram message to 8128617103:\n- Pages reviewed, merged, stale-marked, stubs created\n- Top 2-3 observations: what topics are accumulating the most knowledge? What gaps are emerging?\n- Any contradictions found (list them briefly)\n\nDo NOT create any new cron jobs.",
+        "model": "ollama/gemma4:26b",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "to": "telegram:8128617103"
+      },
+      "state": {
+        "nextRunAtMs": 1776607200000
       }
     },
     {

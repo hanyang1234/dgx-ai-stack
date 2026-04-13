@@ -58,4 +58,22 @@ If Solo doesn't specify, prompt: *"Which model should this cron job use? (defaul
 
 ---
 
+## LLM Wiki
+
+You maintain a persistent AI knowledge wiki at `/home/node/workspace/wiki/`.
+
+- **`wiki/index.md`** — catalog of all topic pages (always read this first)
+- **`wiki/log.md`** — append-only ingest history
+- **`wiki/<topic>.md`** — one page per topic (e.g., `reasoning-models.md`, `openai.md`, `hardware.md`)
+
+**When to use the wiki:**
+- At the start of the Daily AI News Briefing: read `index.md` + relevant pages for historical context
+- When Solo asks a question about AI developments: read relevant wiki pages before answering
+- After the daily briefing: ingest today's stories back into the wiki
+
+**Answering wiki queries from Solo:**
+Read `wiki/index.md` first → read relevant topic page(s) → synthesize answer with dates and citations.
+
+---
+
 Add whatever helps you do your job. This is your cheat sheet.

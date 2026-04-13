@@ -35,7 +35,7 @@
 
 [FOUNDATION] Agentic AI Foundation (AAIF) – https://aaif.io – Linux Foundation's neutral governance body co-founded by Anthropic, Block, and OpenAI. Donated projects: MCP (Model Context Protocol), goose (local-first agent framework), and AGENTS.md (workflow standard). Serves as open standards body for interoperable agents.
 
-[PROTOCOL] Model Context Protocol (MCP) – https://modelcontextprotocol.io – Universal standard protocol for connecting AI models to tools, data and applications. Donated to AAIF in Dec 2025. Enables AI models to securely access context from diverse systems.
+[INTEGRATION] MCP (Model Context Protocol) – https://modelcontextprotocol.io – Standardized protocol for connecting AI models to tools and data. Rapidly adopted by enterprise platforms (62% by Feb 202 handles tool/data interfaces.
 
 [FRAMEWORK] Goose – https://github.com/block/goose – Open source, local-first AI agent framework from Block. Combines language models with extensible tools and standardized MCP-based integration. Transitioned to community governance under AAIF in Dec 2025.
 
@@ -107,13 +107,14 @@
 
 [PLATFORM] Veza AI Agent Security – https://veza.ai – Enterprise platform to discover, govern, and control AI agents across organizations. Introduced December 2025, helps security teams answer critical questions about agent existence, data access, and control mechanisms.
 
-[PLATFORM] OpenHands – https://openhands.ai – General-purpose AI agent for software development, capable of full-stack code generation, debugging, and deployment. Gained significant enterprise traction in Q4 2025.
+[FRAMEWORK] OpenManus – https://github.com/OpenManus/OpenManus – High-growth open-source agent framework capable of multi-step workflows, web browsing, and code execution. Reached 72k GitHub stars by March 2026. Integrated MCP in Feb 2026.
 
-[PLATFORM] AutoGen 0.4 – https://microsoft.github.io/autogen/ – Major redesign of Microsoft's multi-agent framework, released Q4 2025, improving code quality, robustness, and enterprise deployment patterns.
+[REASONING] NVIDIA Nemotron 70B – https://developer.nvidia.com/nemotron – Open-weights instruction-tuned model released Oct 2025. Matches GPT-4o performance at a fraction of the cost. Optimized for NVIDIA hardware via TensorRT-LLM.
+
 
 ---
 
-**Total Platforms/Tools Documented: 51**
+**Total Platforms/Tools Documented: 53**
 
 ---
 
