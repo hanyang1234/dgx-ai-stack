@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1776031236178,
+      "updatedAtMs": 1776117639991,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,11 +25,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776117600000,
-        "lastRunAtMs": 1776031200006,
+        "nextRunAtMs": 1776204000000,
+        "lastRunAtMs": 1776117600010,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 36172,
+        "lastDurationMs": 39981,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -42,7 +42,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1776002457032,
+      "updatedAtMs": 1776089102779,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -61,14 +61,15 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1776088800000,
-        "lastRunAtMs": 1776002400009,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 57023,
+        "nextRunAtMs": 1776175200000,
+        "lastRunAtMs": 1776088800016,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 302763,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": true
+        "consecutiveErrors": 1,
+        "lastDelivered": true,
+        "lastError": "⚠️ ✉️ Message failed"
       }
     },
     {
@@ -78,7 +79,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1775998850722,
+      "updatedAtMs": 1776086400047,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -97,14 +98,15 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1776085200000,
-        "lastRunAtMs": 1775998800014,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 50708,
-        "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": true
+        "nextRunAtMs": 1776171600000,
+        "lastRunAtMs": 1776085200017,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 1200030,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 1,
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -125,7 +127,7 @@
       "payload": {
         "kind": "agentTurn",
         "message": "## Weekly Agent Infrastructure Knowledge Base Review\n\nRead the file at /home/node/workspace/AGENT_INFRA.md.\n\nPerform the following review tasks:\n\n1) **Consolidate duplicates** — identify any entries covering the same product or service (possibly added on different days). Merge them into a single entry keeping the most recent date and the most complete description.\n\n2) **Flag stale entries** — entries older than 60 days that have been superseded by a newer version of the same product should be marked with a `[STALE]` tag at the start of their title.\n\n3) **Identify themes** — based on all entries, write a short 'Patterns & Trends' section at the top of the knowledge base (below the header, above ENTRIES_START) summarizing: what categories are most represented, what gaps keep appearing, and what direction agent infrastructure seems to be heading. Replace any existing Patterns & Trends section.\n\n4) **Update the metadata** at the bottom: set 'Last reviewed' to today's date and update 'Total entries' count.\n\n5) **Write the updated file** back to /home/node/workspace/AGENT_INFRA.md.\n\n6) **Send a brief summary to Solo** via Telegram (8128617103): how many entries reviewed, how many merged, how many flagged stale, and 2-3 sentences on the key trends you observed.\n\n7) **Write the same summary text** to /home/node/workspace/tmp/artoo-infra-weekly.txt using your write tool.",
-        "timeoutSeconds": 300,
+        "timeoutSeconds": 600,
         "model": "ollama/gemma4:26b"
       },
       "delivery": {
@@ -187,7 +189,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1776006021234,
+      "updatedAtMs": 1776092414451,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -205,12 +207,12 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776092400000,
-        "lastRunAtMs": 1776006000014,
+        "nextRunAtMs": 1776178800000,
+        "lastRunAtMs": 1776092400016,
         "lastRunStatus": "ok",
         "consecutiveErrors": 0,
         "lastStatus": "ok",
-        "lastDurationMs": 21220,
+        "lastDurationMs": 14435,
         "lastDeliveryStatus": "not-delivered",
         "lastDelivered": false
       }

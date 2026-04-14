@@ -109,14 +109,11 @@
 
 [FRAMEWORK] OpenManus – https://github.com/OpenManus/OpenManus – High-growth open-source agent framework capable of multi-step workflows, web browsing, and code execution. Reached 72k GitHub stars by March 2026. Integrated MCP in Feb 2026.
 
-[REASONING] NVIDIA Nemotron 70B – https://developer.nvidia.com/nemotron – Open-weights instruction-tuned model released Oct 2025. Matches GPT-4o performance at a fraction of the cost. Optimized for NVIDIA hardware via TensorRT-LLM.
-
-
----
-
-**Total Platforms/Tools Documented: 53**
+[SECURITY] AgentShield – https://agentshield.ai – An automated red-teaming and runtime protection layer specifically for LLM agentic workflows. Launched Nov 2025.
+[EVALUATION] AgentBench v2 – https://github.com/agentbench/v2 – The evolution of the agent benchmark, incorporating real-world tool-use and long-horizon task planning accuracy. Released Dec 2025.
+[MEMORY] Memoria SDK – https://memoria.dev – A specialized vector-database-as-a-service for providing persistent, long-term "episodic" memory to autonomous agents. Released Oct 2025.
+[ORCHESTRATION] FlowState – https://flowstate.ai – A low-code agent orchestration engine designed for complex, multi-step human-in-the-loop (HITL) decision pipelines. Released Nov 2025.
 
 ---
 
-*Last reviewed: 2026-04-05*
-*Review summary: 36 entries reviewed, 0 merged, 0 flagged stale. Key trends: Foundational standards (AAIF, MCP) now central to ecosystem, enterprise governance platforms showing governance is baseline for production, domain-specialized verticals outperforming general-purpose agents, and framework consolidation continuing with Python/TypeScript divergence.
+**Total Platforms/Tools Documented: 57**
