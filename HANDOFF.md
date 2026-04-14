@@ -1,233 +1,27 @@
 # Handoff — AI Stack on DGX Spark
 
-**Last updated:** 2026-03-21
-**Status:** Fully deployed and operational — no manual steps remaining
+**Last updated:** 2026-04-14
+**Status:** Fully deployed and operational
 
 ---
 
 ## Stack Summary
 
 ```
-CONTAINER           STATUS          PORTS
-open-webui          Up (healthy)    0.0.0.0:12000→8080, 127.0.0.1:11435→11434
-openclaw-gateway    Up (healthy)    0.0.0.0:18789→18789
+CONTAINER           IMAGE                              STATUS
+ollama              ollama/ollama:latest (v0.20.5+)    Up (healthy)
+open-webui          open-webui/open-webui:latest       Up (healthy)
+openclaw-gateway    ghcr.io/openclaw/openclaw:2026.4.12  Up (healthy)
+
+PORTS
+0.0.0.0:11435 → ollama:11434       Ollama API (LAN + Tailscale)
+0.0.0.0:12000 → open-webui:8080   Open WebUI
+0.0.0.0:18789 → openclaw:18789    OpenClaw gateway (token auth)
 ```
 
-Both containers have `restart: unless-stopped` — they survive reboots automatically.
-
----
-
-## What Was Deployed (Across Three Sessions)
-
-### Session 1 — Initial Dockerization
-1. Upgraded Open WebUI to `ghcr.io/open-webui/open-webui:ollama` with `OLLAMA_HOST=0.0.0.0:11434`
-2. Deployed OpenClaw v2026.3.8 in Docker (`ghcr.io/openclaw/openclaw:latest`)
-3. Migrated native OpenClaw config (`~/.openclaw/` → `~/openclaw-config/`) to Docker bind-mount
-4. Wired OpenClaw to bundled Ollama via `http://open-webui:11434` (ai-stack network)
-5. Reset Open WebUI admin password (`han.yang123@yahoo.com` / `changeme123` — **change this**)
-6. Set up GitHub repo (`hanyang1234/dgx-ai-stack`) with `backup.sh`, `restore.sh`, `update.sh`, etc.
-7. Configured daily 2am host cron: `0 2 * * * /home/hanyang/Downloads/claude-exp/backup.sh`
-
-### Session 2 — Integrations and Hardening
-8. Configured Anthropic auth via `~/openclaw-config/agents/main/agent/auth-profiles.json`
-9. Added `ANTHROPIC_API_KEY` and `TELEGRAM_TOKEN` to `~/openclaw-config/.env`
-10. Enabled Telegram plugin — initial bot `@hanopenclaw123bot` (DO instance conflict)
-11. Installed and activated **AgentMail** skill (`✓ ready`) with API key configured
-
-### Session 3 — DO Migration and Tuning
-12. Created separate Telegram bot `@artoo_dgx_bot` to avoid 409 conflict with DO instance
-13. Set Telegram DM policy to `open` with `allowFrom: ["*"]`
-14. Transferred identity files from DO: `SOUL.md`, `USER.md`, `IDENTITY.md` → `~/openclaw-config/workspace/`
-15. Transferred 3 OpenClaw cron jobs from DO: `~/openclaw-config/cron/jobs.json`
-    - Agent Needs Briefing — 6:00am daily
-    - Daily AI News Briefing — 6:30am daily
-    - OpenClaw Version Check — 3:00pm daily
-16. Pulled `qwen3.5:35b` (23 GB) and set as primary model
-17. Disabled Nemotron thinking mode as primary (leaks chain-of-thought to Telegram)
-
-### Session 4 — Hardening, OSS Gap Pipeline, Ollama OOM Fix (2026-03-12 to 2026-03-18)
-18. **Pinned OpenClaw to v2026.3.11** — v2026.3.12/3.13 crash with Ollama plugin bug
-    (`ReferenceError: Cannot access 'ANTHROPIC_MODEL_ALIASES' before initialization`)
-19. **Email delivery restored via AgentMail** — `daily-briefing-email.js` script reads
-    `AGENT_BRIEFING_FILE` env var (path to temp file). Cron jobs write briefing to `/tmp/artoo-*.txt`
-    then exec the script. Both briefing jobs deliver to Telegram + email.
-20. **Added exec approval allowlist** — `node *` and `node -e *` pre-approved on the main agent
-    to avoid interactive approval prompts during gateway exec calls
-21. **Fixed AGENT_INFRA.md GitHub sync** — `backup.sh` was looking at `~/openclaw-config/workspace/`
-    but the file lives in `~/openclaw/workspace/` (Docker bind-mount). Added explicit copy block.
-22. **Created SKILLS.md** for Artoo's workspace — capability map covering tools, models, cron jobs,
-    and contacts; integrated into session startup reading list in `AGENTS.md`
-23. **OSS Gap Pipeline (Phase 1 & 2):**
-    - Created `RUBRIC.md` — 6-dimension scoring rubric (Pain, Uniqueness, Addressability, Timing,
-      Leverage, Han's Edge); score ≥ 7.0 triggers alert to Han
-    - Created `GAP_IDEAS.md` — gap tracker seeded with 2 entries from AGENT_INFRA.md
-    - Updated Agent Needs Briefing — now extracts [GAP] entries and appends to GAP_IDEAS.md
-    - Added **Gap Scorer** cron job (Wednesday 9am PT) — scores unscored gaps, alerts Han for ≥ 7.0
-    - Added **Gap Implementer** cron job (daily 8am PT) — writes spec for approved gaps, notifies Han
-    - All approval-gated: Han must reply APPROVE → SCAFFOLD before any code ships
-    - Updated `backup.sh` to include RUBRIC.md, GAP_IDEAS.md, and `specs/`
-24. **Ollama OOM fix** — cron jobs failing with "model requires more system memory (63.4 GiB) than
-    available (62.3 GiB)" when a different 120b model was warm from Open WebUI use. Fixed by adding
-    `OLLAMA_MAX_LOADED_MODELS=1` to `docker-compose.yml` and restarting `open-webui`.
-25. **NemoClaw decision: wait** — requires fresh OpenClaw install (can't layer on existing);
-    alpha-stage with active install failures; no DGX Spark-specific guidance. Re-evaluate in 4–6 weeks.
-
-### Session 5 — Model Expansion, Control UI, GPU Fix (2026-03-18 to 2026-03-21)
-26. **Gateway exposed on LAN** — changed `gateway.bind` from `loopback` → `lan` and port binding
-    from `127.0.0.1:18789` → `0.0.0.0:18789`. Control UI now accessible via browser on LAN or SSH tunnel.
-27. **Added 3 new Ollama models** — `qwen3.5:122b-a10b-q4_K_M`, `nemotron-cascade-2:latest`,
-    `nemotron-3-super:120b` registered in openclaw.json.
-28. **Default conversation model changed to `gpt-oss:20b`** — fastest response for interactive chat.
-29. **All cron jobs switched to `ollama/qwen3.5:35b`** — root cause analysis (2026-03-21):
-    - gpt-oss models use MXFP4 format which runs **CPU-only** in Ollama v0.17.7 (no GPU offload)
-    - gpt-oss:120b at 60.9 GiB on CPU → inference too slow to complete within 10-minute timeout
-    - qwen3.5:35b is GGUF, uses GPU (41/41 layers on CUDA0, 21.9 GiB VRAM), loads in ~8s
-30. **CUDA non-deterministic init bug discovered** — after container restart, `ggml_cuda_init`
-    sometimes fails ("no CUDA-capable device"). Fix: restart `open-webui` a **second** time. GGUF
-    models then properly use GPU. Root cause unknown; appears to be a container toolkit race.
-31. **Daily AI News Briefing rescheduled** — from 6:30am → 7:00am PT.
-32. **Anthropic API credits depleted** — fallback chain breaks on Anthropic models. Top up at
-    platform.anthropic.com to restore. OpenAI fallback remains active.
-
----
-
-## Credentials in Use
-
-| Credential | Where stored | Notes |
-|---|---|---|
-| `ANTHROPIC_API_KEY` | `~/Downloads/claude-exp/.env`, `~/openclaw-config/.env`, `auth-profiles.json` | Fallback LLM provider |
-| `OPENCLAW_GATEWAY_TOKEN` | `~/Downloads/claude-exp/.env`, `openclaw.json` | Gateway auth bearer token |
-| `TELEGRAM_TOKEN` | `~/Downloads/claude-exp/.env`, `openclaw.json` | Bot token for `@artoo_dgx_bot` |
-| `AGENTMAIL_API_KEY` | `~/Downloads/claude-exp/.env`, `~/openclaw-config/.env`, `openclaw.json` | AgentMail email integration |
-| Open WebUI password | Not stored — reset to `changeme123` | **Change on next login** |
-
-> **Action required:** Rotate the GitHub PAT used during setup — it was shared in the Claude Code chat session.
-> Go to https://github.com/settings/tokens and regenerate the token.
-
----
-
-## Key File Locations
-
-| Path | What it is |
-|------|-----------|
-| `~/Downloads/claude-exp/` | Repo root — all scripts and compose file |
-| `~/Downloads/claude-exp/.env` | **Secrets** (gitignored) |
-| `~/Downloads/claude-exp/docker-compose.yml` | Stack definition |
-| `~/openclaw-config/` | OpenClaw config bind-mount (`/home/node/.openclaw` in container) |
-| `~/openclaw-config/openclaw.json` | Main config — models, gateway, plugins, skills |
-| `~/openclaw-config/.env` | OpenClaw's internal env file — provider API keys |
-| `~/openclaw-config/agents/main/agent/auth-profiles.json` | Anthropic API key for OpenClaw auth |
-| `~/openclaw-config/workspace/` | Agent personality files (SOUL.md, USER.md, etc.) |
-| `~/openclaw-config/cron/jobs.json` | OpenClaw internal cron job definitions |
-| `~/openclaw-config/workspace/skills/agentmail/` | AgentMail skill (installed via clawhub) |
-| `~/openclaw/workspace/` | Artoo's working directory (Docker bind-mount) |
-| `~/openclaw/workspace/AGENT_INFRA.md` | Agent infrastructure knowledge base |
-| `~/openclaw/workspace/SKILLS.md` | Artoo's capability map |
-| `~/openclaw/workspace/RUBRIC.md` | OSS gap scoring rubric |
-| `~/openclaw/workspace/GAP_IDEAS.md` | OSS gap tracker (unscored → shipped) |
-| `~/openclaw/workspace/specs/` | Project specs for approved OSS gaps |
-
----
-
-## Active Integrations
-
-| Integration | Status | Notes |
-|---|---|---|
-| Ollama (local models) | ✓ Active | 5 models via `http://open-webui:11434` |
-| Anthropic Claude | ✓ Active | Fallback provider via auth-profiles.json |
-| Telegram | ✓ Active | `@artoo_dgx_bot`, DM policy: open |
-| AgentMail | ✓ Active | Email inbox for the agent |
-| iMessage | ✗ Disabled | No `imsg` binary in Docker |
-| OpenAI / GPT | ✓ Configured | Fallback via `openclaw.json` |
-
----
-
-## Configured Ollama Models
-
-| Model ID | Role | GPU? | Context |
-|---|---|---|---|
-| `ollama/gpt-oss:20b` | **Primary** — interactive chat (fast) | CPU only (MXFP4) | 65k |
-| `ollama/qwen3.5:35b` | **Cron jobs** — GPU-accelerated quality model | GPU ✓ | 65k |
-| `ollama/gpt-oss:120b` | Large reasoning (CPU-only — too slow for cron) | CPU only (MXFP4) | 65k |
-| `ollama/qwen3.5:122b-a10b-q4_K_M` | Large MoE | GPU ✓ | 262k |
-| `ollama/nemotron-cascade-2:latest` | Fast MoE | GPU ✓ | 262k |
-| `ollama/nemotron-3-super:120b` | Nemotron Super | GPU ✓ | 65k |
-| `ollama/qwen3-coder:latest` | Coding | GPU ✓ | 65k |
-| `ollama/nemotron-3-nano:latest` | Reasoning (not primary — leaks thinking to Telegram) | GPU ✓ | 128k |
-
-> **gpt-oss (MXFP4) models** run CPU-only in Ollama v0.17.7 — they do not offload to GPU.
-> gpt-oss:20b is fast enough for short chat (16 GiB on CPU). gpt-oss:120b is too slow for cron.
-
----
-
-## OpenClaw Cron Jobs (Internal)
-
-| Job | Schedule | Model | Delivery |
-|---|---|---|---|
-| Agent Needs Briefing | 6:00am daily (PT) | ollama/qwen3.5:35b | Telegram + email |
-| Daily AI News Briefing | 7:00am daily (PT) | ollama/qwen3.5:35b | Telegram + email |
-| Gap Scorer | Wednesday 9:00am (PT) | ollama/qwen3.5:35b | Telegram (alerts only) |
-| Gap Implementer | 8:00am daily (PT) | ollama/qwen3.5:35b | None (silent if no approved gaps) |
-| Agent Infra Weekly Review | Sunday 10:00am (PT) | ollama/qwen3.5:35b | Telegram |
-| OpenClaw Version Check | 3:00pm daily (PT) | default | None (silent if up to date) |
-
-All jobs use `sessionTarget: isolated` and `wakeMode: now`. Email delivery via AgentMail:
-agent writes briefing to `/tmp/artoo-*.txt`, then execs `daily-briefing-email.js`.
-
-View with: `docker compose exec openclaw-gateway openclaw cron list`
-
----
-
-## Ports
-
-| Port | Bind | What |
-|------|------|------|
-| `12000` | `0.0.0.0` | Open WebUI (public) |
-| `11434` | `0.0.0.0` | **Native** host Ollama (separate process) |
-| `11435` | `127.0.0.1` | Container Ollama inside open-webui |
-| `18789` | `0.0.0.0` | OpenClaw gateway (LAN-accessible, token auth required) |
-
----
-
-## Quirks to Know
-
-- **Separate Telegram bot** — DO instance uses `@hanopenclaw123bot`. DGX uses `@artoo_dgx_bot`. Using the same token on two instances causes a 409 conflict; each instance needs its own bot.
-
-- **Nemotron thinking mode leaks** — Nemotron-3 with `thinking: true` sends its chain-of-thought reasoning to Telegram as visible text. Keep it as a non-primary model or use it only for isolated agent tasks.
-
-- **Port 11434 conflict** — the host has a native `ollama serve` process that holds `0.0.0.0:11434`. The container's Ollama is mapped to `11435` on the host but reachable internally at `http://open-webui:11434`. Don't stop the native Ollama unless you know what depends on it.
-
-- **Native OpenClaw is disabled** — `~/.config/systemd/user/openclaw-gateway.service` still exists but is disabled. Do not re-enable it; it conflicts with Docker on port 18789.
-
-- **OLLAMA_HOST env var is required** — without `OLLAMA_HOST=0.0.0.0:11434` in the open-webui container, Ollama binds to loopback only and OpenClaw cannot reach it.
-
-- **OLLAMA_MAX_LOADED_MODELS=1 is required** — the DGX Spark has 128 GiB unified memory. Each 120b model needs ~63 GiB. Without this limit, a warm model from Open WebUI use will cause cron jobs to OOM when trying to load `gpt-oss:120b`. Side effect: model switching in Open WebUI takes 20–30s instead of instant.
-
-- **OpenClaw pinned to v2026.3.11** — do not upgrade to v2026.3.12 or v2026.3.13. Both crash with an Ollama plugin initialization error. Monitor for v2026.3.14+.
-
-- **gpt-oss (MXFP4) models are CPU-only** — gpt-oss:20b and gpt-oss:120b run entirely on CPU in Ollama v0.17.7. gpt-oss:20b is fast enough for interactive chat; gpt-oss:120b at 60.9 GiB on CPU is too slow for cron jobs (10-minute timeout). All cron jobs use `qwen3.5:35b` (GPU-accelerated).
-
-- **CUDA init non-deterministic after container restart** — after restarting `open-webui`, CUDA sometimes fails to initialize (`ggml_cuda_init: failed to initialize CUDA`). Fix: restart `open-webui` a **second** time. Signs of broken CUDA: all models show `offloaded 0/N layers to GPU` and responses take 1+ minute even for "say hi".
-
-- **jq edits to openclaw.json** — use `docker compose exec openclaw-gateway openclaw config set` or edit the file directly with the Write tool. Never use shell redirects (`>`) to edit it — a failed `mv` will truncate the file to 0 bytes.
-
-- **Agent workspace vs config** — `~/openclaw/workspace/` (Docker bind-mount) is Artoo's working directory. `~/openclaw-config/workspace/` is personality/identity files. They are different directories. AGENT_INFRA.md, SKILLS.md, RUBRIC.md, GAP_IDEAS.md all live in `~/openclaw/workspace/`.
-
----
-
-## Daily Backup
-
-A host cron job runs `backup.sh` every day at 2am:
-```
-0 2 * * * /home/hanyang/Downloads/claude-exp/backup.sh >> /home/hanyang/Downloads/claude-exp/backup.log 2>&1
-```
-
-Backup commits to `hanyang1234/dgx-ai-stack` on GitHub. Credentials are stripped before commit.
-
-To run manually:
-```bash
-cd ~/Downloads/claude-exp && ./backup.sh
-```
+All containers have `restart: unless-stopped` — they survive reboots.
+Docker network: `ai-stack` (bridge, external — created manually).
+Repo root: `~/Downloads/claude-exp/`
 
 ---
 
@@ -235,15 +29,179 @@ cd ~/Downloads/claude-exp && ./backup.sh
 
 ```bash
 cd ~/Downloads/claude-exp
-# Claude Code will load DEPLOYMENT.md and HANDOFF.md for context automatically
+docker compose ps                                       # container health
+docker compose exec openclaw-gateway openclaw cron list # cron job status
+docker compose logs openclaw-gateway --tail 30         # recent logs
+cat ~/openclaw/workspace/tmp/artoo-daily-news.txt      # latest briefing
+tail -20 backup.log                                    # last backup
 ```
 
-Useful commands to orient yourself:
+---
+
+## Current Configuration (April 2026)
+
+### Primary Model
+**`ollama/gemma4:26b`** — default for both interactive chat and all cron jobs (as of 2026-04-08).
+- Q4_K_M, 16 GB VRAM, ~16 tok/s, vision + tools + thinking, 262K context
+- Flash attention active (`OLLAMA_FLASH_ATTENTION=1`)
+- Fallbacks: `anthropic/claude-opus-4-6` → `anthropic/claude-sonnet-4-6` → `openai/gpt-5.1-codex`
+
+### All Pulled Models
+
+| Model | Size | GPU? | Role |
+|-------|------|------|------|
+| `gemma4:26b` | 16 GB | GPU ✓ | **Default** — interactive + all cron jobs |
+| `gemma4:31b` | 20 GB | GPU ✓ | Heavy reasoning in Web UI |
+| `qwen3.5:9b` | 6.6 GB | GPU ✓ | Fast/simple cron subtasks |
+| `qwen3.5:35b` | 23 GB | GPU ✓ | Quality fallback |
+| `qwen3.5:122b-a10b-q4_K_M` | 81 GB | GPU ✓ | Large MoE, deep reasoning |
+| `nemotron-cascade-2:latest` | 24 GB | GPU ✓ | Fast MoE, reasoning |
+| `nemotron-3-super:120b` | 86 GB | GPU ✓ | Deep reasoning (Web UI only) |
+| `nemotron-3-nano:latest` | 24 GB | GPU ✓ | Thinking mode |
+| `qwen3-coder:latest` | 18 GB | GPU ✓ | Coding tasks |
+| `gpt-oss:20b` | 13 GB | CPU only | MXFP4, no GPU |
+| `gpt-oss:120b` | 65 GB | CPU only | MXFP4, too slow for cron |
+
+### Cron Jobs
+
+All use `ollama/gemma4:26b`, `sessionTarget: isolated`, `wakeMode: now`.
+
+| Job | ID | Schedule (PT) | Timeout | Status |
+|-----|----|--------------|---------|--------|
+| Agent Needs Briefing | 8358ce94 | 6:00am daily | 1200s | ok |
+| Daily AI News Briefing | aafd403d | 7:00am daily | 1800s | ok |
+| Gap Implementer | e2f3a4b5 | 8:00am daily | 600s | error (exits if no approved gaps) |
+| Gap Scorer | d1e2f3a4 | Wednesday 9am | 600s | ok |
+| Agent Infra Weekly Review | c2d4e6f8 | Sunday 10am | 600s | error (msg delivery) |
+| Weekly Wiki Lint | b1c2d3e4 | Sunday 11am | 600s | ok |
+| OpenClaw Version Check | 7a8c12a6 | 3:00pm daily | 120s | error (times out) |
+
+Run a job immediately:
 ```bash
-docker compose ps                                                    # container health
-docker compose exec openclaw-gateway openclaw skills list           # skill status
-docker compose exec openclaw-gateway openclaw cron list             # internal cron jobs
-docker compose logs openclaw-gateway --tail 30                      # recent logs
-crontab -l                                                           # host cron jobs
-tail -20 backup.log                                                  # last backup run
+source ~/Downloads/claude-exp/.env
+docker exec openclaw-gateway node openclaw.mjs cron run <jobId> \
+  --token $OPENCLAW_GATEWAY_TOKEN --url ws://127.0.0.1:18789
 ```
+
+---
+
+## Key File Locations
+
+| Path | What it is |
+|------|-----------|
+| `~/Downloads/claude-exp/` | Repo root — compose file, scripts, docs |
+| `~/Downloads/claude-exp/.env` | **Secrets** (gitignored) |
+| `~/Downloads/claude-exp/docker-compose.yml` | Stack definition |
+| `~/Downloads/claude-exp/DEPLOYMENT.md` | Ops reference (full detail) |
+| `~/Downloads/claude-exp/ARCHITECTURE.md` | Claude Code ↔ Artoo interface design |
+| `~/openclaw-config/` | OpenClaw config bind-mount (`/home/node/.openclaw` in container) |
+| `~/openclaw-config/openclaw.json` | Main config — models, gateway, plugins, cron |
+| `~/openclaw-config/cron/jobs.json` | Cron job definitions (live bind-mount, no restart needed) |
+| `~/openclaw-config/workspace/TOOLS.md` | Startup context injected via bootstrap hook |
+| `~/openclaw-config/workspace/SKILLS.md` | Skill registry injected via bootstrap hook |
+| `~/openclaw/workspace/` | Artoo's working directory (Docker bind-mount) |
+| `~/openclaw/workspace/wiki/` | LLM wiki — 10 topic pages + index |
+| `~/openclaw/workspace/TOOLS.md` | What Artoo reads (must stay in sync with config copy) |
+| `~/openclaw/workspace/SKILLS.md` | What Artoo reads (must stay in sync with config copy) |
+| `~/openclaw/workspace/tmp/` | Briefing output files (`artoo-daily-news.txt`, etc.) |
+| `~/openclaw/workspace/GAP_IDEAS.md` | OSS gap tracker |
+| `~/openclaw/workspace/RUBRIC.md` | OSS gap scoring rubric |
+| `~/openclaw/workspace/specs/` | Project specs for approved OSS gaps |
+| `~/.claude/projects/.../memory/` | Claude Code persistent memory (MEMORY.md index) |
+
+---
+
+## Active Integrations
+
+| Integration | Status | Notes |
+|---|---|---|
+| Ollama (local models) | ✓ Active | 11 models, 16 registered in openclaw.json |
+| Anthropic Claude | ✓ Configured | Fallback (credits may be low — check platform.anthropic.com) |
+| Telegram | ✓ Active | `@artoo_dgx_bot`, chatId 8128617103, DM policy: open |
+| AgentMail | ✓ Active | `artooopenclaw@agentmail.to` → `han.yang123@yahoo.com` |
+| Open WebUI | ✓ Active | `http://192.168.4.45:12000` on LAN |
+| iMessage | ✗ Disabled | No `imsg` binary in Docker |
+| OpenAI / GPT | ✓ Configured | Fallback |
+
+---
+
+## LLM Wiki
+
+Artoo maintains a persistent markdown wiki at `~/openclaw/workspace/wiki/`.
+Index: `wiki/index.md`. Current pages: anthropic, openai, hardware, governance,
+agent-infrastructure, projections, quantization, agentic-coding, nemoclaw, vllm-dgx-spark.
+
+**Critical:** Phase 0 of briefing cron jobs reads ONLY `index.md` (not full pages).
+Loading full pages at startup fills gemma4:26b's context budget → empty briefing output.
+
+Artoo's wiki-query skill lets Han ask: "wiki: [topic]" or "what do you know about [topic]"
+and Artoo will search wiki pages to answer.
+
+---
+
+## Credentials in Use
+
+| Credential | Where stored |
+|---|---|
+| `ANTHROPIC_API_KEY` | `~/Downloads/claude-exp/.env`, `~/openclaw-config/.env` |
+| `OPENCLAW_GATEWAY_TOKEN` | `~/Downloads/claude-exp/.env`, `openclaw.json` |
+| `TELEGRAM_TOKEN` | `~/Downloads/claude-exp/.env`, `openclaw.json` |
+| `AGENTMAIL_API_KEY` | `~/Downloads/claude-exp/.env`, `~/openclaw-config/.env`, `openclaw.json` |
+
+---
+
+## Known Issues (April 2026)
+
+| Issue | Status | Notes |
+|-------|--------|-------|
+| Telegram delivery fails for long briefings | Open | Telegram 4096-char limit; multi-part not implemented |
+| Agent Needs Briefing sometimes times out at 1200s | Intermittent | Cold model load + wiki ingest; OLLAMA_KEEP_ALIVE=10m reduces frequency |
+| Agent Infra Weekly Review message delivery failure | Open | Fires but Telegram send fails |
+| Gap Implementer exits early | Expected | Exits cleanly when no approved gaps; shows as "error" but is fine |
+| OpenClaw Version Check times out at 120s | Known | Low priority; hasn't been fixed |
+| Anthropic API credits may be depleted | Check | Top up at platform.anthropic.com |
+
+---
+
+## Quirks to Know
+
+- **TOOLS.md has two copies** — `~/openclaw-config/workspace/TOOLS.md` (injected at startup) and `~/openclaw/workspace/TOOLS.md` (what Artoo reads via file tool). Both must be kept in sync. `backup.sh` syncs config → workspace automatically.
+
+- **jobs.json edits are live** — the file is bind-mounted into the container. Edits take effect on the next cron run without a gateway restart.
+
+- **openclaw.json trailing comma bug** — if `backup.sh` fails with `jq: parse error`, check `~/openclaw-config/openclaw.json` for a trailing comma (most recently found in the `tools.exec` block around line 304).
+
+- **AI-stack network is external** — `docker network create --driver bridge ai-stack` was run once manually. After an OS reinstall, re-create it before `docker compose up`.
+
+- **Docker cgroup driver must be cgroupfs** — not `systemd`. Set in `/etc/docker/daemon.json`. A copy is committed to `sanitized/docker-daemon.json`. This is the decisive fix for CUDA non-deterministic init on GB10.
+
+- **Separate Telegram bot** — any other OpenClaw instance uses `@hanopenclaw123bot`. DGX Spark uses `@artoo_dgx_bot`. Same token on two pollers = 409 conflict.
+
+- **exec blocked in isolated sessions** — Artoo cannot run shell commands in cron sessions. Host cron handles script-based tasks (stock delivery, backup, etc.).
+
+- **GitHub PAT embedded in remote URL** — `git remote get-url origin` to inspect. PAT has expiry; refresh at github.com/settings/tokens if push fails.
+
+- **personality/ dir removed** — stale tracked directory in git; files now live in `openclaw-personality/` (cleaned up 2026-04-10).
+
+---
+
+## Daily Backup
+
+Host cron runs `backup.sh` at 2am daily:
+```
+0 2 * * * /home/hanyang/Downloads/claude-exp/backup.sh >> /home/hanyang/Downloads/claude-exp/backup.log 2>&1
+```
+
+Commits to GitHub with credentials stripped. To run manually:
+```bash
+cd ~/Downloads/claude-exp && ./backup.sh
+```
+
+---
+
+## History Summary (sessions before April 2026)
+
+- **Sessions 1–3 (Feb–Mar 2026):** Initial Dockerization, Anthropic/Telegram/AgentMail integrations, DO migration, split Ollama container, Artoo identity files transferred.
+- **Session 4 (Mar 2026):** OSS gap pipeline (RUBRIC.md, GAP_IDEAS.md, Gap Scorer/Implementer cron), Ollama OOM fix, email delivery via AgentMail, exec approval allowlist.
+- **Session 5 (Mar 2026):** Gateway exposed on LAN, 3 new Ollama models, CUDA init bug root-caused and fixed (cgroupfs + cuda_v13), NemoClaw evaluated (defer).
+- **Sessions 6–7 (Apr 2026):** Upgraded to OpenClaw 2026.4.9→2026.4.12, Ollama v0.20.5, Open WebUI latest. LLM wiki built (10 pages), wiki backfill completed (2 runs), wiki-query skill created, Phase 0 context bloat bug fixed (read only index.md), OLLAMA_KEEP_ALIVE=10m added, Weekly Wiki Lint job added. Claude Code ↔ Artoo architecture documented.

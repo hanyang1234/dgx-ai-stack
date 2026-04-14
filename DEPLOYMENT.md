@@ -14,19 +14,20 @@ HOST: NVIDIA DGX Spark GB10 (Ubuntu)
 │
 │  Docker network: ai-stack (bridge)
 │  │
-│  ├── ollama  (ollama/ollama:latest, v0.20.4+)
+│  ├── ollama  (ollama/ollama:latest, v0.20.5+)
 │  │   ├── Ollama API         0.0.0.0:11435 → :11434   (LAN + Tailscale accessible)
 │  │   ├── Volume: open-webui-ollama        → /root/.ollama  (all model weights)
 │  │   ├── Env: OLLAMA_LLM_LIBRARY=cuda_v13     (required for GB10 CUDA init)
 │  │   ├── Env: OLLAMA_MAX_LOADED_MODELS=2      (two models in VRAM simultaneously)
-│  │   └── Env: OLLAMA_FLASH_ATTENTION=1        (faster prefill/TTFT)
+│  │   ├── Env: OLLAMA_FLASH_ATTENTION=1        (faster prefill/TTFT)
+│  │   └── Env: OLLAMA_KEEP_ALIVE=10m           (evict after 10 min — prevents cron cold-load)
 │  │
 │  ├── open-webui  (ghcr.io/open-webui/open-webui:latest)
 │  │   ├── Open WebUI         0.0.0.0:12000 → :8080
 │  │   ├── Volume: open-webui              → /app/backend/data
 │  │   └── Env: OLLAMA_BASE_URL=http://ollama:11434
 │  │
-│  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:2026.4.9)
+│  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:2026.4.12)
 │      ├── Gateway            0.0.0.0:18789 → :18789   (LAN, token auth)
 │      ├── Bind: ~/openclaw-config          → /home/node/.openclaw
 │      ├── Bind: ~/openclaw/workspace       → /home/node/workspace
@@ -54,7 +55,7 @@ HOST: NVIDIA DGX Spark GB10 (Ubuntu)
 
 ## Ollama
 
-**Container:** `ollama/ollama:latest` (standalone, v0.20.4+)
+**Container:** `ollama/ollama:latest` (standalone, v0.20.5+)
 
 **Critical env vars:**
 - `OLLAMA_LLM_LIBRARY=cuda_v13` — forces the correct CUDA library for GB10. Without this, CUDA init is non-deterministic and models may silently fall back to CPU.
@@ -106,7 +107,7 @@ Accessible at `http://192.168.4.45:12000` on LAN.
 ## OpenClaw
 
 ### Image version
-Pinned to `ghcr.io/openclaw/openclaw:2026.4.9` (updated 2026-04-08).
+Pinned to `ghcr.io/openclaw/openclaw:2026.4.12` (updated 2026-04-14).
 
 To update:
 ```bash
@@ -392,6 +393,98 @@ Monitor: [github.com/NVIDIA/NemoClaw/issues](https://github.com/NVIDIA/NemoClaw/
 
 ---
 
+## LLM Wiki
+
+Artoo maintains a persistent markdown wiki in `~/openclaw/workspace/wiki/`. Each daily briefing
+cron job reads the wiki for context (Phase 0: index.md only) and writes new knowledge back at the
+end (Phase FINAL). A separate Weekly Wiki Lint job keeps pages current.
+
+### Wiki pages (as of 2026-04-13)
+
+| Page | Contents |
+|------|----------|
+| `index.md` | Table of contents — the only page read in Phase 0 |
+| `anthropic.md` | Anthropic model releases, safety research, policy |
+| `openai.md` | OpenAI model releases, products |
+| `hardware.md` | GPU/accelerator landscape, GB10, DGX Spark |
+| `governance.md` | AI regulation, policy, safety frameworks |
+| `agent-infrastructure.md` | Agent stacks, runtimes, orchestration |
+| `projections.md` | Capability forecasts, scaling trends |
+| `quantization.md` | TurboQuant, RotorQuant, KV cache compression |
+| `agentic-coding.md` | Why systems-level features still take long despite agentic coding |
+| `nemoclaw.md` | NVIDIA NemoClaw stack — assessment vs Artoo migration |
+| `vllm-dgx-spark.md` | vLLM on GB10: 52 tok/s (3× Ollama), migration path |
+
+### Adding content to the wiki
+
+**Option A — Claude Code session (preferred for research-heavy ingest):**
+```bash
+# Claude Code reads the URL/paper and writes directly to a wiki page
+```
+
+**Option B — Artoo wiki-query skill (from Telegram):**
+```
+wiki: [topic]            # query existing wiki content
+```
+
+**Option C — Manual ingest via cron:**
+Edit `jobs.json` to add a one-shot wiki ingest job targeting a specific URL or file.
+
+### wiki-query skill
+
+Artoo has a `wiki-query` skill that makes it easy to ask questions answered from the wiki.
+Triggers: "wiki: [topic]", "from your wiki", "check your wiki", "what do you know about".
+Artoo reads index.md → identifies relevant pages → synthesizes a cited answer.
+
+---
+
+## Claude Code Interface
+
+Claude Code (claude-sonnet-4-6) runs on this same DGX Spark host alongside Artoo. It is the
+ops and enrichment layer for the stack. See `ARCHITECTURE.md` for the full proposal.
+
+**What Claude Code manages:**
+- Docker Compose stack (upgrades, restarts, config changes)
+- `jobs.json` (cron job creation, editing, timeout tuning)
+- `~/openclaw-config/openclaw.json` (model config, plugin settings)
+- Wiki pages (research ingestion, enrichment)
+- `TOOLS.md` and `SKILLS.md` (both copies must be kept in sync)
+
+**Shared state (files both agents read/write):**
+- `~/openclaw/workspace/wiki/` — shared knowledge base
+- `~/openclaw/workspace/tmp/` — Artoo's briefing output files
+- `~/openclaw/workspace/GAP_IDEAS.md` — OSS gap tracker
+
+**Key constraint:** Artoo cannot invoke Claude Code. Direction 4 (Artoo writing handoff/ tasks
+for a host cron watcher) is proposed but not yet implemented. See `ARCHITECTURE.md`.
+
+---
+
+## Active Memory Plugin (OpenClaw 2026.4.12)
+
+OpenClaw 2026.4.12 ships an Active Memory plugin — a memory sub-agent that runs before each
+reply to read/write persistent facts. It stores structured memories in
+`~/.openclaw/plugins/active-memory/`.
+
+**Current recommendation: keep disabled for Artoo's conversational sessions.**
+
+Reasons:
+- Bug #65159: in conversational sessions, the plugin sometimes blocks the reply loop entirely
+- The sub-agent round-trip adds 3-10 seconds to every response
+- Artoo's wiki already provides structured persistent knowledge
+
+The plugin is more useful for isolated cron sessions with large reasoning tasks where memory
+continuity matters more than latency.
+
+To enable/disable:
+```bash
+# Edit openclaw.json
+# Set plugins.entries.activeMemory.enabled: true/false
+docker compose restart openclaw-gateway
+```
+
+---
+
 ## OSS Gap Pipeline
 
 Artoo runs an automated pipeline to identify unmet agent infrastructure needs and surface
@@ -407,16 +500,21 @@ high-potential OSS opportunities for Han to act on.
 
 ### Pipeline Cron Jobs
 
-| Job | Schedule | Model | Timeout | What it does |
-|-----|----------|-------|---------|-------------|
-| Agent Needs Briefing | 6:00am daily | gemma4:26b | 1200s | Research + update AGENT_INFRA.md; extract [GAP] entries → GAP_IDEAS.md |
-| Daily AI News Briefing | 7:00am daily | gemma4:26b | 1800s | Multi-source AI news briefing → Telegram + artoo-daily-news.txt |
-| Gap Implementer | 8:00am daily | gemma4:26b | 600s | Check for `approved` gaps; write spec; notify Han to confirm SCAFFOLD |
-| Gap Scorer | Wednesday 9am | gemma4:26b | 600s | Score `unscored` gaps against RUBRIC.md; alert Han via Telegram for ≥ 7.0 |
-| Agent Infra Weekly Review | Sunday 10am | gemma4:26b | 300s | Consolidate/deduplicate AGENT_INFRA.md; send trends summary |
-| OpenClaw Version Check | 3:00pm daily | - | 120s | Check for OpenClaw/Ollama/WebUI updates; notify if newer version available |
+| Job | ID | Schedule | Timeout | Status | What it does |
+|-----|----|----------|---------|--------|-------------|
+| Agent Needs Briefing | 8358ce94 | 6:00am daily | 1200s | ok | Research + update AGENT_INFRA.md; wiki Phase FINAL ingest; extract [GAP] entries |
+| Daily AI News Briefing | aafd403d | 7:00am daily | 1800s | ok | Multi-source AI news briefing → Telegram + artoo-daily-news.txt; wiki ingest |
+| Gap Implementer | e2f3a4b5 | 8:00am daily | 600s | error (exits if no approved gaps) | Check for `approved` gaps; write spec; notify Han to confirm SCAFFOLD |
+| Gap Scorer | d1e2f3a4 | Wednesday 9am | 600s | ok | Score `unscored` gaps against RUBRIC.md; alert Han via Telegram for ≥ 7.0 |
+| Agent Infra Weekly Review | c2d4e6f8 | Sunday 10am | 600s | error (msg delivery) | Consolidate/deduplicate AGENT_INFRA.md; send trends summary |
+| Weekly Wiki Lint | b1c2d3e4 | Sunday 11am | 600s | ok | Lint wiki for stale/thin pages; fix or flag |
+| OpenClaw Version Check | 7a8c12a6 | 3:00pm daily | 120s | error (times out) | Check for OpenClaw/Ollama/WebUI updates; notify if newer version available |
 
-**Timeout sizing rationale:** gemma4:26b is a 16 GB model. If a large model (nemotron, gemma4:31b) is warm in VRAM from overnight Web UI use, gemma4:26b must evict it before loading — this can take 3-5 minutes. Timeouts are set to accommodate cold-load + full research task.
+All jobs use model `ollama/gemma4:26b`, `sessionTarget: isolated`, `wakeMode: now`.
+
+**Timeout sizing rationale:** gemma4:26b is a 16 GB model. If a large model (nemotron, gemma4:31b) is warm in VRAM from overnight Web UI use, gemma4:26b must evict it before loading — this can take 3-5 minutes. Timeouts are set to accommodate cold-load + full research task. `OLLAMA_KEEP_ALIVE=10m` (added 2026-04-10) evicts models after 10 minutes of inactivity, reducing cold-load risk for morning cron jobs.
+
+**Disabled jobs (kept for reference):** `15762f78` Daily AI News + Email, `63919b6a` Agent Infra + Email, `a3f11d19` Stock Recommendation Daily.
 
 ### Approval flow
 
