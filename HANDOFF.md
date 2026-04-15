@@ -11,7 +11,7 @@
 CONTAINER           IMAGE                              STATUS
 ollama              ollama/ollama:latest (v0.20.5+)    Up (healthy)
 open-webui          open-webui/open-webui:latest       Up (healthy)
-openclaw-gateway    ghcr.io/openclaw/openclaw:2026.4.12  Up (healthy)
+openclaw-gateway    ghcr.io/openclaw/openclaw:2026.4.14  Up (healthy)
 
 PORTS
 0.0.0.0:11435 → ollama:11434       Ollama API (LAN + Tailscale)

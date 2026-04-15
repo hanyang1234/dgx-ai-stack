@@ -27,7 +27,7 @@ HOST: NVIDIA DGX Spark GB10 (Ubuntu)
 │  │   ├── Volume: open-webui              → /app/backend/data
 │  │   └── Env: OLLAMA_BASE_URL=http://ollama:11434
 │  │
-│  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:2026.4.12)
+│  └── openclaw-gateway  (ghcr.io/openclaw/openclaw:2026.4.14)
 │      ├── Gateway            0.0.0.0:18789 → :18789   (LAN, token auth)
 │      ├── Bind: ~/openclaw-config          → /home/node/.openclaw
 │      ├── Bind: ~/openclaw/workspace       → /home/node/workspace
@@ -107,7 +107,7 @@ Accessible at `http://192.168.4.45:12000` on LAN.
 ## OpenClaw
 
 ### Image version
-Pinned to `ghcr.io/openclaw/openclaw:2026.4.12` (updated 2026-04-14).
+Pinned to `ghcr.io/openclaw/openclaw:2026.4.14` (updated 2026-04-14).
 
 To update:
 ```bash
