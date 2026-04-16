@@ -414,6 +414,17 @@
       },
       "openai": {
         "enabled": true
+      },
+      "brave": {
+        "enabled": true,
+        "config": {
+          "webSearch": {
+            "apiKey": {
+              "env": "BRAVE_API_KEY"
+            },
+            "mode": "web"
+          }
+        }
       }
     }
   }

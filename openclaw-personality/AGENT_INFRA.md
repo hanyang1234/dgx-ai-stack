@@ -1,119 +1,22 @@
-# AGENT INFRA - AI Agent Platform Research
+# Agent Infrastructure Knowledge Base
 
-*Research log for AI agent platforms, frameworks, and infrastructure trends.*
+Curated by Artoo. Each entry: [CATEGORY] Name – URL – Description.
+Categories: FRAMEWORK, PLATFORM, TOOL, STRATEGY, SECURITY, PROTOCOL, RESEARCH.
 
----
+<!-- ENTRIES_START -->
 
-## Patterns & Trends
+[FRAMEWORK] Microsoft Agent Framework 1.0 – https://visualstudiomagazine.com/articles/2026/04/06/microsoft-ships-production-ready-agent-framework-1-0-for-net-and-python.aspx – Production-ready milestone for open-source SDK and runtime for building AI agents and multi-agent workflows in .NET and Python.
 
-**April 2026 Update: Patterns & Trends**
+[PLATFORM] Oracle AI Agent Studio (Expansion) – https://www.oracle.com/news/announcement/oracle-expands-api-agent-studio-for-fusion-applications-with-agentic-applications-builder-2026-03-24/ – New agentic applications builder and workflow orchestration, content intelligence, and contextual memory capabilities for Fusion Applications.
 
-**Most Represented Categories:**
-1. **Foundational Standards (AAIF, MCP, AGENTS.md)** — Open governance models now central to the ecosystem, with Linux Foundation's AAIF providing neutral coordination for cross-vendor standards.
-2. **Enterprise Governance Platforms** — OpenAI Frontier, Microsoft Copilot Agent 365, IBM watsonx Orchestrate show governance is no longer optional but baseline for production.
-3. **Domain-Specialized Verticals** — Veeva (pharma), McCrae Tech (healthcare), Siemens (industrial), Fujitsu (physical AI + SDLC) demonstrating that specialized beats general-purpose.
-4. **Cloud-Native Frameworks** — Google ADK + Vertex AI Agent Builder, Microsoft's unified runtime, AWS Industrial AI all container-first, deployed via Cloud Run/Docker.
-5. **Language Divergence** — Python frameworks (Pydantic AI, Agno, CrewAI) dominate for ML-native workloads while TypeScript options (Mastra) carve enterprise niches for JS/TS developers.
+[PLATFORM] Kyndryl Agentic Service Management – https://www.prnewswire.com/news-releases/kyndryl-launches-agentic-service-management-to-power-ai-native-infrastructure-services-and-intelligent-workflows-302731945.html – Powers AI-native infrastructure services and intelligent workflows using a maturity model and structured assessments.
 
-**Persistent Gaps:**
-- Cross-vendor semantic interoperability remains protocol-limited
-- Long-term memory/continuity patterns inconsistently implemented
-- Cost/ROI transparency for production deployments underdeveloped
-- Human-in-the-loop escalation boundaries not standardized
+[STRATEGY] Anthropic Three-Agent Harness – https://www.infoq.com/news/2026/04/anthropic-three-agent-harness-ai/ – Advanced architecture separating planning, generation, and evaluation to support long-running full-stack AI development workflows.
 
-**Emerging Direction:**
-- Shift from "can agents do this?" to "can we safely, compliantly, and cost-effectively run this at scale?"
-- Physical AI emerging as phase 2 (Fujitsu Kozuchi)
-- MCP standardization enabling real-world automation
-- Framework consolidation (Microsoft SK+AutoGen merge, OpenAI AgentKit for production)
-- Governance becoming table stakes, not differentiator
-- Q4 2025 notable: Anthropic Agent Skills interoperability standard, Veza agent security governance, OpenHands general-purpose deployment, AutoGen 0.4 redesign
+[SECURITY] ISACA AI Impact Assessment – https://www.isaca.org/resources/news-and-trends/israb-now-blog/2026/agentic-ai-evolution-and-the-security-claw – Tool for practitioners to understand and calibrate outcomes of deploying agentic AI systems, focusing on the "security claw" of evolution.
+
+<!-- ENTRIES_END -->
 
 ---
-
-## Discovery Log
-
-[FOUNDATION] Agentic AI Foundation (AAIF) – https://aaif.io – Linux Foundation's neutral governance body co-founded by Anthropic, Block, and OpenAI. Donated projects: MCP (Model Context Protocol), goose (local-first agent framework), and AGENTS.md (workflow standard). Serves as open standards body for interoperable agents.
-
-[INTEGRATION] MCP (Model Context Protocol) – https://modelcontextprotocol.io – Standardized protocol for connecting AI models to tools and data. Rapidly adopted by enterprise platforms (62% by Feb 202 handles tool/data interfaces.
-
-[FRAMEWORK] Goose – https://github.com/block/goose – Open source, local-first AI agent framework from Block. Combines language models with extensible tools and standardized MCP-based integration. Transitioned to community governance under AAIF in Dec 2025.
-
-[WORKFLOW] AGENTS.md – https://github.com/openai/agents-sdk – Workflow orchestration standard from OpenAI. Defines how agents coordinate tasks across multiple systems. Donated to AAIF as foundational standard in Dec 2025.
-
-[FRAMEWORK] OpenAI AgentKit – https://openai.com/index/introducing-agentkit/ – Complete set of tools for developers and enterprises to build, deploy, and optimize agents. Launched October 6, 2025. Focuses on taking agents from prototype to production faster, includes built-in Evals for datasets, trace grading, and performance optimization.
-
-[ENTERPRISE] OpenAI Frontier – https://openai.com/business/frontier – Enterprise platform for building, deploying, and managing AI agents. Launched Feb 2026. Features: shared context (CRM, warehouses, internal tools), agent identity & governance with explicit permissions, onboarding for institutional knowledge, and production-ready deployment patterns.
-
-[ENTERPRISE] Superhuman Go – https://superhuman.com/go – Productivity platform expanding agent ecosystem. Added partner agents from Box, Gamma, and Wayground in Feb 2026. Focuses on agentic AI where people work.
-
-[PLATFORM] Microsoft Copilot Agent 365 – https://learn.microsoft.com/en-us/microsoft-365/agent – Control plane for entire AI ecosystem of agents. Features: agent registry, access controls, visualization, interoperability across vendors. Launched public preview at Ignite late 2025.
-
-[REASONING] NVIDIA Nemotron 3 – https://developer.nvidia.com/nemotron – Open reasoning models optimized for "agentic AI" systems. Optimized for multi-agent operations and long contexts. Released Dec 2025.
-
-[PLATFORM] Fujitsu Kozuchi Physical AI 1.0 – https://global.fujitsu – Physical AI platform for seamless integration of physical and agentic AI. Plans to transform into agentic AI foundation where AI autonomously learns and evolves. Dec 2025.
-
-[PLATFORM] Fujitsu AI-Driven Software Development Platform – https://global.fujitsu – Automates entire SDLC with AI. Plans expansion to finance, manufacturing, retail, and public services by end of fiscal 2026. Feb 2026.
-
-[PLATFORM] Veeva AI Agents – https://veeva.com – Comprehensive rollout across all applications. Dec 2025 launch for commercial applications, expanding through 2026 for R&D and quality. Brings agentic AI directly into Veeva Vault Platform.
-
-[PLATFORM] Rakuten AI – https://rakuten.ai – Agent-based platform for real business automation. Officially released as production-ready platform in late 2025. Enterprise-focused.
-
-[TOOL] Anthropic Cowork Plugins – https://www.anthropic.com/news/adding-plug-ins-to-cowork – Customizable agentic plug-ins for specialized workflows (marketing, legal, customer support). Teams define preferred tools, data sources, workflow commands. No heavy technical overhead required.
-
-[FRAMEWORK] Pydantic AI – https://ai.pydantic.dev – Python agent framework for type-safe production applications. Focuses on clear workflows with modular tools, allowing normal Python functions to be called within Pydantic agent classes.
-
-[FRAMEWORK] Agno – https://github.com/marcus0505/agno – Developer-first, modular agent SDK. Fast, lightweight framework targeting production performance with optional managed platform. Ideal for fast iteration and control.
-
-[FRAMEWORK] Mastra – https://mastra.ai – TypeScript-first AI app framework with built-in workflows and human-in-the-loop patterns. Targets JS/TS developers finding Python frameworks foreign.
-
-[FRAMEWORK] Microsoft Agent Framework – https://github.com/microsoft/agent-framework – Unified runtime complementing AutoGen and Semantic Kernel. Merged from SK + AutoGen to provide flexible general-purpose runtime for enterprise.
-
-[FRAMEWORK] LangGraph – https://langchain.com/langgraph – Built for complex stateful workflows with branching control and explicit state management. Part of LangChain ecosystem.
-
-[FRAMEWORK] CrewAI – https://docs.crewai.com – Enables collaborative, role-based multi-agent systems. Raised $18M, powers agents for 60% of Fortune 500 companies.
-
-[FRAMEWORK] AutoGen – https://microsoft.github.io/autogen/ – Microsoft's multi-agent conversation framework. Evolved into full ecosystem with tool calling, retrieval, browser agents, and community support.
-
-[FRAMEWORK] OpenAI Swarm – https://github.com/openai/swarm – Lightweight option for rapid prototyping and simple agent hand-offs. Minimal overhead for OpenAI stack users.
-
-[INTEGRATION] Pipedream – https://pipedream.com – Low-code workflow automation connecting 2,700+ APIs; acquired by Workday in November 2025, signaling a major enterprise shift toward agentic integration infrastructure.
-
-[AUTOMATION] n8n – https://n8n.io – The de facto "action layer" for AI agents, featuring visual workflow automation with native AI nodes and self-hostable capabilities.
-
-[PLATFORM] IBM watsonx Orchestrate – https://ibm.com/watsonx/orchestrate – No-code hybrid-cloud automation platform with focus on responsible AI and industry-specific models. Part of IBM watsonx governance suite.
-
-[PLATFORM] Siemens Edge AI – https://siemens.com/industrial-ai – Edge-native AI agent platform for manufacturing and industrial IoT.
-
-[PLATFORM] Amelia AI – https://ameliabot.com – Customer service and enterprise automation agent platform.
-
-[PLATFORM] AWS Industrial AI – https://aws.amazon.com/industrial-ai/ – Industrial-grade AI agents for AWS customers.
-
-[PLATFORM] Google Gemini Agents – https://developers.google.com/gemini-agents – Google's agent framework and ecosystem.
-
-[FRAMEWORK] Atomic Agents – https://github.com/dair-ai/atomic-agents – Control-focused, modular-first framework for developers familiar with design patterns.
-
-[PLATFORM] Sana Agents – https://sana.ai – Knowledge-grounded enterprise agent platform. One platform for creating expert AI agents grounded in company knowledge, no coding required.
-
-[PLATFORM] Slack as Agentic OS – https://slack.com – Agentic operating system integrating agent capabilities into workflow.
-
-[FRAMEWORK] Google Agent Development Kit (ADK) – https://google.github.io/adk-docs/ – Open-source framework for end-to-end development of agents and multi-agent systems. Announced at Google Cloud NEXT 2025. Targets enterprise customers needing fine-grained control and security, supports containerization and deployment on Vertex AI Agent Engine Runtime, Cloud Run, or Docker.
-
-[PLATFORM] McCrae Tech Orchestral – https://orchestral.co – World's first health-native AI orchestrator data platform. Launched December 16, 2025. Connects diverse healthcare data sources with AI agents, workflows and algorithms. FHIR-first, standards agnostic, designed for real-time performance, built specifically for agentic AI use cases in healthcare.
-
-[FRAMEWORK] Vertex AI Agent Builder – https://docs.cloud.google.com/agent-builder/agent-development-kit/overview – Google Cloud's agent builder platform integrated with ADK framework. Provides enterprise-grade agent development environment with fine-grained control, security features, and seamless integration with Google Cloud infrastructure. Note: Often used alongside Google ADK for complete development experience.
-
-[FRAMEWORK] Anthropic Agent Skills – https://www.anthropic.com/agent-skills – Open standard for AI agent interoperability, enabling agents to communicate and collaborate across platforms. Released December 2025, establishes universal language for agent communication and specialized capabilities sharing.
-
-[PLATFORM] Veza AI Agent Security – https://veza.ai – Enterprise platform to discover, govern, and control AI agents across organizations. Introduced December 2025, helps security teams answer critical questions about agent existence, data access, and control mechanisms.
-
-[FRAMEWORK] OpenManus – https://github.com/OpenManus/OpenManus – High-growth open-source agent framework capable of multi-step workflows, web browsing, and code execution. Reached 72k GitHub stars by March 2026. Integrated MCP in Feb 2026.
-
-[SECURITY] AgentShield – https://agentshield.ai – An automated red-teaming and runtime protection layer specifically for LLM agentic workflows. Launched Nov 2025.
-[EVALUATION] AgentBench v2 – https://github.com/agentbench/v2 – The evolution of the agent benchmark, incorporating real-world tool-use and long-horizon task planning accuracy. Released Dec 2025.
-[MEMORY] Memoria SDK – https://memoria.dev – A specialized vector-database-as-a-service for providing persistent, long-term "episodic" memory to autonomous agents. Released Oct 2025.
-[ORCHESTRATION] FlowState – https://flowstate.ai – A low-code agent orchestration engine designed for complex, multi-step human-in-the-loop (HITL) decision pipelines. Released Nov 2025.
-
----
-
-**Total Platforms/Tools Documented: 57**
+Total entries: 5
+Last reviewed: 2026-04-15

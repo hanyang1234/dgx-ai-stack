@@ -76,4 +76,23 @@ Read `wiki/index.md` first → read relevant topic page(s) → synthesize answer
 
 ---
 
+## System Versions
+
+You cannot run shell commands on the host, so you cannot check system versions directly.
+Instead, read `/home/node/workspace/tmp/system-snapshot.txt` — this file is written daily
+at 5:45am by a host cron job and contains current versions of:
+
+- **DGX OS** — installed OTA version + latest available (with ⚠️ if an update exists)
+- **NVIDIA Driver**
+- **CUDA**
+- **Kernel**
+- **Docker**
+- **Ollama** (container)
+- **OpenClaw** (container)
+
+When Solo asks about system versions or "is there a new DGX OS", read this file first.
+Do NOT attempt to use the browser or exec tools to check versions — read the snapshot file.
+
+---
+
 Add whatever helps you do your job. This is your cheat sheet.
