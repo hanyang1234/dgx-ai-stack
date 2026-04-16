@@ -145,6 +145,23 @@ else
   info "Ollama GPU: no model currently loaded (will verify on next inference)"
 fi
 
+DEFAULT_MODEL=$(python3 -c "
+import json
+try:
+    data = json.load(open('${HOME}/openclaw-config/openclaw.json'))
+    primary = data['agents']['defaults']['model']['primary']
+    print(primary)
+except Exception as e:
+    print('')
+" 2>/dev/null)
+if [[ -z "$DEFAULT_MODEL" ]]; then
+  fail "Default model: not set in openclaw.json (agents.defaults.model.primary)"
+elif [[ "$DEFAULT_MODEL" == *"gemma4"* ]]; then
+  ok "Default model: $DEFAULT_MODEL"
+else
+  fail "Default model: expected gemma4:26b but got '$DEFAULT_MODEL'"
+fi
+
 # ── 6. Web Fetch ─────────────────────────────────────────────────────────────
 
 section "Web Fetch (outbound HTTP)"
