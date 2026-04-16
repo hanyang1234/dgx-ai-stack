@@ -14,9 +14,22 @@ NEW_DIGEST=$(docker inspect ghcr.io/openclaw/openclaw:latest --format '{{index .
 echo "[update-openclaw] New digest: ${NEW_DIGEST}"
 
 echo "[update-openclaw] Recreating openclaw-gateway container …"
-docker compose up -d --no-deps openclaw-gateway
+docker compose up -d --no-deps --force-recreate openclaw-gateway
 
 echo "[update-openclaw] Waiting for gateway to become healthy …"
+for i in $(seq 1 30); do
+  STATUS=$(docker inspect --format='{{.State.Health.Status}}' openclaw-gateway 2>/dev/null || echo "unknown")
+  echo "  Status: ${STATUS}"
+  if [ "${STATUS}" = "healthy" ]; then
+    break
+  fi
+  sleep 3
+done
+
+echo "[update-openclaw] Re-enabling plugins that require explicit activation …"
+docker exec openclaw-gateway node openclaw.mjs plugins enable brave
+docker compose restart openclaw-gateway
+echo "[update-openclaw] Waiting for gateway to become healthy after plugin restart …"
 for i in $(seq 1 30); do
   STATUS=$(docker inspect --format='{{.State.Health.Status}}' openclaw-gateway 2>/dev/null || echo "unknown")
   echo "  Status: ${STATUS}"
