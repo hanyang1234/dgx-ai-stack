@@ -63,6 +63,24 @@ else
   fail "Telegram: send failed (check TELEGRAM_TOKEN and bot status)"
 fi
 
+TG_POLICY=$(python3 -c "
+import json
+data = json.load(open('${HOME}/openclaw-config/openclaw.json'))
+ch = data.get('channels', {}).get('telegram', {})
+dm = ch.get('dmPolicy', '')
+gp = ch.get('groupPolicy', '')
+af = ch.get('allowFrom', [])
+if dm == 'allowlist' and gp == 'allowlist' and af == [8128617103]:
+    print('ok')
+else:
+    print(f'dmPolicy={dm} groupPolicy={gp} allowFrom={af}')
+" 2>/dev/null)
+if [[ "$TG_POLICY" == "ok" ]]; then
+  ok "Telegram: locked to Han only (dmPolicy=allowlist, allowFrom=[8128617103])"
+else
+  fail "Telegram: allowlist misconfigured — $TG_POLICY"
+fi
+
 # ── 3. AgentMail ─────────────────────────────────────────────────────────────
 
 section "AgentMail"
@@ -85,6 +103,14 @@ if [[ -f "$SEND_SCRIPT" && -x "$SEND_SCRIPT" ]]; then
   ok "AgentMail delivery script present and executable"
 else
   fail "AgentMail delivery script missing or not executable: $SEND_SCRIPT"
+fi
+
+EMAIL_JS="${HOME}/openclaw/workspace/skills/agentmail/daily-briefing-email.js"
+RECIPIENT=$(grep -oP "to:\s*\['\K[^']+" "$EMAIL_JS" 2>/dev/null || echo "")
+if [[ "$RECIPIENT" == "han.yang123@yahoo.com" ]]; then
+  ok "AgentMail recipient: locked to han.yang123@yahoo.com"
+else
+  fail "AgentMail recipient: expected han.yang123@yahoo.com, got '${RECIPIENT:-not found}'"
 fi
 
 # ── 4. Brave Search ──────────────────────────────────────────────────────────
