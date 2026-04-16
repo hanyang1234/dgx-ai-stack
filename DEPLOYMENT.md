@@ -528,6 +528,47 @@ Nothing ships without explicit approval at each stage.
 
 ---
 
+## Post-Upgrade Health Check
+
+Every upgrade runs `post-upgrade-check.sh` automatically (wired into `update.sh`).
+Run it manually any time:
+
+```bash
+./post-upgrade-check.sh            # terminal output only
+./post-upgrade-check.sh --notify   # also sends Telegram summary
+```
+
+### What it tests
+
+| Check | What it catches |
+|-------|----------------|
+| Gateway responds + version | Container didn't start |
+| `/media → /tmp/openclaw` symlink | v2026.4.9+ security workaround survived upgrade |
+| Telegram send | Bot token valid, channel connected |
+| AgentMail API (GET /v0/inboxes) | API key valid, inbox reachable |
+| AgentMail delivery script exists + executable | Host cron email path intact |
+| Brave Search API (live query) | API key valid, search returns results |
+| Brave plugin loaded in OpenClaw | Plugin enabled in openclaw.json and activated |
+| Ollama API reachable | Container-to-container networking intact |
+| gemma4:26b present in Ollama | Primary model not lost |
+| Outbound HTTPS (example.com) | Container has internet access |
+| All 7 cron job IDs in jobs.json | No job accidentally deleted |
+| No unexpected consecutive error streaks | Upgrade didn't break a running job |
+
+### Known-flakey jobs (excluded from error check)
+- `7a8c12a6` OpenClaw Version Check — always times out at 120s
+- `e2f3a4b5` Gap Implementer — exits early (ok) when no approved gaps exist
+
+### Lessons from past upgrades
+
+| Version | Breaking change | Fix applied |
+|---------|----------------|-------------|
+| 2026.4.9 | `fs.realpath()` media path check broke Telegram image uploads | `/media → /tmp/openclaw` symlink in docker-compose.yml startup command |
+| 2026.4.12 | Message tool API: `chatId` renamed to `target` | Updated cron job prompts to use `target="telegram:8128617103"` |
+| 2026.4.14 | Brave plugin requires explicit `plugins enable` CLI call even when set in openclaw.json | Run `docker exec openclaw-gateway node openclaw.mjs plugins enable brave` then restart |
+
+---
+
 ## OS Upgrade / Reboot Procedure
 
 ### Before the upgrade

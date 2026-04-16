@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# update.sh – Update the OpenClaw gateway image only, preserving all data
-# Does NOT touch the open-webui container or Ollama volumes
+# update.sh – Update the OpenClaw gateway image only, preserving all data.
+# Does NOT touch the open-webui container or Ollama volumes.
+# Runs post-upgrade-check.sh at the end and sends a Telegram summary.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,7 +16,7 @@ echo "[update-openclaw] New digest: ${NEW_DIGEST}"
 echo "[update-openclaw] Recreating openclaw-gateway container …"
 docker compose up -d --no-deps openclaw-gateway
 
-echo "[update-openclaw] Waiting for health check …"
+echo "[update-openclaw] Waiting for gateway to become healthy …"
 for i in $(seq 1 30); do
   STATUS=$(docker inspect --format='{{.State.Health.Status}}' openclaw-gateway 2>/dev/null || echo "unknown")
   echo "  Status: ${STATUS}"
@@ -25,6 +26,6 @@ for i in $(seq 1 30); do
   sleep 3
 done
 
-echo "[update-openclaw] Done. Verify:"
-echo "  docker compose logs openclaw-gateway --tail 20"
-echo "  docker compose ps"
+echo ""
+echo "[update-openclaw] Running post-upgrade health checks …"
+"${SCRIPT_DIR}/post-upgrade-check.sh" --notify

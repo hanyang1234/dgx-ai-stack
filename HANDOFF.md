@@ -185,6 +185,30 @@ and Artoo will search wiki pages to answer.
 
 ---
 
+## Post-Upgrade Health Checks
+
+After every `update.sh` run, `post-upgrade-check.sh` runs automatically with `--notify`.
+It covers 15 checks across 8 sections and sends a Telegram summary.
+
+To run manually:
+```bash
+cd ~/Downloads/claude-exp
+./post-upgrade-check.sh           # terminal output only
+./post-upgrade-check.sh --notify  # + Telegram summary
+```
+
+Exit code: `0` = all passed, `1` = one or more failed.
+
+**Checks covered:** Gateway version + /media symlink, Telegram delivery, AgentMail API key
++ delivery script, Brave Search API key + plugin loaded, Ollama API + gemma4:26b present
++ GPU active, outbound HTTPS, all 7 cron job IDs present + no unexpected error streaks.
+
+**Known-flakey exclusions** (won't trigger failures):
+- `7a8c12a6` OpenClaw Version Check — always times out at 120s
+- `e2f3a4b5` Gap Implementer — exits cleanly when no approved gaps, shows as error
+
+---
+
 ## Daily Backup
 
 Host cron runs `backup.sh` at 2am daily:
@@ -205,3 +229,4 @@ cd ~/Downloads/claude-exp && ./backup.sh
 - **Session 4 (Mar 2026):** OSS gap pipeline (RUBRIC.md, GAP_IDEAS.md, Gap Scorer/Implementer cron), Ollama OOM fix, email delivery via AgentMail, exec approval allowlist.
 - **Session 5 (Mar 2026):** Gateway exposed on LAN, 3 new Ollama models, CUDA init bug root-caused and fixed (cgroupfs + cuda_v13), NemoClaw evaluated (defer).
 - **Sessions 6–7 (Apr 2026):** Upgraded to OpenClaw 2026.4.9→2026.4.12, Ollama v0.20.5, Open WebUI latest. LLM wiki built (10 pages), wiki backfill completed (2 runs), wiki-query skill created, Phase 0 context bloat bug fixed (read only index.md), OLLAMA_KEEP_ALIVE=10m added, Weekly Wiki Lint job added. Claude Code ↔ Artoo architecture documented.
+- **Session 8 (Apr 2026):** Upgraded to OpenClaw 2026.4.14. Fixed Telegram delivery (chatId→target API change). Wired Brave Search (API key was in .env but not openclaw.json). Fixed Agent Needs Briefing hallucination (explicit web_search tool instruction). Fixed PHASE FINAL wiki edits (read-before-edit). Implemented system-snapshot.sh host script for DGX OS version checks. Added post-upgrade health check suite (post-upgrade-check.sh, 15 checks, auto-runs after update.sh).
