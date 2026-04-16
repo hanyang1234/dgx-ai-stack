@@ -226,12 +226,16 @@ fi
 # ── Telegram summary (if --notify) ───────────────────────────────────────────
 
 if [[ "$NOTIFY" == true ]]; then
-  STATUS_EMOJI=$([[ $FAIL -eq 0 ]] && echo "✅" || echo "⚠️")
   OC_VER=$(docker exec openclaw-gateway node openclaw.mjs --version 2>/dev/null | grep -oP '[\d.]+' || echo "?")
-  MSG="${STATUS_EMOJI} Post-upgrade check: ${PASS}/${TOTAL} passed (OpenClaw ${OC_VER})"$'\n'
-  for r in "${RESULTS[@]}"; do
-    MSG+="  ${r}"$'\n'
-  done
+  if [[ $FAIL -eq 0 ]]; then
+    MSG="✅ Post-upgrade check PASSED — all ${TOTAL} checks OK (OpenClaw ${OC_VER})"
+  else
+    MSG="❌ Post-upgrade check FAILED — ${PASS}/${TOTAL} passed (OpenClaw ${OC_VER})"$'\n\n'
+    MSG+="Failed checks:"$'\n'
+    for r in "${RESULTS[@]}"; do
+      [[ "$r" == ❌* ]] && MSG+="  ${r}"$'\n'
+    done
+  fi
   curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
     -d chat_id=8128617103 \
     --data-urlencode "text=${MSG}" > /dev/null 2>&1
