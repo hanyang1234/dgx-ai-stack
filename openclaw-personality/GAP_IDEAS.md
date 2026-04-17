@@ -90,4 +90,27 @@ No open marketplace exists for agent service publishing, capability discovery, p
 
 ---
 
-<!-- NEW GAPS APPENDED BELOW BY ARTOO -->
+### GAP-003: High-Fidelity Agent Observability & Auditing for Governance
+
+**Discovered:** 2026-04-16
+**Status:** unscored
+**Source:** Agent Needs Briefing daily research
+
+**Description:**
+As agents move from single-turn task completion to long-running, multi-step workflows, there is a critical lack of standardized, "black-box" observability tools capable of auditing the decision-making trace (reasoning chains, tool use, and intermediate state changes) for governance compliance. While basic logging exists, there is no unified protocol for capturing a "forensic trace" of agentic intent and outcome that is verifiable by third-party governance systems without compromising the privacy of the underlying data or the model weights.
+
+**Evidence to find:** Check for discussions on "agentic forensics," "traceable LLM workflows," or "auditable agent chains" in AI governance papers. Look for gaps in LangSmith or Arize Phoenix specifically regarding long-duration, multi-agent state transitions.
+
+**Scores:** (filled)
+- Pain Severity: 
+- Gap Uniqueness: 
+- Addressability: 
+- Ecosystem Timing: 
+- Leverage: 
+- Han's Edge: 
+- **Raw total:** 
+- **Final score:** 
+
+**Notes:** 
+- 
+

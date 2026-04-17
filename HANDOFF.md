@@ -155,6 +155,7 @@ and Artoo will search wiki pages to answer.
 | Issue | Status | Notes |
 |-------|--------|-------|
 | Telegram delivery fails for long briefings | Open | Telegram 4096-char limit; multi-part not implemented |
+| Telegram file upload limit (20MB) | Known | Telegram bot API silently drops files >20MB — they never land in `media/inbound/`. Workaround: copy large files directly to `~/openclaw/workspace/tmp/` on the host and give Artoo the path `/home/node/workspace/tmp/<filename>` |
 | Agent Needs Briefing sometimes times out at 1200s | Intermittent | Cold model load + wiki ingest; OLLAMA_KEEP_ALIVE=10m reduces frequency |
 | Agent Infra Weekly Review message delivery failure | Open | Fires but Telegram send fails |
 | Gap Implementer exits early | Expected | Exits cleanly when no approved gaps; shows as "error" but is fine |
@@ -176,6 +177,8 @@ and Artoo will search wiki pages to answer.
 - **Docker cgroup driver must be cgroupfs** — not `systemd`. Set in `/etc/docker/daemon.json`. A copy is committed to `sanitized/docker-daemon.json`. This is the decisive fix for CUDA non-deterministic init on GB10.
 
 - **Separate Telegram bot** — any other OpenClaw instance uses `@hanopenclaw123bot`. DGX Spark uses `@artoo_dgx_bot`. Same token on two pollers = 409 conflict.
+
+- **Telegram 20MB file upload limit** — the Telegram bot API silently fails to download files larger than 20MB. The gateway never logs an error; the file simply never appears in `~/openclaw-config/media/inbound/`. For files over 20MB, copy them directly to `~/openclaw/workspace/tmp/` on the host and tell Artoo the path: `/home/node/workspace/tmp/<filename>`. The `ai_index_report_2026.pdf` (37MB) is a confirmed example of this.
 
 - **exec blocked in isolated sessions** — Artoo cannot run shell commands in cron sessions. Host cron handles script-based tasks (stock delivery, backup, etc.).
 
