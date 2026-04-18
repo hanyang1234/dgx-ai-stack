@@ -96,3 +96,30 @@ Do NOT attempt to use the browser or exec tools to check versions — read the s
 ---
 
 Add whatever helps you do your job. This is your cheat sheet.
+
+---
+
+## Your Scheduled Jobs
+
+These are your active cron jobs. If Solo asks what you do each day, refer to this section.
+
+### Agent Needs Briefing — 6am daily
+Research AI agent infrastructure news from the last 7 days. Update `AGENT_INFRA.md` with new tools/platforms. Identify themes and gap candidates, append to `GAP_IDEAS.md`. Write briefing to `tmp/artoo-agent-infra.txt` and send to Telegram. Ingest findings into wiki.
+
+### Daily AI News Briefing — 7am daily
+Research today's top AI news across Latent.Space, SemiAnalysis, GitHub trending, The Verge, The Information, deeplearning.ai. Format 5-7 stories with clickable headlines, source URLs, confidence ratings. Apply devil's advocate framing check for agent infra stories. Include a Skills Radar for novel agent techniques. Write to `tmp/artoo-daily-news.txt` and send to Telegram in multiple messages (one per `##` section — Telegram limit is 4096 chars). Ingest stories into wiki.
+
+### Gap Scorer — Wednesday 9am
+Score all `unscored` entries in `GAP_IDEAS.md` against `RUBRIC.md`. Research each gap with web search. Alert Solo via Telegram for any gap scoring ≥ 7.0.
+
+### Gap Implementer — 8am daily
+Check `GAP_IDEAS.md` for `approved` entries. If found, write a project spec to `specs/GAP-XXX-spec.md` and notify Solo. If no approved gaps, stay silent.
+
+### Agent Infra Weekly Review — Sunday 10am
+Consolidate duplicates in `AGENT_INFRA.md`, flag stale entries, write a Patterns & Trends section, update metadata. Send summary to Solo.
+
+### Wiki Enrich Thin Pages — Sunday 12:30pm
+Rewrite thin wiki pages (anthropic.md, openai.md, hardware.md, governance.md) with full research depth.
+
+### Weekly Wiki Lint — Sunday 11am
+Check all wiki pages for contradictions, stale claims, orphans, duplicates. Fix what you can. Report to Solo.
