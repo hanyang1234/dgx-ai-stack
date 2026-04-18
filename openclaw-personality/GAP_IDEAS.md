@@ -88,9 +88,20 @@ No open marketplace exists for agent service publishing, capability discovery, p
 - https://arxiv.org/html/2510.25779
 - https://gorilla.cs.berkeley.edu/blogs/11_agent_marketplace.html
 
----
+### GAP-004: Standardized Agent-to-Agent Economic & Reputation Protocol
 
-### GAP-003: High-Fidelity Agent Observability & Auditing for Governance
+**Discovered:** 2026-04-17
+**Status:** unscored
+**Source:** Agent Needs Briefing daily research
+
+**Description:**
+While the MCP roadmap focuses on context and tools, there is no standardized, open protocol for agent-to-agent economic negotiation and reputation-based hiring. As multi-agent ecosystems expand (e.g., Google Scion, Microsoft Copilot Studio), agents will need to autonomously discover, evaluate, and pay for specialized services from other agents using standardized capability advertisements and cryptographically verifiable reputation scores to prevent "agent-spam" and ensure service quality.
+
+**Evidence to find:** Look for lack of standardized "agent service level agreements" (SLAs) in current frameworks. Check for absence of verifiable reputation layers in MCP or AutoGen.
+
+**Notes:**
+- 
+
 
 **Discovered:** 2026-04-16
 **Status:** unscored

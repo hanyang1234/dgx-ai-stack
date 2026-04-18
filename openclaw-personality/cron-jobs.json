@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1776376839014,
+      "updatedAtMs": 1776463222085,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,14 +25,16 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776463200000,
-        "lastRunAtMs": 1776376800012,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 39002,
+        "nextRunAtMs": 1776549600000,
+        "lastRunAtMs": 1776463200013,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 22072,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
+        "consecutiveErrors": 1,
+        "lastDelivered": false,
+        "lastError": "⚠️ Agent couldn't generate a response. Note: some tool actions may have already been executed — please verify before retrying.",
+        "lastDeliveryError": "⚠️ Agent couldn't generate a response. Note: some tool actions may have already been executed — please verify before retrying."
       }
     },
     {
@@ -42,7 +44,7 @@
       "name": "Daily AI News Briefing",
       "enabled": true,
       "createdAtMs": 1772673929751,
-      "updatedAtMs": 1776348114119,
+      "updatedAtMs": 1776434504978,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -61,14 +63,15 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1776434400000,
-        "lastRunAtMs": 1776348000013,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 114106,
+        "nextRunAtMs": 1776520800000,
+        "lastRunAtMs": 1776434400010,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 104968,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": true
+        "consecutiveErrors": 1,
+        "lastDelivered": true,
+        "lastError": "⚠️ Agent couldn't generate a response. Note: some tool actions may have already been executed — please verify before retrying."
       }
     },
     {
@@ -78,7 +81,7 @@
       "name": "Agent Needs Briefing",
       "enabled": true,
       "createdAtMs": 1772722153564,
-      "updatedAtMs": 1776344571039,
+      "updatedAtMs": 1776430951044,
       "schedule": {
         "kind": "cron",
         "expr": "0 6 * * *",
@@ -97,15 +100,14 @@
         "to": "telegram:8128617103"
       },
       "state": {
-        "nextRunAtMs": 1776430800000,
-        "lastRunAtMs": 1776344400015,
+        "nextRunAtMs": 1776517200000,
+        "lastRunAtMs": 1776430800012,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 171024,
+        "lastDurationMs": 151032,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": true,
-        "lastError": ""
+        "lastDelivered": true
       }
     },
     {
@@ -188,7 +190,7 @@
       "name": "Gap Implementer",
       "enabled": true,
       "createdAtMs": 1773925200000,
-      "updatedAtMs": 1776351614369,
+      "updatedAtMs": 1776438014955,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * *",
@@ -206,12 +208,12 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776438000000,
-        "lastRunAtMs": 1776351600013,
+        "nextRunAtMs": 1776524400000,
+        "lastRunAtMs": 1776438000016,
         "lastRunStatus": "ok",
         "consecutiveErrors": 0,
         "lastStatus": "ok",
-        "lastDurationMs": 14356,
+        "lastDurationMs": 14939,
         "lastDeliveryStatus": "not-delivered",
         "lastDelivered": false
       }
