@@ -8,7 +8,7 @@
       "name": "OpenClaw Version Check",
       "enabled": true,
       "createdAtMs": 1772539182812,
-      "updatedAtMs": 1776463222085,
+      "updatedAtMs": 1776549636642,
       "schedule": {
         "kind": "cron",
         "expr": "0 15 * * *",
@@ -25,16 +25,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776549600000,
-        "lastRunAtMs": 1776463200013,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 22072,
+        "nextRunAtMs": 1776636000000,
+        "lastRunAtMs": 1776549600016,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 36626,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 1,
-        "lastDelivered": false,
-        "lastError": "⚠️ Agent couldn't generate a response. Note: some tool actions may have already been executed — please verify before retrying.",
-        "lastDeliveryError": "⚠️ Agent couldn't generate a response. Note: some tool actions may have already been executed — please verify before retrying."
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     },
     {
